@@ -1,0 +1,456 @@
+# SPDX-FileCopyrightText: 2024 Panoptes Contributors
+# SPDX-License-Identifier: MIT
+
+# Panoptes - Trillion Recipe Justfile
+# https://just.systems/
+
+set dotenv-load := true
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+# Default recipe - show help
+default:
+    @just --list
+
+# ============================================================================
+# BUILD RECIPES
+# ============================================================================
+
+# Build the project in debug mode
+build:
+    cargo build
+
+# Build the project in release mode
+build-release:
+    cargo build --release
+
+# Build with all features
+build-all:
+    cargo build --all-features
+
+# Build only the main binary
+build-bin:
+    cargo build --bin panoptes
+
+# Build only the undo binary
+build-undo:
+    cargo build --bin panoptes-undo
+
+# Build only the web binary
+build-web:
+    cargo build --bin panoptes-web --features web
+
+# Build for a specific target
+build-target target:
+    cargo build --release --target {{target}}
+
+# Build static binary (Linux musl)
+build-static:
+    cargo build --release --target x86_64-unknown-linux-musl
+
+# Build with minimal features
+build-minimal:
+    cargo build --no-default-features
+
+# ============================================================================
+# RUN RECIPES
+# ============================================================================
+
+# Run the application
+run *ARGS:
+    cargo run -- {{ARGS}}
+
+# Run with verbose logging
+run-verbose *ARGS:
+    RUST_LOG=debug cargo run -- -vv {{ARGS}}
+
+# Run in release mode
+run-release *ARGS:
+    cargo run --release -- {{ARGS}}
+
+# Scan a directory
+scan DIR:
+    cargo run -- scan {{DIR}}
+
+# Scan with dry run
+scan-dry DIR:
+    cargo run -- scan --dry-run {{DIR}}
+
+# Watch a directory
+watch DIR:
+    cargo run -- watch {{DIR}}
+
+# Start web dashboard
+web:
+    cargo run --features web -- web
+
+# Start web on custom port
+web-port PORT:
+    cargo run --features web -- web --port {{PORT}}
+
+# Interactive shell
+shell:
+    cargo run -- shell
+
+# ============================================================================
+# TEST RECIPES
+# ============================================================================
+
+# Run all tests
+test:
+    cargo test
+
+# Run tests with output
+test-verbose:
+    cargo test -- --nocapture
+
+# Run tests with coverage (requires cargo-tarpaulin)
+test-coverage:
+    cargo tarpaulin --out html --output-dir target/coverage
+
+# Run specific test
+test-one NAME:
+    cargo test {{NAME}} -- --nocapture
+
+# Run unit tests only
+test-unit:
+    cargo test --lib
+
+# Run integration tests
+test-integration:
+    cargo test --test '*'
+
+# Run doc tests
+test-doc:
+    cargo test --doc
+
+# Run property tests
+test-prop:
+    cargo test prop_
+
+# Benchmark tests
+bench:
+    cargo bench
+
+# Run tests with all features
+test-all:
+    cargo test --all-features
+
+# ============================================================================
+# LINT & FORMAT RECIPES
+# ============================================================================
+
+# Format code
+fmt:
+    cargo fmt
+
+# Check formatting
+fmt-check:
+    cargo fmt -- --check
+
+# Run clippy
+clippy:
+    cargo clippy -- -D warnings
+
+# Run clippy with all features
+clippy-all:
+    cargo clippy --all-features -- -D warnings
+
+# Run clippy with fixes
+clippy-fix:
+    cargo clippy --fix --allow-dirty
+
+# Full lint check
+lint: fmt-check clippy
+
+# Strict lint check
+lint-strict:
+    cargo fmt -- --check
+    cargo clippy --all-features -- -D warnings -W clippy::pedantic -W clippy::nursery
+
+# ============================================================================
+# DOCUMENTATION RECIPES
+# ============================================================================
+
+# Generate documentation
+doc:
+    cargo doc
+
+# Generate and open documentation
+doc-open:
+    cargo doc --open
+
+# Generate docs with private items
+doc-private:
+    cargo doc --document-private-items
+
+# Generate all docs including dependencies
+doc-all:
+    cargo doc --all-features --document-private-items
+
+# Serve docs locally
+doc-serve:
+    python3 -m http.server 8000 --directory target/doc
+
+# ============================================================================
+# CLEAN RECIPES
+# ============================================================================
+
+# Clean build artifacts
+clean:
+    cargo clean
+
+# Clean and rebuild
+rebuild: clean build
+
+# Clean release artifacts
+clean-release:
+    rm -rf target/release
+
+# Clean coverage data
+clean-coverage:
+    rm -rf target/coverage
+
+# Deep clean (including Cargo.lock)
+clean-all:
+    cargo clean
+    rm -f Cargo.lock
+
+# ============================================================================
+# DEPENDENCY RECIPES
+# ============================================================================
+
+# Update dependencies
+update:
+    cargo update
+
+# Check for outdated dependencies
+outdated:
+    cargo outdated
+
+# Audit dependencies for security issues
+audit:
+    cargo audit
+
+# Show dependency tree
+tree:
+    cargo tree
+
+# Show duplicate dependencies
+tree-dups:
+    cargo tree --duplicates
+
+# Check unused dependencies (requires cargo-udeps)
+unused:
+    cargo +nightly udeps
+
+# ============================================================================
+# RELEASE RECIPES
+# ============================================================================
+
+# Prepare a release
+release-prep VERSION:
+    @echo "Preparing release {{VERSION}}"
+    @sed -i 's/^version = .*/version = "{{VERSION}}"/' Cargo.toml
+    @echo "Updated Cargo.toml"
+
+# Create release build
+release-build: build-release
+    @echo "Release build complete"
+    @ls -lh target/release/panoptes
+
+# Package release
+release-package:
+    @mkdir -p dist
+    @cp target/release/panoptes dist/
+    @cp target/release/panoptes-undo dist/
+    @cp README.adoc dist/
+    @cp LICENSE.txt dist/
+    @tar -czvf dist/panoptes-$(uname -s)-$(uname -m).tar.gz -C dist panoptes panoptes-undo README.adoc LICENSE.txt
+    @echo "Package created: dist/panoptes-$(uname -s)-$(uname -m).tar.gz"
+
+# ============================================================================
+# OLLAMA RECIPES
+# ============================================================================
+
+# Check Ollama status
+ollama-status:
+    @curl -s http://localhost:11434/api/version | jq . || echo "Ollama not running"
+
+# List Ollama models
+ollama-models:
+    @curl -s http://localhost:11434/api/tags | jq '.models[].name'
+
+# Pull Moondream model
+ollama-pull:
+    ollama pull moondream
+
+# Start Ollama (if using systemd)
+ollama-start:
+    systemctl --user start ollama
+
+# Stop Ollama
+ollama-stop:
+    systemctl --user stop ollama
+
+# ============================================================================
+# DATABASE RECIPES
+# ============================================================================
+
+# Show database stats
+db-stats:
+    cargo run -- db stats
+
+# Compact database
+db-compact:
+    cargo run -- db compact
+
+# Export database
+db-export FILE:
+    cargo run -- db export {{FILE}}
+
+# Import database
+db-import FILE:
+    cargo run -- db import {{FILE}}
+
+# Reset database (DESTRUCTIVE)
+db-reset:
+    @echo "This will delete all data. Press Ctrl+C to cancel."
+    @sleep 3
+    rm -f ~/.local/share/panoptes/panoptes.db
+    @echo "Database reset."
+
+# ============================================================================
+# HISTORY RECIPES
+# ============================================================================
+
+# Show history
+history:
+    cargo run -- history list
+
+# Undo last operation
+undo:
+    cargo run -- undo
+
+# Undo last N operations
+undo-n N:
+    cargo run -- undo --count {{N}}
+
+# Clear history
+history-clear:
+    cargo run -- history clear
+
+# ============================================================================
+# CONTAINER RECIPES
+# ============================================================================
+
+# Build container image
+container-build:
+    podman build -t panoptes:latest .
+
+# Run container
+container-run:
+    podman run -it --rm \
+        -v ~/.local/share/panoptes:/data \
+        -v /path/to/files:/files:ro \
+        panoptes:latest scan /files
+
+# Build multi-arch container
+container-build-multi:
+    podman build --platform linux/amd64,linux/arm64 -t panoptes:latest .
+
+# Push container to registry
+container-push REGISTRY:
+    podman push panoptes:latest {{REGISTRY}}/panoptes:latest
+
+# ============================================================================
+# NIX RECIPES
+# ============================================================================
+
+# Enter Nix development shell
+nix-develop:
+    nix develop
+
+# Build with Nix
+nix-build:
+    nix build
+
+# Run with Nix
+nix-run *ARGS:
+    nix run . -- {{ARGS}}
+
+# Update Nix flake
+nix-update:
+    nix flake update
+
+# Check Nix flake
+nix-check:
+    nix flake check
+
+# ============================================================================
+# DEVELOPMENT RECIPES
+# ============================================================================
+
+# Watch for changes and run tests
+watch-test:
+    cargo watch -x test
+
+# Watch for changes and run
+watch-run:
+    cargo watch -x run
+
+# Watch for changes and check
+watch-check:
+    cargo watch -x check
+
+# Setup development environment
+setup:
+    @echo "Installing development tools..."
+    cargo install cargo-watch cargo-tarpaulin cargo-audit cargo-outdated
+    @echo "Pulling Moondream model..."
+    ollama pull moondream
+    @echo "Setup complete!"
+
+# Generate shell completions
+completions SHELL:
+    cargo run -- shell completions {{SHELL}}
+
+# Install locally
+install:
+    cargo install --path .
+
+# Uninstall
+uninstall:
+    cargo uninstall panoptes
+
+# ============================================================================
+# CI RECIPES
+# ============================================================================
+
+# Run CI checks
+ci: lint test
+
+# Full CI pipeline
+ci-full: lint test-all doc audit
+
+# Pre-commit hook
+pre-commit: fmt clippy test
+
+# Generate SBOM
+sbom:
+    cargo sbom > sbom.json
+
+# ============================================================================
+# HELP RECIPES
+# ============================================================================
+
+# Show help for a specific command
+help CMD:
+    cargo run -- {{CMD}} --help
+
+# Show all CLI help
+help-all:
+    cargo run -- --help
+
+# Show version
+version:
+    cargo run -- --version

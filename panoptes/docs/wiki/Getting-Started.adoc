@@ -1,0 +1,162 @@
+// SPDX-FileCopyrightText: 2024 Panoptes Contributors
+// SPDX-License-Identifier: MIT
+= Getting Started with Panoptes
+:toc: left
+:toclevels: 3
+:icons: font
+:source-highlighter: rouge
+
+This guide will help you get up and running with Panoptes in minutes.
+
+== Prerequisites
+
+Before installing Panoptes, ensure you have:
+
+1. **Ollama** installed and running
+2. **~2GB disk space** for the AI model
+3. **Rust toolchain** (for building from source)
+
+== Installation
+
+=== Using Cargo (Recommended)
+
+[source,bash]
+----
+cargo install panoptes
+----
+
+=== From Source
+
+[source,bash]
+----
+git clone https://github.com/yourusername/panoptes.git
+cd panoptes
+cargo install --path .
+----
+
+=== Using Nix
+
+[source,bash]
+----
+nix run github:yourusername/panoptes
+----
+
+== Setting Up Ollama
+
+=== Install Ollama
+
+[source,bash]
+----
+# Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+
+# macOS
+brew install ollama
+
+# Or download from https://ollama.ai
+----
+
+=== Pull the Moondream Model
+
+[source,bash]
+----
+ollama pull moondream
+----
+
+=== Verify Installation
+
+[source,bash]
+----
+# Check Ollama is running
+curl http://localhost:11434/api/version
+
+# Check model is available
+ollama list
+----
+
+== Your First Scan
+
+=== Basic Scan
+
+Scan a directory and see what Panoptes suggests:
+
+[source,bash]
+----
+panoptes scan ~/Downloads --dry-run
+----
+
+The `--dry-run` flag shows what would be renamed without making changes.
+
+=== Apply Renames
+
+When you're satisfied with the suggestions:
+
+[source,bash]
+----
+panoptes scan ~/Downloads
+----
+
+=== Undo Changes
+
+Made a mistake? No problem:
+
+[source,bash]
+----
+panoptes undo
+----
+
+== Watch Mode
+
+Monitor a folder for new files:
+
+[source,bash]
+----
+panoptes watch ~/Downloads
+----
+
+Press `Ctrl+C` to stop watching.
+
+== Web Dashboard
+
+Start the web interface:
+
+[source,bash]
+----
+panoptes web
+----
+
+Open http://localhost:8080 in your browser.
+
+== Next Steps
+
+* xref:Configuration.adoc[Configure Panoptes] to your preferences
+* Learn about xref:Analyzers.adoc[different file analyzers]
+* Explore the xref:CLI-Reference.adoc[full CLI reference]
+* Set up xref:Web-Dashboard.adoc[the web dashboard]
+
+== Common Issues
+
+=== "Ollama not available"
+
+Ensure Ollama is running:
+
+[source,bash]
+----
+# Start Ollama
+ollama serve
+----
+
+=== "Model not found"
+
+Pull the model:
+
+[source,bash]
+----
+ollama pull moondream
+----
+
+=== Slow Analysis
+
+* First analysis may be slow as the model loads
+* Subsequent scans are faster
+* Consider using `--jobs 1` on low-memory systems

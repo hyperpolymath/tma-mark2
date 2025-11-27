@@ -1,0 +1,417 @@
+// SPDX-FileCopyrightText: 2024 Panoptes Contributors
+// SPDX-License-Identifier: MIT
+= Troubleshooting Guide
+:toc: left
+:toclevels: 3
+:icons: font
+:source-highlighter: rouge
+
+Solutions to common issues with Panoptes.
+
+== Ollama Issues
+
+=== "Ollama is not available"
+
+**Symptoms**: Error message about Ollama not being reachable.
+
+**Solutions**:
+
+1. Start Ollama:
++
+[source,bash]
+----
+ollama serve
+----
+
+2. Check if Ollama is running:
++
+[source,bash]
+----
+curl http://localhost:11434/api/version
+----
+
+3. If using a custom URL:
++
+[source,bash]
+----
+export PANOPTES_OLLAMA_URL="http://your-host:11434"
+----
+
+=== "Model not found"
+
+**Symptoms**: Error that moondream model is not available.
+
+**Solutions**:
+
+1. Pull the model:
++
+[source,bash]
+----
+ollama pull moondream
+----
+
+2. Verify it's installed:
++
+[source,bash]
+----
+ollama list
+----
+
+3. Use a different model:
++
+[source,bash]
+----
+panoptes --model llava scan ~/Downloads
+----
+
+=== Slow Analysis
+
+**Symptoms**: Analysis takes very long per file.
+
+**Solutions**:
+
+1. First run is slow (model loading). Subsequent runs are faster.
+
+2. Reduce parallel jobs on low-memory systems:
++
+[source,bash]
+----
+panoptes --jobs 1 scan ~/Downloads
+----
+
+3. Check system resources:
++
+[source,bash]
+----
+htop  # or top
+----
+
+== Database Issues
+
+=== "Database locked"
+
+**Symptoms**: Error about database being locked.
+
+**Solutions**:
+
+1. Only run one instance of Panoptes at a time.
+
+2. Kill any zombie processes:
++
+[source,bash]
+----
+pkill -f panoptes
+----
+
+3. If persists, remove the lock:
++
+[source,bash]
+----
+rm ~/.local/share/panoptes/panoptes.db-journal
+----
+
+=== Corrupted Database
+
+**Symptoms**: Unexplained errors, missing data.
+
+**Solutions**:
+
+1. Try compacting:
++
+[source,bash]
+----
+panoptes db compact
+----
+
+2. Export and reimport:
++
+[source,bash]
+----
+panoptes db export backup.json
+rm ~/.local/share/panoptes/panoptes.db
+panoptes db import backup.json
+----
+
+3. Reset (loses all data):
++
+[source,bash]
+----
+rm ~/.local/share/panoptes/panoptes.db
+----
+
+== File Operation Issues
+
+=== Permission Denied
+
+**Symptoms**: Cannot rename files.
+
+**Solutions**:
+
+1. Check file permissions:
++
+[source,bash]
+----
+ls -la /path/to/file
+----
+
+2. Run with sudo (not recommended):
++
+[source,bash]
+----
+sudo panoptes scan /protected/dir
+----
+
+3. Fix permissions:
++
+[source,bash]
+----
+chmod u+rw /path/to/file
+----
+
+=== "File not found" After Rename
+
+**Symptoms**: File shows in database but not on disk.
+
+**Solutions**:
+
+1. File may have been moved/deleted externally.
+
+2. Update database:
++
+[source,bash]
+----
+panoptes db scan --update-missing
+----
+
+=== Undo Not Working
+
+**Symptoms**: Cannot undo a rename.
+
+**Solutions**:
+
+1. Check history:
++
+[source,bash]
+----
+panoptes history list
+----
+
+2. Verify original path exists:
++
+[source,bash]
+----
+ls -la /original/path/
+----
+
+3. Manual undo:
++
+[source,bash]
+----
+mv /new/name /original/name
+----
+
+== Configuration Issues
+
+=== Config Not Loading
+
+**Symptoms**: Settings not being applied.
+
+**Solutions**:
+
+1. Check config path:
++
+[source,bash]
+----
+panoptes config path
+----
+
+2. Validate config:
++
+[source,bash]
+----
+panoptes config validate
+----
+
+3. Show effective config:
++
+[source,bash]
+----
+panoptes config show
+----
+
+=== Invalid Configuration
+
+**Symptoms**: Error parsing configuration.
+
+**Solutions**:
+
+1. Validate JSON:
++
+[source,bash]
+----
+jq . config.json
+----
+
+2. Check for common errors:
+   - Missing quotes
+   - Trailing commas
+   - Invalid values
+
+3. Reset to defaults:
++
+[source,bash]
+----
+panoptes config reset
+----
+
+== Watch Mode Issues
+
+=== Files Not Being Detected
+
+**Symptoms**: New files are not processed.
+
+**Solutions**:
+
+1. Check ignore patterns:
++
+[source,bash]
+----
+panoptes config get watch.ignore_patterns
+----
+
+2. Ensure file matches supported extensions.
+
+3. Increase debounce time for slow filesystems:
++
+[source,bash]
+----
+panoptes watch --debounce 1000 ~/Downloads
+----
+
+=== High CPU Usage in Watch Mode
+
+**Symptoms**: panoptes using excessive CPU.
+
+**Solutions**:
+
+1. Increase debounce time:
++
+[source,bash]
+----
+panoptes watch --debounce 2000 ~/Downloads
+----
+
+2. Reduce watched directories.
+
+3. Add ignore patterns for high-churn directories.
+
+== Web Dashboard Issues
+
+=== Cannot Access Dashboard
+
+**Symptoms**: Browser can't connect.
+
+**Solutions**:
+
+1. Check if running:
++
+[source,bash]
+----
+panoptes web
+----
+
+2. Verify port is not in use:
++
+[source,bash]
+----
+lsof -i :8080
+----
+
+3. Use different port:
++
+[source,bash]
+----
+panoptes web --port 9000
+----
+
+=== Dashboard Shows No Files
+
+**Symptoms**: Empty file list.
+
+**Solutions**:
+
+1. Run a scan first:
++
+[source,bash]
+----
+panoptes scan ~/Downloads
+----
+
+2. Check database:
++
+[source,bash]
+----
+panoptes db stats
+----
+
+== Build/Installation Issues
+
+=== Compilation Fails
+
+**Symptoms**: Cargo build errors.
+
+**Solutions**:
+
+1. Update Rust:
++
+[source,bash]
+----
+rustup update
+----
+
+2. Install dependencies:
++
+[source,bash]
+----
+# Ubuntu/Debian
+sudo apt install build-essential pkg-config libssl-dev
+
+# Fedora
+sudo dnf install gcc pkg-config openssl-devel
+
+# macOS
+xcode-select --install
+----
+
+3. Clean and rebuild:
++
+[source,bash]
+----
+cargo clean && cargo build
+----
+
+== Getting Help
+
+If you're still stuck:
+
+1. Run diagnostics:
++
+[source,bash]
+----
+panoptes system check
+panoptes system info
+----
+
+2. Check logs:
++
+[source,bash]
+----
+RUST_LOG=debug panoptes scan ~/Downloads 2>&1 | tee debug.log
+----
+
+3. Open an issue on GitHub with:
+   - Panoptes version (`panoptes --version`)
+   - OS and version
+   - Full error message
+   - Steps to reproduce
+   - Debug log output

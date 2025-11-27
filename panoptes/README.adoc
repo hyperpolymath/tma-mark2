@@ -1,0 +1,371 @@
+// SPDX-FileCopyrightText: 2024 Panoptes Contributors
+// SPDX-License-Identifier: MIT
+= Panoptes
+:toc: left
+:toclevels: 3
+:icons: font
+:source-highlighter: rouge
+:experimental:
+:sectnums:
+
+image:https://img.shields.io/badge/version-3.0.0-blue[Version]
+image:https://img.shields.io/badge/license-MIT-green[License]
+image:https://img.shields.io/badge/RSR-Gold-gold[RSR Gold]
+image:https://img.shields.io/badge/rust-1.75+-orange[Rust Version]
+
+== Overview
+
+Panoptes is a local AI-powered file scanner that intelligently renames images and labels documents using free vision models like Moondream via Ollama. It runs entirely on your machine with no cloud dependencies or API costs.
+
+=== Key Features
+
+* **AI-Powered Naming**: Uses Moondream vision model to analyze images and generate descriptive filenames
+* **Multi-Format Support**: Images, PDFs, audio, video, code, documents, and archives
+* **Plugin Architecture**: Extensible analyzer system for custom file types
+* **Web Dashboard**: Real-time monitoring and management interface
+* **Tagging System**: SQLite-backed tags and categories with full-text search
+* **File Watching**: Automatic processing of new files in watched directories
+* **Time Machine**: Full undo/redo history via JSONL logging
+* **Deduplication**: Blake3 hashing to identify duplicate files
+* **Offline First**: No internet required after initial model download
+
+== Quick Start
+
+=== Prerequisites
+
+* Rust 1.75+ (for building)
+* https://ollama.ai[Ollama] with Moondream model
+* SQLite 3.x
+
+=== Installation
+
+[source,bash]
+----
+# Clone the repository
+git clone https://github.com/panoptes/panoptes.git
+cd panoptes
+
+# Build with all features
+cargo build --release --features full
+
+# Or using Just
+just build
+----
+
+=== First Run
+
+[source,bash]
+----
+# Pull the Moondream vision model
+ollama pull moondream
+
+# Scan a directory
+panoptes scan ~/Pictures --rename
+
+# Start the web dashboard
+panoptes-web --port 8080
+
+# Watch for new files
+panoptes watch ~/Downloads --auto-rename
+----
+
+== Usage
+
+=== Command Line Interface
+
+Panoptes provides a comprehensive CLI with extensive flags and options:
+
+[source,bash]
+----
+panoptes [OPTIONS] <COMMAND> [ARGS]
+
+Commands:
+  scan      Scan files in a directory
+  watch     Watch directory for new files
+  rename    Rename files based on AI analysis
+  tag       Manage file tags
+  search    Search files by tags or content
+  history   View and manage operation history
+  undo      Undo recent operations
+  config    Manage configuration
+  db        Database operations
+  web       Start web dashboard
+  shell     Generate shell completions
+
+Global Options:
+  -c, --config <FILE>      Config file path [default: config.json]
+  -v, --verbose...         Increase verbosity (-v, -vv, -vvv)
+  -q, --quiet              Suppress output
+      --json               Output as JSON
+      --dry-run            Show what would be done without doing it
+      --no-color           Disable colored output
+  -j, --jobs <N>           Number of parallel jobs [default: 4]
+      --ollama-url <URL>   Ollama API URL [default: http://localhost:11434]
+  -h, --help               Print help
+  -V, --version            Print version
+----
+
+=== Scan Command
+
+[source,bash]
+----
+panoptes scan [OPTIONS] <PATH>...
+
+Arguments:
+  <PATH>...  Directories or files to scan
+
+Options:
+  -r, --recursive          Scan subdirectories
+  -R, --rename             Rename files after analysis
+  -t, --tag                Auto-tag files
+  -d, --dedupe             Find and report duplicates
+      --min-size <BYTES>   Minimum file size [default: 1024]
+      --max-size <BYTES>   Maximum file size [default: 104857600]
+  -e, --ext <EXT>          Filter by extensions (comma-separated)
+      --exclude <PATTERN>  Exclude patterns (glob)
+      --include <PATTERN>  Include patterns (glob)
+      --since <DATE>       Files modified since date
+      --until <DATE>       Files modified until date
+  -o, --output <FORMAT>    Output format (table, json, csv, jsonl)
+      --sort <FIELD>       Sort by field (name, size, date, type)
+      --limit <N>          Limit results
+      --model <MODEL>      Vision model to use [default: moondream]
+----
+
+=== Watch Command
+
+[source,bash]
+----
+panoptes watch [OPTIONS] <PATH>...
+
+Arguments:
+  <PATH>...  Directories to watch
+
+Options:
+      --auto-rename        Automatically rename new files
+      --auto-tag           Automatically tag new files
+      --debounce <MS>      Debounce interval [default: 2000]
+      --poll               Use polling instead of native events
+      --poll-interval <S>  Polling interval [default: 5]
+      --daemon             Run as background daemon
+      --pid-file <FILE>    PID file for daemon mode
+----
+
+== Configuration
+
+Panoptes uses a layered configuration system:
+
+1. Built-in defaults
+2. System config: `/etc/panoptes/config.json`
+3. User config: `~/.config/panoptes/config.json`
+4. Project config: `./config.json`
+5. Environment variables: `PANOPTES_*`
+6. Command-line flags
+
+=== Configuration File
+
+[source,json]
+----
+{
+  "version": "3.0.0",
+  "watch_paths": ["~/Downloads", "~/Pictures"],
+  "ai_engine": {
+    "provider": "ollama",
+    "url": "http://localhost:11434",
+    "models": {
+      "vision": "moondream",
+      "text": "llama3.2",
+      "code": "codellama"
+    },
+    "timeout_seconds": 60,
+    "retry_attempts": 3
+  },
+  "rules": {
+    "max_filename_length": 100,
+    "preserve_extension": true,
+    "lowercase": true,
+    "replace_spaces": "_"
+  },
+  "prompts": {
+    "image": "Describe this image in 3-5 words for a filename",
+    "pdf": "Summarize this PDF content in 3-5 words",
+    "code": "Describe the purpose of this code in 3-5 words"
+  },
+  "analyzers": {
+    "image": { "enabled": true, "extensions": [".jpg", ".png", ".gif", ".webp"] },
+    "pdf": { "enabled": true, "extensions": [".pdf"] },
+    "audio": { "enabled": true, "extensions": [".mp3", ".wav", ".flac", ".ogg"] },
+    "video": { "enabled": true, "extensions": [".mp4", ".mkv", ".avi", ".webm"] },
+    "code": { "enabled": true, "extensions": [".rs", ".py", ".js", ".ts", ".go"] },
+    "document": { "enabled": true, "extensions": [".docx", ".xlsx", ".pptx", ".odt"] },
+    "archive": { "enabled": true, "extensions": [".zip", ".tar", ".tar.gz", ".7z"] }
+  },
+  "web": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 8080
+  },
+  "database": {
+    "path": "~/.local/share/panoptes/panoptes.db"
+  },
+  "history": {
+    "path": "~/.local/share/panoptes/history.jsonl",
+    "max_entries": 10000
+  }
+}
+----
+
+=== Nickel Configuration
+
+For type-safe configuration, use `config.ncl`:
+
+[source,nickel]
+----
+let Config = {
+  version | String = "3.0.0",
+  watch_paths | Array String = [],
+  ai_engine | {
+    provider | String = "ollama",
+    url | String = "http://localhost:11434",
+    models | { vision | String, text | String, code | String }
+  },
+  rules | {
+    max_filename_length | Number = 100,
+    preserve_extension | Bool = true,
+    lowercase | Bool = true
+  }
+}
+in Config
+----
+
+== Architecture
+
+=== Plugin System
+
+Panoptes uses a trait-based plugin architecture:
+
+[source,rust]
+----
+#[async_trait]
+pub trait FileAnalyzer: Send + Sync {
+    fn name(&self) -> &'static str;
+    fn supported_extensions(&self) -> &[&str];
+    fn priority(&self) -> u8;
+    async fn analyze(&self, path: &Path, config: &Config) -> Result<AnalysisResult>;
+}
+----
+
+=== Database Schema
+
+[source,sql]
+----
+CREATE TABLE files (
+    id TEXT PRIMARY KEY,
+    path TEXT NOT NULL UNIQUE,
+    hash TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    mime_type TEXT,
+    original_name TEXT,
+    suggested_name TEXT,
+    analyzed_at TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    color TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE file_tags (
+    file_id TEXT REFERENCES files(id),
+    tag_id INTEGER REFERENCES tags(id),
+    PRIMARY KEY (file_id, tag_id)
+);
+
+CREATE TABLE categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    parent_id INTEGER REFERENCES categories(id),
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+----
+
+== Web Dashboard
+
+The web dashboard provides a real-time interface for:
+
+* Viewing analyzed files
+* Managing tags and categories
+* Monitoring watch directories
+* Reviewing operation history
+* Configuring settings
+
+Start with:
+
+[source,bash]
+----
+panoptes-web --port 8080
+----
+
+Then open http://localhost:8080 in your browser.
+
+== Development
+
+=== Building
+
+[source,bash]
+----
+# Development build
+just build-dev
+
+# Release build
+just build-release
+
+# All targets
+just build-all
+----
+
+=== Testing
+
+[source,bash]
+----
+# Run all tests
+just test
+
+# Run with coverage
+just test-coverage
+
+# Run specific test
+just test-unit analyzer
+----
+
+=== Documentation
+
+[source,bash]
+----
+# Generate docs
+just docs
+
+# Open docs in browser
+just docs-open
+----
+
+== Contributing
+
+See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc] for guidelines.
+
+== License
+
+MIT License - see link:LICENSE.txt[LICENSE.txt] for details.
+
+== Security
+
+See link:SECURITY.md[SECURITY.md] for security policies and reporting vulnerabilities.
+
+== Acknowledgements
+
+* https://ollama.ai[Ollama] - Local LLM runtime
+* https://huggingface.co/vikhyatk/moondream2[Moondream] - Compact vision model
+* The Rust community for excellent crates

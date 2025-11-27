@@ -1,0 +1,162 @@
+// SPDX-FileCopyrightText: 2024 Panoptes Contributors
+// SPDX-License-Identifier: MIT
+= Panoptes Governance
+:toc: left
+:toclevels: 2
+:icons: font
+
+== Overview
+
+Panoptes follows a benevolent dictator for life (BDFL) governance model with a core team structure. This document outlines how decisions are made and how the project is managed.
+
+== Roles
+
+=== BDFL (Benevolent Dictator For Life)
+
+The BDFL has final authority on all project decisions. This role is responsible for:
+
+* Setting overall project direction
+* Resolving disputes
+* Appointing core team members
+* Making final decisions when consensus cannot be reached
+
+=== Core Team
+
+Core team members are trusted contributors with significant responsibilities:
+
+* Merge permissions on the repository
+* Release management
+* Issue triage
+* Community moderation
+* Mentoring new contributors
+
+Current core team members are listed in link:MAINTAINERS.md[MAINTAINERS.md].
+
+=== Contributors
+
+Anyone who has contributed to the project through:
+
+* Code contributions
+* Documentation improvements
+* Bug reports
+* Feature suggestions
+* Community support
+
+=== Users
+
+The community of people who use Panoptes. User feedback is essential for guiding development priorities.
+
+== Decision Making
+
+=== Lazy Consensus
+
+Most decisions are made through lazy consensus:
+
+1. Proposal is made (issue, PR, or discussion)
+2. Reasonable time for feedback (typically 72 hours)
+3. If no objections, proposal is accepted
+4. Silence is consent
+
+=== Voting
+
+For significant decisions where consensus cannot be reached:
+
+* Core team members have voting rights
+* Simple majority required
+* BDFL has tie-breaking vote
+* Voting period: 7 days
+
+=== Escalation
+
+When disputes arise:
+
+1. Discussion among involved parties
+2. Core team mediation
+3. BDFL final decision
+
+== Contribution Process
+
+=== Code Contributions
+
+1. Fork and create feature branch
+2. Implement changes with tests
+3. Submit pull request
+4. Core team review
+5. Address feedback
+6. Merge upon approval
+
+=== Becoming a Core Team Member
+
+Core team members are invited based on:
+
+* Sustained, quality contributions
+* Demonstrated understanding of project goals
+* Positive community interactions
+* Commitment to the project
+
+Process:
+
+1. Nomination by existing core team member
+2. Discussion among core team
+3. Lazy consensus or vote
+4. BDFL approval
+
+== Release Process
+
+=== Version Numbering
+
+We follow Semantic Versioning (SemVer):
+
+* MAJOR: Breaking changes
+* MINOR: New features, backward compatible
+* PATCH: Bug fixes, backward compatible
+
+=== Release Schedule
+
+* Patch releases: As needed
+* Minor releases: Approximately monthly
+* Major releases: As needed for breaking changes
+
+=== Release Checklist
+
+1. All tests passing
+2. Documentation updated
+3. CHANGELOG.md updated
+4. Security review (for major releases)
+5. Core team approval
+6. Tag and publish
+
+== Communication
+
+=== Official Channels
+
+* GitHub Issues: Bug reports, feature requests
+* GitHub Discussions: Questions, ideas
+* Discord: Real-time community chat
+
+=== Meetings
+
+* Monthly core team sync (optional)
+* Ad-hoc meetings for significant decisions
+* Notes published in discussions
+
+== Changes to Governance
+
+This governance document may be changed by:
+
+1. Proposal via pull request
+2. Two-week discussion period
+3. Core team vote (⅔ majority)
+4. BDFL approval
+
+== Code of Conduct
+
+All participants must follow our link:CODE_OF_CONDUCT.adoc[Code of Conduct].
+
+== Attribution
+
+This governance model is inspired by various open source projects including Python, Rust, and Node.js.
+
+---
+
+_Last updated: 2024-12-01_

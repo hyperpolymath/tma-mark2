@@ -1,0 +1,30 @@
+{
+  "$schema": "https://slsa.dev/provenance/v1",
+  "buildDefinition": {
+    "buildType": "cargo",
+    "externalParameters": {
+      "repository": "https://github.com/yourusername/panoptes",
+      "ref": "refs/heads/main"
+    },
+    "internalParameters": {
+      "rustVersion": "stable",
+      "features": "default"
+    },
+    "resolvedDependencies": []
+  },
+  "runDetails": {
+    "builder": {
+      "id": "https://github.com/yourusername/panoptes/actions/build"
+    },
+    "metadata": {
+      "invocationId": "",
+      "startedOn": "",
+      "finishedOn": ""
+    }
+  },
+  "_notes": {
+    "description": "This file provides software provenance information following SLSA guidelines.",
+    "verification": "Verify releases using the signed checksums in the release assets.",
+    "sbom": "Software Bill of Materials available at sbom.json in releases."
+  }
+}

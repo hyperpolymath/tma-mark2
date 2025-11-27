@@ -1,0 +1,341 @@
+// SPDX-FileCopyrightText: 2024 Panoptes Contributors
+// SPDX-License-Identifier: MIT
+= Configuration Guide
+:toc: left
+:toclevels: 3
+:icons: font
+:source-highlighter: rouge
+
+Panoptes supports flexible configuration through multiple sources.
+
+== Configuration Sources
+
+Configuration is loaded in the following order (later sources override earlier ones):
+
+1. **Built-in defaults**
+2. **System config**: `/etc/panoptes/config.json`
+3. **User config**: `~/.config/panoptes/config.json`
+4. **Project config**: `./config.json` (current directory)
+5. **Environment variables**: `PANOPTES_*`
+6. **CLI arguments**
+
+== Configuration File Format
+
+Panoptes supports both JSON and Nickel configuration formats.
+
+=== JSON Format
+
+[source,json]
+----
+{
+  "ollama_url": "http://localhost:11434",
+  "model": "moondream",
+  "max_jobs": 4,
+  "timeout_secs": 120,
+  "naming": {
+    "style": "kebab-case",
+    "max_length": 50
+  },
+  "tags": {
+    "auto_generate": true,
+    "max_auto_tags": 5
+  }
+}
+----
+
+=== Nickel Format
+
+[source,nickel]
+----
+{
+  ollama = {
+    url = "http://localhost:11434",
+    model = "moondream",
+  },
+  naming = {
+    style = 'KebabCase,
+    max_length = 50,
+  },
+}
+----
+
+== Configuration Sections
+
+=== Ollama Settings
+
+[source,json]
+----
+{
+  "ollama_url": "http://localhost:11434",
+  "model": "moondream",
+  "timeout_secs": 120
+}
+----
+
+[cols="1,2,1"]
+|===
+|Key |Description |Default
+
+|`ollama_url`
+|Ollama API endpoint
+|http://localhost:11434
+
+|`model`
+|AI model to use
+|moondream
+
+|`timeout_secs`
+|Request timeout in seconds
+|120
+|===
+
+=== Processing Settings
+
+[source,json]
+----
+{
+  "max_jobs": 4,
+  "database_path": "~/.local/share/panoptes/panoptes.db",
+  "history_path": "~/.local/share/panoptes/history.jsonl"
+}
+----
+
+=== Retry Settings
+
+[source,json]
+----
+{
+  "retry": {
+    "max_retries": 3,
+    "initial_backoff_ms": 1000,
+    "max_backoff_ms": 30000,
+    "multiplier": 2.0
+  }
+}
+----
+
+=== Naming Settings
+
+[source,json]
+----
+{
+  "naming": {
+    "style": "kebab-case",
+    "max_length": 50,
+    "prefix": null,
+    "suffix": null,
+    "include_date": false,
+    "date_format": "%Y-%m-%d",
+    "preserve_original_as_tag": true
+  }
+}
+----
+
+==== Naming Styles
+
+* `kebab-case`: lowercase-with-hyphens (default)
+* `snake_case`: lowercase_with_underscores
+* `PascalCase`: CapitalizedWords
+* `camelCase`: capitalizedWordsLowerFirst
+
+=== Tag Settings
+
+[source,json]
+----
+{
+  "tags": {
+    "auto_generate": true,
+    "max_auto_tags": 5,
+    "default_tags": ["inbox"],
+    "separator": "_"
+  }
+}
+----
+
+=== Watch Settings
+
+[source,json]
+----
+{
+  "watch": {
+    "debounce_ms": 500,
+    "recursive": true,
+    "process_existing": false,
+    "ignore_patterns": [
+      ".*",
+      "*~",
+      "*.tmp"
+    ]
+  }
+}
+----
+
+=== Web Settings
+
+[source,json]
+----
+{
+  "web": {
+    "address": "127.0.0.1",
+    "port": 8080,
+    "enable_api": true,
+    "api_key": null
+  }
+}
+----
+
+=== Logging Settings
+
+[source,json]
+----
+{
+  "logging": {
+    "level": "info",
+    "file": null,
+    "json": false
+  }
+}
+----
+
+==== Log Levels
+
+* `trace`: Very verbose debugging
+* `debug`: Debugging information
+* `info`: General information (default)
+* `warn`: Warnings only
+* `error`: Errors only
+
+=== Filter Settings
+
+[source,json]
+----
+{
+  "filter": {
+    "min_size": null,
+    "max_size": null,
+    "include_extensions": [],
+    "exclude_extensions": [],
+    "exclude_hidden": true,
+    "exclude_patterns": []
+  }
+}
+----
+
+== Environment Variables
+
+All configuration options can be overridden with environment variables:
+
+[source,bash]
+----
+# Ollama settings
+export PANOPTES_OLLAMA_URL="http://localhost:11434"
+export PANOPTES_MODEL="moondream"
+
+# Processing
+export PANOPTES_MAX_JOBS="4"
+export PANOPTES_TIMEOUT="120"
+
+# Database
+export PANOPTES_DATABASE="/path/to/db.sqlite"
+
+# Logging
+export PANOPTES_LOG_LEVEL="debug"
+----
+
+== Per-Project Configuration
+
+Create a `config.json` or `config.ncl` in your project directory:
+
+[source,bash]
+----
+# Project structure
+my-project/
+├── config.json      # Project-specific config
+├── photos/
+└── documents/
+----
+
+This is useful for:
+* Different naming conventions per project
+* Custom tag defaults
+* Project-specific ignore patterns
+
+== Configuration Commands
+
+[source,bash]
+----
+# Show current configuration
+panoptes config show
+
+# Get a specific value
+panoptes config get naming.style
+
+# Set a value
+panoptes config set naming.max_length 60
+
+# Validate configuration
+panoptes config validate
+
+# Show config file path
+panoptes config path
+
+# Reset to defaults
+panoptes config reset
+----
+
+== Example Configurations
+
+=== Photography Workflow
+
+[source,json]
+----
+{
+  "naming": {
+    "style": "snake_case",
+    "include_date": true,
+    "date_format": "%Y%m%d"
+  },
+  "tags": {
+    "default_tags": ["unprocessed"],
+    "max_auto_tags": 10
+  },
+  "filter": {
+    "include_extensions": ["jpg", "jpeg", "raw", "cr2", "nef"]
+  }
+}
+----
+
+=== Document Management
+
+[source,json]
+----
+{
+  "naming": {
+    "style": "kebab-case",
+    "max_length": 40
+  },
+  "tags": {
+    "auto_generate": true,
+    "max_auto_tags": 5
+  },
+  "filter": {
+    "include_extensions": ["pdf", "doc", "docx", "txt"]
+  }
+}
+----
+
+=== High-Volume Processing
+
+[source,json]
+----
+{
+  "max_jobs": 8,
+  "timeout_secs": 60,
+  "retry": {
+    "max_retries": 5
+  },
+  "watch": {
+    "debounce_ms": 1000
+  }
+}
+----

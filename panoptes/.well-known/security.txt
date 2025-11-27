@@ -1,0 +1,12 @@
+# Panoptes Security Policy
+# https://securitytxt.org/
+
+Contact: mailto:security@example.com
+Expires: 2025-12-31T23:59:59.000Z
+Encryption: https://example.com/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://github.com/yourusername/panoptes/.well-known/security.txt
+Policy: https://github.com/yourusername/panoptes/blob/main/SECURITY.md
+
+# Acknowledgments
+# Thank you to all security researchers who have helped improve Panoptes.

@@ -1,0 +1,162 @@
+// SPDX-FileCopyrightText: 2024 Panoptes Contributors
+// SPDX-License-Identifier: MIT
+= Contributing to Panoptes
+:toc: left
+:toclevels: 2
+:icons: font
+
+Thank you for your interest in contributing to Panoptes! This document provides guidelines and information for contributors.
+
+== Code of Conduct
+
+All contributors must follow our link:CODE_OF_CONDUCT.adoc[Code of Conduct]. Please read it before participating.
+
+== Ways to Contribute
+
+=== Reporting Bugs
+
+1. Check existing issues to avoid duplicates
+2. Use the bug report template
+3. Include:
+   - Panoptes version (`panoptes --version`)
+   - Operating system and version
+   - Ollama version
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Logs (with `--verbose`)
+
+=== Suggesting Features
+
+1. Check existing issues and roadmap
+2. Use the feature request template
+3. Describe the use case clearly
+4. Consider implementation complexity
+
+=== Code Contributions
+
+==== Development Setup
+
+[source,bash]
+----
+# Clone the repository
+git clone https://github.com/panoptes/panoptes.git
+cd panoptes
+
+# Install Rust (if needed)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install development tools
+just setup-dev
+
+# Build
+just build-dev
+
+# Run tests
+just test
+----
+
+==== Coding Standards
+
+* Follow Rust idioms and best practices
+* Run `cargo fmt` before committing
+* Run `cargo clippy` and fix all warnings
+* All code must be `#![forbid(unsafe_code)]`
+* Write documentation for public APIs
+* Include SPDX license headers on all files
+
+==== Commit Messages
+
+We follow Conventional Commits:
+
+[source]
+----
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+----
+
+Types:
+* `feat`: New feature
+* `fix`: Bug fix
+* `docs`: Documentation
+* `style`: Formatting
+* `refactor`: Code restructuring
+* `test`: Adding tests
+* `chore`: Maintenance
+
+Examples:
+[source]
+----
+feat(analyzer): add audio file support
+fix(watcher): handle symlink loops
+docs(wiki): add configuration guide
+----
+
+==== Pull Request Process
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/my-feature`
+3. Make your changes
+4. Run all checks: `just check-all`
+5. Commit with meaningful messages
+6. Push to your fork
+7. Open a Pull Request
+
+==== Pull Request Checklist
+
+* [ ] Code compiles without warnings
+* [ ] All tests pass
+* [ ] Documentation updated
+* [ ] CHANGELOG.md updated
+* [ ] Commit messages follow convention
+* [ ] Branch is up to date with main
+
+=== Documentation
+
+* API documentation: Update doc comments
+* User documentation: Update README.adoc or wiki
+* Use AsciiDoc format where possible
+* Include code examples
+
+=== Testing
+
+* Write unit tests for new functionality
+* Add integration tests for complex features
+* Maintain or improve code coverage
+* Test on multiple platforms if possible
+
+== Development Workflow
+
+=== Branches
+
+* `main`: Stable release branch
+* `develop`: Integration branch
+* `feat/*`: Feature branches
+* `fix/*`: Bug fix branches
+* `docs/*`: Documentation branches
+
+=== Release Process
+
+1. Features merged to `develop`
+2. Release candidate created
+3. Testing and fixes
+4. Merge to `main`
+5. Tag release
+6. Publish crates and binaries
+
+== Getting Help
+
+* GitHub Discussions for questions
+* Discord for real-time chat
+* Issue tracker for bugs/features
+
+== Recognition
+
+Contributors are recognized in:
+* CHANGELOG.md for contributions
+* README.adoc acknowledgements
+* GitHub contributors graph
+
+Thank you for contributing to Panoptes!
