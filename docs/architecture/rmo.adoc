@@ -1,0 +1,241 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= RMO Utility - Role Matrix Operations
+:toc: left
+:icons: font
+
+== Overview
+
+The RMO (Role Matrix Operations) utility defines the operational procedures for different roles within the eTMA Handler project. This document specifies what each role can do and the processes they follow.
+
+== Role Definitions
+
+=== BDFL (Benevolent Dictator For Life)
+
+[cols="1,3"]
+|===
+| Attribute | Value
+
+| Count | 1
+| Selection | Founder or succession
+| Term | Indefinite
+| Removal | Voluntary or incapacity
+|===
+
+==== Permissions
+
+* All permissions of other roles
+* Governance changes
+* Final dispute resolution
+* Succession planning
+
+==== Operations
+
+* Annual roadmap approval
+* Quarterly governance review
+* Exception handling for all processes
+
+=== Core Maintainer
+
+[cols="1,3"]
+|===
+| Attribute | Value
+
+| Count | 2-5
+| Selection | BDFL appointment with community input
+| Term | 2 years, renewable
+| Removal | BDFL decision or voluntary
+|===
+
+==== Permissions
+
+* Merge to main branch
+* Release management
+* Maintainer nomination
+* Security response coordination
+
+==== Operations
+
+[source]
+----
+# Daily
+- Review open PRs (SLA: 48 hours for initial review)
+- Triage new issues
+
+# Weekly
+- Release planning
+- Community engagement
+
+# Monthly
+- Dependency updates
+- Security review
+
+# Quarterly
+- Roadmap review
+- Contributor recognition
+----
+
+=== Expert Contributor
+
+[cols="1,3"]
+|===
+| Attribute | Value
+
+| Count | Unlimited
+| Selection | Core Maintainer invitation
+| Term | Indefinite
+| Removal | Inactivity (12 months) or conduct
+|===
+
+==== Permissions
+
+* Approve PRs (2 approvals required for merge)
+* Assign/close issues
+* Moderate discussions
+* Write access to non-main branches
+
+==== Operations
+
+[source]
+----
+# Per contribution
+- Self-assign issues
+- Submit PRs with tests
+- Review peer PRs
+
+# Weekly
+- Participate in discussions
+- Help with issue triage
+
+# Monthly
+- Update relevant documentation
+----
+
+=== Community Contributor
+
+[cols="1,3"]
+|===
+| Attribute | Value
+
+| Count | Unlimited
+| Selection | Open (anyone)
+| Term | Indefinite
+| Removal | Conduct violation
+|===
+
+==== Permissions
+
+* Fork repository
+* Submit pull requests
+* Open issues
+* Participate in discussions
+
+==== Operations
+
+[source]
+----
+# Per contribution
+- Follow CONTRIBUTING.adoc
+- Sign off commits (DCO)
+- Respond to review feedback
+
+# Optional
+- Help other contributors
+- Improve documentation
+----
+
+== Operational Procedures
+
+=== Pull Request Flow
+
+[source]
+----
+1. Contributor opens PR
+2. CI runs automatically
+3. Maintainer/Expert reviews (48h SLA)
+4. Contributor addresses feedback
+5. Second approval (if required)
+6. Maintainer merges
+----
+
+=== Issue Lifecycle
+
+[source]
+----
+New → Triaged → Assigned → In Progress → Review → Closed
+         ↓         ↓           ↓
+    Won't Fix  Unassigned   Blocked
+----
+
+=== Release Process
+
+[source]
+----
+1. Feature freeze (branch cut)
+2. Release candidate testing
+3. Changelog finalization
+4. Version bump
+5. Tag creation
+6. Build artifacts
+7. GitHub release
+8. Announcement
+----
+
+=== Security Response
+
+[source]
+----
+1. Report received (T+0)
+2. Acknowledgment (T+24h)
+3. Severity assessment (T+48h)
+4. Fix development (varies)
+5. Coordinated disclosure
+6. Public advisory
+----
+
+== Role Transitions
+
+=== Promotion Path
+
+[source]
+----
+Community Contributor
+        ↓ (3+ quality PRs, maintainer nomination)
+Expert Contributor
+        ↓ (6+ months active, BDFL appointment)
+Core Maintainer
+        ↓ (succession event)
+BDFL
+----
+
+=== Demotion/Removal
+
+[cols="2,2,2"]
+|===
+| Role | Reason | Process
+
+| Expert Contributor | Inactivity | Automatic after 12 months
+| Expert Contributor | Conduct | Core Maintainer decision
+| Core Maintainer | Inactivity | BDFL decision after 6 months
+| Core Maintainer | Conduct | BDFL decision
+|===
+
+== Metrics and Reporting
+
+=== Per-Role Metrics
+
+[cols="2,3"]
+|===
+| Role | Tracked Metrics
+
+| Core Maintainer | PR review time, release frequency
+| Expert Contributor | PRs reviewed, issues resolved
+| Community | PRs submitted, issue reports
+|===
+
+=== Reporting Cadence
+
+* Weekly: CI/CD status, open PR count
+* Monthly: Contributor activity summary
+* Quarterly: Project health metrics
+* Annually: Governance review

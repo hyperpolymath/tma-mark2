@@ -1,0 +1,124 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= MAA Framework - Mutually Assured Accountability
+:toc: left
+:icons: font
+
+== Overview
+
+The MAA (Mutually Assured Accountability) framework ensures that all participants in the eTMA Handler project are accountable for their contributions and decisions.
+
+== Core Principles
+
+=== 1. Transparent Decision Making
+
+All significant decisions must be:
+
+* Documented in ADRs (Architecture Decision Records)
+* Discussed in public forums (GitHub Issues/Discussions)
+* Reviewed by at least one other contributor
+
+=== 2. Traceable Contributions
+
+Every change must:
+
+* Reference an issue or discussion
+* Include clear commit messages
+* Pass automated checks
+
+=== 3. Shared Responsibility
+
+No single person bears sole responsibility:
+
+* Code reviews required for all merges
+* Multiple maintainers for critical paths
+* Succession planning documented
+
+== Accountability Matrix
+
+[cols="2,2,2,2"]
+|===
+| Area | Primary | Secondary | Escalation
+
+| Core Business Logic | Core Maintainers | Expert Contributors | BDFL
+| UI/UX | Core Maintainers | Community | Core Maintainers
+| Security | Security Team | Core Maintainers | External Audit
+| Documentation | All Contributors | Core Maintainers | Community
+|===
+
+== Decision Escalation
+
+=== Level 1: Individual
+
+* Bug fixes
+* Documentation updates
+* Minor refactoring
+
+=== Level 2: Peer Review
+
+* New features
+* API changes
+* Dependency updates
+
+=== Level 3: Maintainer Consensus
+
+* Breaking changes
+* Architecture decisions
+* Security policies
+
+=== Level 4: Community RFC
+
+* Major version changes
+* Governance changes
+* License changes
+
+== Incident Response
+
+=== Security Incidents
+
+1. Report via SECURITY.md process
+2. 24-hour acknowledgment SLA
+3. Post-incident review required
+4. Public disclosure after fix
+
+=== Data Loss Incidents
+
+1. Immediate investigation
+2. Root cause analysis
+3. Prevention measures documented
+4. User communication if affected
+
+== Audit Trail
+
+=== Required Records
+
+* All merged pull requests
+* All closed issues with resolution
+* All ADRs with rationale
+* All security advisories
+
+=== Retention
+
+* Git history: Permanent
+* Issue discussions: Permanent
+* Security reports: 5 years
+* Audit logs: 2 years
+
+== Compliance Verification
+
+=== Self-Assessment
+
+Quarterly review of:
+
+* [ ] All PRs have reviews
+* [ ] All decisions documented
+* [ ] Security policy followed
+* [ ] Community guidelines enforced
+
+=== External Review
+
+Annual review by:
+
+* Independent contributor
+* Security assessment (if funded)
+* Accessibility audit (if funded)

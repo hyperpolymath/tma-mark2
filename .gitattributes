@@ -1,0 +1,68 @@
+# SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+# SPDX-License-Identifier: MIT
+
+# Auto detect text files and normalize line endings
+* text=auto
+
+# Elixir source files
+*.ex text diff=elixir
+*.exs text diff=elixir
+
+# Web assets
+*.js text
+*.css text
+*.html text eol=lf
+*.eex text eol=lf
+*.heex text eol=lf
+*.leex text eol=lf
+
+# Configuration
+*.json text
+*.yml text
+*.yaml text
+*.toml text
+
+# Documentation
+*.md text diff=markdown
+*.adoc text
+*.txt text
+
+# Nix files
+*.nix text
+
+# Shell scripts
+*.sh text eol=lf
+
+# Lock files (exact binary match)
+mix.lock text
+flake.lock text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Burrito/release artifacts
+*.tar.gz binary
+*.zip binary
+
+# Compiled BEAM files
+*.beam binary
+*.ez binary
+
+# Export linguist attributes for GitHub
+*.ex linguist-language=Elixir
+*.exs linguist-language=Elixir
+*.heex linguist-language=HEEx
+
+# Ignore generated files in diff
+/priv/static/** -diff
+/_build/** -diff
+/deps/** -diff

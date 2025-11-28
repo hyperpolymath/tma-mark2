@@ -1,0 +1,109 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= eTMA Handler Governance
+:toc: left
+:toclevels: 2
+:icons: font
+:sectnums:
+
+== Overview
+
+eTMA Handler follows a BDFL (Benevolent Dictator For Life) governance model with a core team structure.
+
+== Roles
+
+=== BDFL
+
+The BDFL has final authority on project decisions:
+
+* Set project direction
+* Resolve disputes
+* Appoint core team members
+* Must maintain succession plan
+
+=== Core Team
+
+Core team members (see MAINTAINERS.md):
+
+* Merge permissions
+* Release management
+* Security response
+* Architecture decisions
+
+=== Contributors
+
+All levels as defined in CONTRIBUTING.adoc (TPCF Perimeters 1-3).
+
+== Decision Making
+
+=== Lazy Consensus
+
+Most decisions use lazy consensus:
+
+1. Proposal made (issue/PR/discussion)
+2. Review period (72 hours standard, 14 days for breaking changes)
+3. No blocking objections = accepted
+
+=== Voting
+
+When consensus fails:
+
+* Core team votes
+* Simple majority required
+* BDFL breaks ties
+* 7-day voting period
+
+== Succession Planning
+
+=== BDFL Succession
+
+* Designated successor documented
+* Triggers: resignation, 6-month inactivity, ⅔ removal vote
+* 30-day transition period
+
+=== Core Team
+
+* Nomination by existing Core member
+* 14-day discussion
+* BDFL approval
+* Emeritus status for departing members
+
+== Release Management
+
+=== Versioning
+
+Semantic Versioning (SemVer):
+
+* MAJOR: Breaking changes
+* MINOR: New features
+* PATCH: Bug fixes
+
+=== Release Authority
+
+* Patch: Any Core member
+* Minor: Two Core members
+* Major: Core consensus + BDFL
+
+== Financial Transparency
+
+See FUNDING.yml for funding sources.
+
+Funds used for:
+
+* Infrastructure
+* Security audits
+* Documentation
+
+Quarterly reports in Discussions.
+
+== Amendments
+
+Changes to this document require:
+
+1. RFC with 30-day discussion
+2. ⅔ Core team vote
+3. BDFL approval
+
+---
+
+_Last updated: 2024-12-01_

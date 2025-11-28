@@ -1,0 +1,190 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= Contributing to eTMA Handler
+:toc: left
+:toclevels: 3
+:icons: font
+:sectnums:
+
+Thank you for your interest in contributing to eTMA Handler!
+
+== Code of Conduct
+
+All contributors must follow our link:CODE_OF_CONDUCT.adoc[Code of Conduct].
+
+== Tri-Perimeter Contribution Framework (TPCF)
+
+=== Perimeter 1: Core (Maintainers)
+
+**Access**: Full repository access, release authority
+
+**Responsibilities**:
+
+* Merge authority on all branches
+* Release management
+* Security vulnerability handling
+* Architecture decisions
+
+**Requirements**:
+
+* Sustained contributions (12+ months)
+* Deep understanding of codebase
+* DCO sign-off on all commits
+
+=== Perimeter 2: Expert (Trusted Contributors)
+
+**Access**: Merge on feature branches, triage rights
+
+**Responsibilities**:
+
+* Code review
+* Issue triage
+* Documentation
+* Mentoring
+
+**Requirements**:
+
+* Multiple accepted contributions
+* Consistent quality
+* Active 6+ months
+
+=== Perimeter 3: Community (Open Contribution)
+
+**Access**: Fork and PR submission
+
+**Responsibilities**:
+
+* Submit PRs from forks
+* Report bugs
+* Participate in discussions
+
+**Requirements**:
+
+* GitHub account
+* DCO sign-off
+* Follow guidelines
+
+== Development Setup
+
+[source,bash]
+----
+# Clone repository
+git clone https://github.com/your-org/tma-mark2.git
+cd tma-mark2
+
+# Using Nix (recommended)
+nix develop
+mix setup
+
+# Or manually
+mix deps.get
+mix assets.setup
+mix phx.server
+----
+
+== Coding Standards
+
+=== Elixir Style
+
+* Run `mix format` before committing
+* Run `mix credo --strict` for linting
+* Follow Elixir style guide
+* Maximum line length: 98 characters
+
+=== Documentation
+
+* All public functions must have `@doc`
+* Include `@spec` for public functions
+* Update README.adoc for user-facing changes
+
+=== Licensing
+
+* SPDX headers on all source files:
+
+[source,elixir]
+----
+# SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+# SPDX-License-Identifier: MIT
+----
+
+=== Testing
+
+* Write ExUnit tests for new functionality
+* Maintain or improve coverage (>80%)
+* Run `mix test` before submitting
+
+== Commit Messages
+
+We follow Conventional Commits:
+
+[source]
+----
+<type>(<scope>): <description>
+
+[body]
+
+[footer]
+----
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+**Examples**:
+
+[source]
+----
+feat(parser): add .docx export support
+
+fix(watcher): handle permission errors gracefully
+
+docs(readme): add installation instructions
+----
+
+== Pull Request Process
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feat/my-feature`
+3. Make changes with tests
+4. Run checks: `just check`
+5. Sign commits: `git commit -s`
+6. Push and open PR
+
+=== PR Checklist
+
+* [ ] Code compiles: `mix compile --warnings-as-errors`
+* [ ] Tests pass: `mix test`
+* [ ] Formatted: `mix format --check-formatted`
+* [ ] Linted: `mix credo --strict`
+* [ ] SPDX headers on new files
+* [ ] Documentation updated
+* [ ] DCO sign-off present
+
+== Getting Help
+
+* GitHub Issues for bugs/features
+* GitHub Discussions for questions
+* See MAINTAINERS.md for contacts
+
+== Developer Certificate of Origin
+
+By contributing, you certify (DCO 1.1):
+
+[source]
+----
+By making a contribution to this project, I certify that:
+
+(a) The contribution was created by me and I have the right to submit it
+    under the open source license indicated in the file; or
+
+(b) The contribution is based upon previous work covered under an
+    appropriate open source license; or
+
+(c) The contribution was provided to me by someone who certified (a) or (b);
+
+(d) I understand this project and contribution are public.
+----
+
+Sign with: `git commit -s`
+
+---
+
+Thank you for contributing!

@@ -1,0 +1,136 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= CLAUDE.adoc - AI Assistant Guide
+:toc: left
+:icons: font
+
+== Purpose
+
+This file provides context for AI assistants (like Claude) working on the eTMA Handler codebase.
+
+== Project Overview
+
+eTMA Handler is an Elixir/Phoenix application for marking Open University student assignments. It replaces a legacy Java application with a modern BEAM-based solution.
+
+== Technology Stack
+
+* **Language**: Elixir 1.14+ / OTP 25+
+* **Web Framework**: Phoenix 1.7 + LiveView
+* **Database**: CubDB (embedded, pure Elixir)
+* **Frontend**: Tailwind CSS, Alpine.js
+* **Packaging**: Burrito (cross-platform binaries)
+
+== Directory Structure
+
+[source]
+----
+tma-mark2/
+├── lib/
+│   ├── etma_handler/           # Core business logic
+│   │   ├── application.ex      # OTP application
+│   │   ├── assignments/        # Assignment management
+│   │   ├── marking/            # Marking logic
+│   │   └── parser/             # File parsing
+│   └── etma_handler_web/       # Phoenix web layer
+├── config/                     # Configuration files
+├── test/                       # ExUnit tests
+├── assets/                     # Frontend assets
+├── priv/                       # Static files, migrations
+└── scripts/                    # Helper scripts
+----
+
+== Key Concepts
+
+=== .fhi Files
+
+Proprietary XML-based format for student submissions. Contains:
+- Student metadata
+- Submission content
+- Attachment references
+
+=== Marking Grid
+
+Tutors assign grades using a grid interface. Each cell has:
+- Criterion
+- Grade (A-F or numeric)
+- Feedback text
+
+=== CubDB
+
+Embedded database. No external dependencies. Data stored in:
+`~/.local/share/etma_handler/data/`
+
+== Code Conventions
+
+=== Elixir Style
+
+* Use `mix format` for formatting
+* Use `mix credo --strict` for linting
+* All public functions need `@doc` and `@spec`
+
+=== SPDX Headers
+
+All source files must have:
+
+[source,elixir]
+----
+# SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+# SPDX-License-Identifier: MIT
+----
+
+=== Testing
+
+* ExUnit for all tests
+* Property-based testing with StreamData where applicable
+* Maintain >80% coverage
+
+== Common Tasks
+
+=== Running Development Server
+
+[source,bash]
+----
+mix phx.server
+# Or: just dev
+----
+
+=== Running Tests
+
+[source,bash]
+----
+mix test
+# Or: just test
+----
+
+=== Building Release
+
+[source,bash]
+----
+MIX_ENV=prod mix release
+# Or: just release
+----
+
+== RSR Gold Compliance
+
+This project follows RSR Gold standards:
+
+* All documentation in AsciiDoc where possible
+* SPDX headers on all files
+* TPCF contribution framework
+* MAA/RMR/RMO accountability frameworks
+* Nix flakes for reproducibility
+* Containerfile with Wolfi base
+
+== What NOT to Do
+
+* Don't use TypeScript/JavaScript (except minimal Alpine.js)
+* Don't add external database dependencies
+* Don't break backward compatibility without RFC
+* Don't commit secrets or credentials
+* Don't use `unsafe` patterns
+
+== Getting Help
+
+* Read README.adoc for setup
+* Check lib/etma_handler.ex for public API
+* See CONTRIBUTING.adoc for contribution process
