@@ -1,0 +1,53 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= Architecture Documentation
+:toc: left
+:icons: font
+
+== Overview
+
+This directory contains architecture documentation for eTMA Handler following RSR Gold standards.
+
+== Documents
+
+=== Core Architecture
+
+* link:overview.adoc[Architecture Overview] - System design and component structure
+* link:decisions.adoc[Architecture Decision Records] - Key design decisions
+
+=== Accountability Frameworks
+
+* link:maa.adoc[MAA Framework] - Mutually Assured Accountability
+* link:rmr.adoc[RMR Utility] - Responsibility Matrix Registry
+* link:rmo.adoc[RMO Utility] - Role Matrix Operations
+
+== Architecture Principles
+
+1. **Simplicity First** - Prefer simple solutions over complex ones
+2. **Local First** - All data stays on user's machine
+3. **Resilience** - OTP supervision trees for fault tolerance
+4. **Reversibility** - All operations can be undone
+
+== Technology Stack
+
+[plantuml, tech-stack, svg]
+....
+@startuml
+package "eTMA Handler" {
+  [Phoenix LiveView] as UI
+  [Business Logic] as BL
+  [CubDB] as DB
+
+  UI --> BL : Phoenix Contexts
+  BL --> DB : CubDB API
+}
+
+cloud "External" {
+  [.fhi Files] as FHI
+  [.docx Export] as DOCX
+}
+
+FHI --> BL : SweetXml Parser
+BL --> DOCX : Export Module
+@enduml
+....

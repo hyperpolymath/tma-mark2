@@ -1,0 +1,150 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= Architecture Overview
+:toc: left
+:icons: font
+
+== System Context
+
+eTMA Handler is a desktop application for Open University tutors to mark student assignments.
+
+=== Context Diagram
+
+[source]
+----
+┌─────────────────────────────────────────────────────────────┐
+│                      Tutor Workstation                       │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │                    eTMA Handler                        │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  │  │
+│  │  │   Phoenix   │  │   Business  │  │    CubDB     │  │  │
+│  │  │  LiveView   │◄─┤    Logic    │◄─┤   Storage    │  │  │
+│  │  │     UI      │  │   Contexts  │  │              │  │  │
+│  │  └─────────────┘  └─────────────┘  └──────────────┘  │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                              │                               │
+│              ┌───────────────┼───────────────┐              │
+│              ▼               ▼               ▼              │
+│        ┌──────────┐   ┌──────────┐   ┌──────────┐         │
+│        │.fhi Files│   │  .docx   │   │  Local   │         │
+│        │ (Input)  │   │ (Output) │   │  Backup  │         │
+│        └──────────┘   └──────────┘   └──────────┘         │
+└─────────────────────────────────────────────────────────────┘
+----
+
+== Component Architecture
+
+=== OTP Application Structure
+
+[source]
+----
+EtmaHandler.Application
+├── EtmaHandler.Repo (CubDB)
+├── EtmaHandler.FileWatcher (File System Events)
+├── EtmaHandlerWeb.Endpoint (Phoenix)
+├── EtmaHandlerWeb.Telemetry
+└── Phoenix.PubSub (etma_handler)
+----
+
+=== Layer Responsibilities
+
+==== Presentation Layer (Phoenix LiveView)
+
+* Real-time UI updates via WebSocket
+* Server-side rendering (no JavaScript state)
+* Tailwind CSS for styling
+* Minimal Alpine.js for client interactions
+
+==== Business Logic Layer (Contexts)
+
+* `EtmaHandler.Assignments` - Assignment management
+* `EtmaHandler.Marking` - Grade and feedback logic
+* `EtmaHandler.Parser` - .fhi file parsing
+* `EtmaHandler.Export` - .docx generation
+
+==== Data Layer (CubDB)
+
+* Embedded, pure Elixir database
+* Append-only B-tree structure
+* No external dependencies
+* ACID transactions
+
+== Data Flow
+
+=== Import Flow
+
+[source]
+----
+.fhi File → FileWatcher → Parser → Validation → CubDB → UI Update
+----
+
+=== Marking Flow
+
+[source]
+----
+User Input → LiveView → Marking Context → CubDB → Broadcast → UI Update
+----
+
+=== Export Flow
+
+[source]
+----
+Export Request → Marking Context → Template Engine → .docx Writer → File System
+----
+
+== Deployment Architecture
+
+=== Single Binary (Burrito)
+
+eTMA Handler packages as a single executable:
+
+* Embedded BEAM runtime
+* All dependencies included
+* Cross-platform (Linux, macOS, Windows)
+* No installation required
+
+=== Data Location
+
+[cols="1,2"]
+|===
+| Platform | Location
+
+| Linux | `~/.local/share/etma_handler/`
+| macOS | `~/Library/Application Support/etma_handler/`
+| Windows | `%APPDATA%\etma_handler\`
+|===
+
+== Security Architecture
+
+=== Principles
+
+1. **No Network Required** - Core functionality offline
+2. **Local Data Only** - No cloud synchronization
+3. **No Telemetry** - No data collection
+4. **Standard Encryption** - Optional data-at-rest encryption
+
+=== Threat Model
+
+[cols="2,1,2"]
+|===
+| Threat | Risk | Mitigation
+
+| Data theft | Medium | Local storage, user's responsibility
+| Data corruption | Low | CubDB append-only, automatic backups
+| Unauthorized access | Medium | OS-level permissions
+|===
+
+== Performance Characteristics
+
+=== Typical Load
+
+* Assignments per session: 10-50
+* Concurrent operations: 1 (single user)
+* Data size: <100MB typical
+
+=== Optimization Strategies
+
+* LiveView reduces server round-trips
+* CubDB B-tree provides O(log n) lookups
+* Lazy loading for large assignments
+* Background processing for exports

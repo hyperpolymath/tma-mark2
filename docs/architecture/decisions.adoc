@@ -1,0 +1,237 @@
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= Architecture Decision Records
+:toc: left
+:icons: font
+
+== Overview
+
+This document captures key architecture decisions for eTMA Handler using the ADR format.
+
+== ADR-001: Rewrite from Java to Elixir
+
+=== Status
+
+Accepted (2024-01-01)
+
+=== Context
+
+The original Java implementation had limitations:
+
+* Complex deployment (JRE dependency)
+* Poor concurrency model for file watching
+* Heavyweight UI framework (Swing)
+* Difficult cross-platform packaging
+
+=== Decision
+
+Rewrite the application in Elixir/Phoenix with:
+
+* OTP for fault tolerance
+* Phoenix LiveView for real-time UI
+* Burrito for single-binary distribution
+
+=== Consequences
+
+**Positive:**
+
+* Simpler deployment (single binary)
+* Better concurrency (BEAM VM)
+* Modern web UI
+* Smaller attack surface
+
+**Negative:**
+
+* Learning curve for Java developers
+* Smaller ecosystem than JVM
+* Less familiar to Open University IT
+
+== ADR-002: CubDB for Storage
+
+=== Status
+
+Accepted (2024-01-15)
+
+=== Context
+
+Need embedded database with:
+
+* No external dependencies
+* Cross-platform support
+* ACID transactions
+* Simple backup/restore
+
+=== Decision
+
+Use CubDB, a pure Elixir embedded database.
+
+=== Alternatives Considered
+
+[cols="2,2,2"]
+|===
+| Option | Pros | Cons
+
+| SQLite | Mature, SQL | Native dependency
+| DETS | Built-in | Limited features
+| Mnesia | Distributed | Complex, overkill
+| CubDB | Pure Elixir, simple | Newer project
+|===
+
+=== Consequences
+
+**Positive:**
+
+* Zero external dependencies
+* Append-only for safety
+* Simple API
+* Good performance for our scale
+
+**Negative:**
+
+* No SQL (learning curve)
+* Smaller community
+* Manual backup management
+
+== ADR-003: Phoenix LiveView for UI
+
+=== Status
+
+Accepted (2024-02-01)
+
+=== Context
+
+Need interactive UI without complex JavaScript.
+
+=== Decision
+
+Use Phoenix LiveView for server-rendered real-time UI.
+
+=== Consequences
+
+**Positive:**
+
+* Single language (Elixir)
+* Real-time updates out of the box
+* Reduced client complexity
+* Better accessibility
+
+**Negative:**
+
+* Requires WebSocket connection
+* Server-side state management
+* Less offline capability
+
+== ADR-004: Burrito for Packaging
+
+=== Status
+
+Accepted (2024-03-01)
+
+=== Context
+
+Need cross-platform distribution without requiring Erlang/Elixir installation.
+
+=== Decision
+
+Use Burrito to create self-contained executables.
+
+=== Consequences
+
+**Positive:**
+
+* Single file distribution
+* No runtime dependencies
+* Cross-platform from one build system
+
+**Negative:**
+
+* Larger binary size
+* Platform-specific builds needed
+* Newer/less tested than releases
+
+== ADR-005: Local-First Architecture
+
+=== Status
+
+Accepted (2024-01-01)
+
+=== Context
+
+Privacy requirements for student data prevent cloud storage.
+
+=== Decision
+
+All data stored locally. No network features for core functionality.
+
+=== Consequences
+
+**Positive:**
+
+* Complete privacy
+* Works offline
+* No server costs
+* GDPR compliant by design
+
+**Negative:**
+
+* No sync between devices
+* No collaborative features
+* User responsible for backups
+
+== ADR-006: RSR Gold Compliance
+
+=== Status
+
+Accepted (2024-12-01)
+
+=== Context
+
+Need standardized repository structure for maintainability and compliance.
+
+=== Decision
+
+Adopt RSR Gold (Rhodium Repo Standard) including:
+
+* Nix flakes for reproducibility
+* Containerfile with Wolfi
+* MAA/RMR/RMO accountability frameworks
+* TPCF contribution model
+* Comprehensive documentation
+
+=== Consequences
+
+**Positive:**
+
+* Clear governance
+* Reproducible builds
+* Professional presentation
+* Easier onboarding
+
+**Negative:**
+
+* Documentation overhead
+* Maintenance burden
+* Learning curve for contributors
+
+== Template for New ADRs
+
+[source,asciidoc]
+----
+== ADR-NNN: Title
+
+=== Status
+
+Proposed | Accepted | Deprecated | Superseded
+
+=== Context
+
+What is the issue?
+
+=== Decision
+
+What was decided?
+
+=== Consequences
+
+What are the results?
+----
