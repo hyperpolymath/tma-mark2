@@ -1,0 +1,18 @@
+{
+  "subject": "acct:HANDLE@DOMAIN.example",
+  "aliases": [
+    "https://YOURDOMAIN.example"
+  ],
+  "links": [
+    {
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html",
+      "href": "https://YOURDOMAIN.example"
+    },
+    {
+      "rel": "self",
+      "type": "application/activity+json",
+      "href": "https://YOURDOMAIN.example/activitypub"
+    }
+  ]
+}

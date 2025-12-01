@@ -1,0 +1,23 @@
+# PROJECT_NAME - LLM Context
+# https://llmstxt.org/
+
+> Brief description of the project.
+
+## Overview
+
+- **Purpose**: What it does
+- **Stack**: Technologies used
+- **License**: LICENSE_NAME
+
+## Key Files
+
+- `/path/to/important/` - Description
+- `/another/path/` - Description
+
+## For AI Assistants
+
+Guidance for AI working on this codebase.
+
+## Boundaries
+
+See `/.well-known/aibdp.json` for full AI boundary declaration.

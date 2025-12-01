@@ -1,0 +1,17 @@
+# Consent Requirements
+
+## Data Processed
+- [Describe what data this project/site handles]
+
+## Consent Basis
+| Data Type | Consent Required | Legal Basis |
+|-----------|------------------|-------------|
+| Example   | Yes/No           | Legitimate interest / Consent / Contract |
+
+## User Rights
+- Export data: [URL or process]
+- Delete data: [URL or process]
+- Withdraw consent: [URL or process]
+
+## Contact
+Privacy inquiries: CONTACT_URL

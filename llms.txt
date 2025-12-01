@@ -1,0 +1,38 @@
+# eTMA Handler - LLM Context File
+# https://llmstxt.org/
+
+> eTMA Handler is an Elixir/Phoenix application for marking Open University student assignments. It replaces a legacy Java tool with a modern BEAM-based implementation.
+
+## Overview
+
+- **Purpose**: Mark student TMA (Tutor-Marked Assignment) submissions
+- **Stack**: Elixir, Phoenix 1.7, LiveView, CubDB, Burrito
+- **License**: MIT
+
+## Key Files
+
+- `/lib/etma_handler/` - Core business logic
+- `/lib/etma_handler_web/` - Phoenix web interface
+- `/config/` - Application configuration
+- `/mix.exs` - Project definition and dependencies
+
+## Architecture
+
+Local-first desktop application:
+- All data stored locally (CubDB embedded database)
+- No network required for core functionality
+- Single binary distribution via Burrito
+- Real-time UI via Phoenix LiveView
+
+## For AI Assistants
+
+When working on this codebase:
+- See `CLAUDE.adoc` for detailed guidance
+- Follow Elixir conventions and Phoenix patterns
+- Run `mix test` before committing
+- Run `mix format` for code style
+
+## Boundaries
+
+Training/indexing permitted under MIT license with attribution.
+See `/.well-known/aibdp.json` for full AI boundary declaration.

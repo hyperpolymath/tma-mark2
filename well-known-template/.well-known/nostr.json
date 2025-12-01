@@ -1,0 +1,8 @@
+{
+  "names": {
+    "_": "NPUB_HEX_WITHOUT_NPUB_PREFIX"
+  },
+  "relays": {
+    "NPUB_HEX": ["wss://relay.example.com"]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://consent-aware.org/schemas/aibdp/v1.json",
+  "version": "1.0",
+  "protocol": "AI Boundary Declaration Protocol",
+  "issued": "YYYY-MM-DD",
+  "expires": "YYYY-MM-DD",
+
+  "identity": {
+    "name": "PROJECT_NAME",
+    "type": "open-source-project",
+    "url": "https://YOURDOMAIN.example",
+    "license": "LICENSE_SPDX_ID"
+  },
+
+  "boundaries": {
+    "training": {
+      "permitted": true,
+      "conditions": ["attribution", "license-compliance"]
+    },
+    "inference": {
+      "permitted": true,
+      "conditions": []
+    },
+    "indexing": {
+      "permitted": true
+    },
+    "scraping": {
+      "permitted": true,
+      "respect_robots_txt": true
+    },
+    "embedding": {
+      "permitted": true,
+      "conditions": ["attribution"]
+    }
+  },
+
+  "consent": {
+    "default": "permit-with-conditions",
+    "withdrawal_contact": "CONTACT_EMAIL_OR_URL"
+  },
+
+  "attribution": {
+    "required": true,
+    "format": "PROJECT_NAME (LICENSE)"
+  },
+
+  "related": {
+    "robots_txt": "/robots.txt",
+    "llms_txt": "/llms.txt",
+    "license": "/LICENSE"
+  }
+}

@@ -1,0 +1,7 @@
+# ads.txt - Authorized Digital Sellers Declaration
+# https://iabtechlab.com/ads-txt/
+
+# This project does not participate in programmatic advertising.
+# No authorized sellers exist.
+
+# Contact for inquiries: https://github.com/Hyperpolymath/tma-mark2/issues

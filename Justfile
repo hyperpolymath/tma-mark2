@@ -1,238 +1,247 @@
-# eTMA Handler - Master Justfile
-# The "Trillion Recipe" Cookbook for marking tool development
+# SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+# SPDX-License-Identifier: MIT
 #
-# Usage:
-#   just              # List all recipes
-#   just setup        # Initial project setup
-#   just start        # Start development server
-#   just build        # Build for production
+# eTMA Handler - Justfile
+# ========================
 #
-# Requirements:
-#   - Elixir 1.14+
-#   - Erlang/OTP 25+
-#   - Node.js (for assets)
-#   - Podman (for containers)
+# The only command you need: just do-it
+#
+# That's it. Really. It handles everything.
+#
 
-set shell := ["bash", "-c"]
+set shell := ["bash", "-uc"]
+set positional-arguments := true
 
-# Default recipe: show available commands
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+
+container_name := "etma-handler"
+container_registry := "ghcr.io/hyperpolymath"
+container_tag := "latest"
+container_image := container_registry + "/" + container_name + ":" + container_tag
+local_image := container_name + ":" + container_tag
+
+# Data directory (override with ETMA_DATA_DIR env var)
+data_dir := env_var_or_default("ETMA_DATA_DIR", if os() == "windows" { "%APPDATA%\\etma_handler" } else { "$HOME/.local/share/etma_handler" })
+
+# Port (override with ETMA_PORT env var)
+port := env_var_or_default("ETMA_PORT", "4000")
+
+# ============================================================================
+# 🚀 THE ONE COMMAND TO RULE THEM ALL
+# ============================================================================
+
+# Show available commands
 default:
-    @just --list --unsorted
+    @echo ""
+    @echo "  ╔═══════════════════════════════════════════════════════════╗"
+    @echo "  ║                    eTMA Handler                           ║"
+    @echo "  ║              Open University Marking Tool                 ║"
+    @echo "  ╠═══════════════════════════════════════════════════════════╣"
+    @echo "  ║                                                           ║"
+    @echo "  ║   just do-it     →  Set up everything and run            ║"
+    @echo "  ║                                                           ║"
+    @echo "  ║   That's it. That's all you need.                        ║"
+    @echo "  ║                                                           ║"
+    @echo "  ╚═══════════════════════════════════════════════════════════╝"
+    @echo ""
+    @just --list --unsorted 2>/dev/null | grep -v "^Available" | grep -v "^$" || true
 
-# ===========================================
-# DEVELOPMENT RECIPES
-# ===========================================
+# 🎯 THE COMMAND - Set up everything and run
+do-it: _check-podman _ensure-dirs
+    @echo ""
+    @echo "  🎯 eTMA Handler - Let's do this!"
+    @echo ""
+    @just _pull-or-build
+    @echo ""
+    @echo "  ✅ Ready! Starting eTMA Handler..."
+    @echo ""
+    @echo "  ┌─────────────────────────────────────────────────────────┐"
+    @echo "  │  Open your browser to: http://localhost:{{ port }}          │"
+    @echo "  │  Press Ctrl+C to stop                                   │"
+    @echo "  │  Your data is saved in: {{ data_dir }}                  │"
+    @echo "  └─────────────────────────────────────────────────────────┘"
+    @echo ""
+    @just run
 
-# Initial project setup (run once after clone)
-setup:
-    @echo "Setting up eTMA Handler..."
-    mix local.hex --force
-    mix local.rebar --force
-    mix deps.get
-    mix assets.setup
-    mix assets.build
-    @echo "Setup complete! Run 'just start' to begin."
+# ============================================================================
+# CONTAINER OPERATIONS
+# ============================================================================
 
-# Start development server with live reload
-start:
-    @echo "Starting eTMA Handler on http://localhost:4000"
-    mix phx.server
+# Pull the latest container image
+pull:
+    @echo "  📦 Pulling container image..."
+    podman pull {{ container_image }} || (echo "  ⚠️  Pull failed, will build locally" && exit 1)
 
-# Start in interactive mode (iex)
-iex:
-    iex -S mix phx.server
+# Build the container locally (if you've cloned the repo)
+build:
+    @echo "  🔨 Building container locally..."
+    podman build -t {{ local_image }} -t {{ container_image }} -f Containerfile .
+    @echo "  ✅ Build complete!"
 
-# Run tests
+# Run the container (foreground)
+run:
+    podman run --rm -it \
+        -p {{ port }}:4000 \
+        -v {{ data_dir }}:/data:Z \
+        --name {{ container_name }} \
+        {{ container_image }}
+
+# Run in background
+start: _check-podman _ensure-dirs
+    @echo "  🚀 Starting eTMA Handler in background..."
+    -@podman stop {{ container_name }} 2>/dev/null || true
+    -@podman rm {{ container_name }} 2>/dev/null || true
+    podman run -d \
+        -p {{ port }}:4000 \
+        -v {{ data_dir }}:/data:Z \
+        --name {{ container_name }} \
+        --restart unless-stopped \
+        {{ container_image }}
+    @echo ""
+    @echo "  ✅ Running at http://localhost:{{ port }}"
+    @echo "     Stop with: just stop"
+    @echo "     Logs with: just logs"
+
+# Stop the container
+stop:
+    @echo "  🛑 Stopping eTMA Handler..."
+    -podman stop {{ container_name }} 2>/dev/null || true
+    -podman rm {{ container_name }} 2>/dev/null || true
+    @echo "  ✅ Stopped"
+
+# Restart the container
+restart: stop start
+
+# View logs
+logs:
+    podman logs -f {{ container_name }}
+
+# Container status
+status:
+    @podman ps -a --filter name={{ container_name }} --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || echo "  Not running"
+
+# Shell into running container
+shell:
+    podman exec -it {{ container_name }} /bin/sh
+
+# ============================================================================
+# DATA MANAGEMENT
+# ============================================================================
+
+# Backup your data
+backup dest="./backup":
+    @echo "  💾 Backing up data..."
+    @mkdir -p {{ dest }}
+    cp -r {{ data_dir }}/* {{ dest }}/ 2>/dev/null || echo "  No data to backup yet"
+    @echo "  ✅ Backed up to {{ dest }}"
+
+# Restore from backup
+restore src:
+    @echo "  📥 Restoring from {{ src }}..."
+    @mkdir -p {{ data_dir }}
+    cp -r {{ src }}/* {{ data_dir }}/
+    @echo "  ✅ Restored"
+
+# Where is my data?
+where:
+    @echo "  📂 Your data is stored at:"
+    @echo "     {{ data_dir }}"
+
+# ============================================================================
+# UPDATES
+# ============================================================================
+
+# Update to latest version
+update: stop
+    @echo "  🔄 Updating eTMA Handler..."
+    podman pull {{ container_image }}
+    @echo "  ✅ Updated! Run 'just start' to use new version"
+
+# ============================================================================
+# DEVELOPMENT (only if you're hacking on the code)
+# ============================================================================
+
+# Enter Nix development shell
+dev:
+    @echo "  🔧 Entering development environment..."
+    @echo "     (requires Nix with flakes enabled)"
+    nix develop
+
+# Run tests (requires dev environment)
 test:
     mix test
 
-# Run tests with coverage
-test-coverage:
-    mix test --cover
-
-# Format code
+# Format code (requires dev environment)
 format:
     mix format
 
-# Check formatting without changing files
-format-check:
-    mix format --check-formatted
-
-# Run static analysis
+# Lint code (requires dev environment)
 lint:
     mix credo --strict
 
-# Run all quality checks
-quality: format-check lint test
-    @echo "All quality checks passed!"
+# All checks (requires dev environment)
+check: format lint test
+    @echo "  ✅ All checks passed!"
 
-# ===========================================
-# BUILD RECIPES
-# ===========================================
+# Build and push release
+release version: build
+    @echo "  📦 Releasing version {{ version }}..."
+    podman tag {{ local_image }} {{ container_registry }}/{{ container_name }}:{{ version }}
+    podman push {{ container_registry }}/{{ container_name }}:{{ version }}
+    podman push {{ container_image }}
+    @echo "  ✅ Released {{ version }}"
 
-# Build production release
-build:
-    @echo "Building production release..."
-    MIX_ENV=prod mix assets.deploy
-    MIX_ENV=prod mix release
-    @echo "Release built in _build/prod/rel/etma_handler"
+# ============================================================================
+# CLEANUP
+# ============================================================================
 
-# Build cross-platform binaries using Burrito
-build-binaries:
-    @echo "Building cross-platform binaries (Burrito)..."
-    MIX_ENV=prod mix release
-    @echo "Binaries ready in burrito_out/"
-
-# Build for specific target
-build-linux:
-    @echo "Building for Linux x86_64..."
-    MIX_ENV=prod mix release --target linux
-    @echo "Binary: burrito_out/etma_handler_linux"
-
-build-windows:
-    @echo "Building for Windows x86_64..."
-    MIX_ENV=prod mix release --target windows
-    @echo "Binary: burrito_out/etma_handler_windows.exe"
-
-build-macos:
-    @echo "Building for macOS (ARM64)..."
-    MIX_ENV=prod mix release --target macos
-    @echo "Binary: burrito_out/etma_handler_macos"
-
-build-riscv:
-    @echo "Building for RISC-V (experimental)..."
-    MIX_ENV=prod mix release --target riscv
-    @echo "Binary: burrito_out/etma_handler_riscv"
-
-# ===========================================
-# CONTAINER RECIPES
-# ===========================================
-
-# Build Wolfi-based OCI container
-build-container:
-    @echo "Building Wolfi container..."
-    podman build -t etma-handler:latest .
-    @echo "Container built: etma-handler:latest"
-
-# Run container locally
-run-container:
-    @echo "Running container on http://localhost:4000"
-    podman run -p 4000:4000 --rm -it etma-handler:latest
-
-# Push container to registry
-push-container registry="ghcr.io/yourusername":
-    podman tag etma-handler:latest {{registry}}/etma-handler:latest
-    podman push {{registry}}/etma-handler:latest
-
-# ===========================================
-# DATABASE RECIPES
-# ===========================================
-
-# Reset the local CubDB database
-db-reset:
-    @echo "Resetting CubDB database..."
-    rm -rf priv/data/etma.cub
-    @echo "Database reset. Data will be recreated on next start."
-
-# Backup database
-db-backup:
-    @echo "Backing up database..."
-    mkdir -p backups
-    cp -r priv/data backups/data_$(date +%Y%m%d_%H%M%S)
-    @echo "Backup complete."
-
-# ===========================================
-# SECURITY RECIPES
-# ===========================================
-
-# Audit dependencies for vulnerabilities
-audit:
-    mix hex.audit
-    @echo "Security audit complete."
-
-# Generate new secret key
-gen-secret:
-    mix phx.gen.secret
-
-# Rotate signing keys (for production)
-rotate-keys:
-    @echo "Key rotation not implemented yet."
-    @echo "This would regenerate signing keys and update config."
-
-# ===========================================
-# INSTALLER RECIPES
-# ===========================================
-
-# Generate Linux installer script
-gen-installer:
-    @echo "Generating Linux installer..."
-    cp scripts/install.sh dist/install.sh
-    chmod +x dist/install.sh
-    @echo "Installer: dist/install.sh"
-
-# Generate .deb package
-package-deb:
-    @echo "Generating Debian package..."
-    @echo "Not implemented yet. Would use fpm or nfpm."
-
-# Generate .rpm package
-package-rpm:
-    @echo "Generating RPM package..."
-    @echo "Not implemented yet. Would use fpm or nfpm."
-
-# ===========================================
-# DOCUMENTATION RECIPES
-# ===========================================
-
-# Generate documentation
-docs:
-    mix docs
-
-# Open documentation in browser
-docs-open:
-    mix docs && open doc/index.html
-
-# ===========================================
-# CLEANUP RECIPES
-# ===========================================
-
-# Clean build artifacts
+# Clean up containers and images
 clean:
-    mix clean
-    rm -rf _build deps node_modules
+    @echo "  🧹 Cleaning up..."
+    -podman stop {{ container_name }} 2>/dev/null || true
+    -podman rm {{ container_name }} 2>/dev/null || true
+    @echo "  ✅ Cleaned"
 
-# Deep clean (including database)
-clean-all: clean db-reset
-    rm -rf priv/static/assets
+# Deep clean (removes images too)
+clean-all: clean
+    -podman rmi {{ container_image }} 2>/dev/null || true
+    -podman rmi {{ local_image }} 2>/dev/null || true
+    @echo "  ✅ Deep cleaned"
 
-# ===========================================
-# DEVELOPMENT HELPERS
-# ===========================================
+# ============================================================================
+# INTERNAL HELPERS
+# ============================================================================
 
-# Open Elixir shell with project loaded
-shell:
-    iex -S mix
+# Check podman is installed
+_check-podman:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v podman &> /dev/null; then
+        echo ""
+        echo "  ❌ Podman is not installed!"
+        echo ""
+        echo "  Install it:"
+        echo ""
+        echo "    Linux (Fedora):    sudo dnf install podman"
+        echo "    Linux (Ubuntu):    sudo apt install podman"
+        echo "    Linux (Arch):      sudo pacman -S podman"
+        echo "    macOS:             brew install podman"
+        echo "    Windows:           winget install RedHat.Podman"
+        echo ""
+        echo "  Or run our setup script:"
+        echo ""
+        echo "    curl -fsSL https://raw.githubusercontent.com/Hyperpolymath/tma-mark2/main/setup.sh | bash"
+        echo ""
+        exit 1
+    fi
+    echo "  ✅ Podman $(podman --version | cut -d' ' -f3)"
 
-# Watch for changes and run tests
-test-watch:
-    mix test.watch
+# Ensure data directory exists
+_ensure-dirs:
+    @mkdir -p {{ data_dir }} 2>/dev/null || true
 
-# Check for outdated dependencies
-deps-outdated:
-    mix hex.outdated
-
-# Update all dependencies
-deps-update:
-    mix deps.update --all
-
-# Generate a new LiveView
-gen-live context name:
-    mix phx.gen.live {{context}} {{name}}
-
-# ===========================================
-# IMPORT MODULAR RECIPES
-# ===========================================
-
-# Include additional recipe files if they exist
-# import? "recipes/security.just"
-# import? "recipes/deploy.just"
+# Try to pull, fall back to build
+_pull-or-build:
+    @just pull 2>/dev/null || just build

@@ -1,0 +1,8 @@
+# Keybase proof placeholder
+# Keybase was acquired by Zoom (2020) and abandoned.
+#
+# For identity verification, see:
+# - /.well-known/did.json
+# - /.well-known/webfinger
+#
+# RIP Keybase (2014-2020)

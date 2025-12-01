@@ -1,0 +1,21 @@
+# AI Policy
+# Human-readable version of aibdp.json
+
+# Permissions
+Training: allowed with attribution
+Indexing: allowed
+Scraping: allowed (respect robots.txt)
+Summarization: allowed
+Code-Generation: allowed with license compliance
+
+# Attribution
+Required: yes
+Format: "PROJECT_NAME (LICENSE)"
+
+# Contact
+Questions: CONTACT_URL
+
+# See also
+# /.well-known/aibdp.json - Machine-readable declaration
+# /llms.txt - LLM context
+# /robots.txt - Crawler directives

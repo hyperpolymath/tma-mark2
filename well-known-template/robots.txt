@@ -1,0 +1,34 @@
+# robots.txt
+
+User-agent: *
+Allow: /
+
+# AI crawlers (explicit declaration)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Disallow if needed
+# User-agent: SomeBot
+# Disallow: /private/
+
+# Advisory rate limit
+Crawl-delay: 1
+
+# Related
+# AI Boundary Declaration: /.well-known/aibdp.json
+# LLM Context: /llms.txt
