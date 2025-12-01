@@ -8,46 +8,42 @@
 :experimental:
 :sectnums:
 
+[.text-center]
+--
+[source,bash]
+----
+curl -fsSL https://hyperpolymath.github.io/tma-mark2/install | bash
+----
+
+**That's it.** Open http://localhost:4000 and start marking.
+
 image:https://img.shields.io/badge/version-2.0.0-blue[Version]
 image:https://img.shields.io/badge/license-MIT-green[License]
 image:https://img.shields.io/badge/RSR-Gold-gold[RSR Gold]
+image:https://img.shields.io/badge/crypto-post--quantum-purple[Post-Quantum]
+--
 
-**Mark Open University assignments without the pain.**
+'''
 
-== Quick Start
+**Mark Open University assignments without the pain.** No Java. No Windows-only. No Word dependency. Just works.
 
-=== One Command Install
+== Install
 
-[source,bash]
-----
-# Linux/macOS
-curl -fsSL https://raw.githubusercontent.com/Hyperpolymath/tma-mark2/main/setup.sh | bash
+[cols="1,2"]
+|===
+|Platform |Command
 
-# Windows (PowerShell)
-irm https://raw.githubusercontent.com/Hyperpolymath/tma-mark2/main/setup.ps1 | iex
-----
+|**Linux/macOS**
+|`curl -fsSL https://hyperpolymath.github.io/tma-mark2/install \| bash`
 
-=== Or Just Run It
+|**Windows**
+|`irm https://hyperpolymath.github.io/tma-mark2/install.ps1 \| iex`
 
-If you have https://podman.io[Podman] installed:
+|**Already have Podman?**
+|`podman run -p 4000:4000 ghcr.io/hyperpolymath/etma-handler`
+|===
 
-[source,bash]
-----
-podman run -p 4000:4000 -v ~/.local/share/etma_handler:/data ghcr.io/hyperpolymath/etma-handler
-----
-
-Then open http://localhost:4000
-
-=== Or Clone and Go
-
-[source,bash]
-----
-git clone https://github.com/Hyperpolymath/tma-mark2.git
-cd tma-mark2
-just do-it
-----
-
-That's it. `just do-it` handles everything.
+Then open http://localhost:4000. Done.
 
 == What You Need
 
