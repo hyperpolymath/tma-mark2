@@ -1,0 +1,8 @@
+{
+  "links": [
+    {
+      "rel": "http://nodeinfo.diaspora.software/ns/schema/2.1",
+      "href": "https://YOURDOMAIN.example/nodeinfo/2.1"
+    }
+  ]
+}

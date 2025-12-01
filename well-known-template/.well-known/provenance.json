@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "project": "PROJECT_NAME",
+  "repository": "https://github.com/USER/REPO",
+  "license": "LICENSE_SPDX_ID",
+  "build": {
+    "reproducible": true,
+    "system": "BUILD_SYSTEM"
+  }
+}

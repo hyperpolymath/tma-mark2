@@ -1,0 +1,8 @@
+# ads.txt - Authorized Digital Sellers
+# https://iabtechlab.com/ads-txt/
+
+# This project/site does not participate in programmatic advertising.
+# No authorized sellers.
+
+# If you DO have ad partners, format is:
+# domain.com, publisher-id, DIRECT/RESELLER, certification-id
