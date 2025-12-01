@@ -31,10 +31,11 @@ RUN mix local.hex --force && \
     mix local.rebar --force
 
 # Copy dependency files first (for better caching)
-COPY mix.exs mix.lock ./
+# Note: mix.lock is generated during build if not present
+COPY mix.exs ./
 COPY config config
 
-# Fetch dependencies
+# Fetch dependencies (generates mix.lock if missing)
 RUN mix deps.get --only prod && \
     mix deps.compile
 

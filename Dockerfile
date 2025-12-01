@@ -37,8 +37,8 @@ RUN mix local.hex --force && \
 # Set build environment
 ENV MIX_ENV=prod
 
-# Cache dependencies
-COPY mix.exs mix.lock ./
+# Cache dependencies (mix.lock generated during build if not present)
+COPY mix.exs ./
 RUN mix deps.get --only $MIX_ENV
 
 # Copy config (needed for deps.compile)
