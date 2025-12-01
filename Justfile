@@ -41,17 +41,12 @@ default:
     @just --list --unsorted 2>/dev/null | grep -v "^Available" | grep -v "^$" || true
 
 # Set up everything and run
-do-it: _check-podman _ensure-dirs
+do-it: _check-podman _ensure-dirs _pull-or-build
     @echo ""
-    @echo "  eTMA Handler - Let's do this!"
-    @echo ""
-    @just _pull-or-build
-    @echo ""
-    @echo "  Ready! Starting eTMA Handler..."
-    @echo ""
-    @echo "  Open your browser to: http://localhost:{{ port }}"
+    @echo "  Starting eTMA Handler..."
+    @echo "  Open: http://localhost:{{ port }}"
+    @echo "  Data: {{ data_dir }}"
     @echo "  Press Ctrl+C to stop"
-    @echo "  Your data is saved in: {{ data_dir }}"
     @echo ""
     @just run
 
@@ -72,7 +67,12 @@ build:
 
 # Run the container (foreground)
 run:
-    @podman image exists {{ container_image }} || just build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! podman image exists {{ container_image }} 2>/dev/null; then
+        echo "  Image not found, building..."
+        just build
+    fi
     podman run --rm -it \
         -p {{ port }}:4000 \
         -v {{ data_dir }}:/data:Z \
@@ -229,4 +229,12 @@ _ensure-dirs:
 
 # Try to pull, fall back to build
 _pull-or-build:
-    @just pull || just build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "  Checking for container image..."
+    if podman pull {{ container_image }} 2>/dev/null; then
+        echo "  Image pulled successfully"
+    else
+        echo "  Image not available, building locally..."
+        just build
+    fi
