@@ -19,15 +19,25 @@ The BEAM edition provides basic marking workflows. Now we make it actually good.
 
 ## Phase 1: Foundation (v2.1 - v2.3)
 
-### v2.1 - Cross-Platform Nirvana
+### v2.1 - Container-First Distribution
 *Kill: Platform lock-in, Java hell, runtime dependencies*
 
-- [ ] Burrito builds for Linux, macOS (Intel + ARM), Windows
-- [ ] Zero-dependency installer (no JRE, no runtime)
-- [ ] Flatpak for Linux (Flathub submission)
-- [ ] Homebrew formula for macOS
-- [ ] Winget manifest for Windows
-- [ ] Automatic updates (optional, privacy-respecting)
+**The container IS the distribution.** User needs only Podman.
+
+- [ ] Multi-arch container (linux/amd64, linux/arm64)
+- [ ] GitHub Container Registry publishing (ghcr.io)
+- [ ] `just do-it` one-command setup
+- [ ] setup.sh for Linux/macOS bootstrap
+- [ ] setup.ps1 for Windows bootstrap
+- [ ] Podman Quadlet for systemd integration
+- [ ] Automatic container updates (optional)
+
+**Why container-first:**
+- Zero dependencies for users (only Podman)
+- Works on any OS with Podman
+- Reproducible across all machines
+- Security updates via container rebuild
+- Dev environment via Nix flake (contributors only)
 
 ### v2.2 - Native .fhi Mastery
 *Kill: File handler stupidity, format conversion nightmares*
@@ -175,7 +185,8 @@ The BEAM edition provides basic marking workflows. Now we make it actually good.
 
 | Feature | Pain Killed | Effort | Impact | Priority |
 |---------|-------------|--------|--------|----------|
-| Cross-platform binary | Platform lock-in | Medium | Critical | P0 |
+| Container distribution | Platform lock-in, Java hell | Low | Critical | P0 |
+| `just do-it` setup | Installation complexity | Low | Critical | P0 |
 | Native .fhi parsing | File handler issues | Medium | Critical | P0 |
 | Built-in annotation | Word dependency | High | Critical | P1 |
 | Comment bank | Repetitive typing | Low | High | P1 |

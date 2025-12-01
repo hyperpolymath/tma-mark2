@@ -11,243 +11,168 @@
 image:https://img.shields.io/badge/version-2.0.0-blue[Version]
 image:https://img.shields.io/badge/license-MIT-green[License]
 image:https://img.shields.io/badge/RSR-Gold-gold[RSR Gold]
-image:https://img.shields.io/badge/elixir-1.14+-purple[Elixir Version]
-image:https://img.shields.io/badge/OTP-25+-red[OTP Version]
 
-== Overview
-
-eTMA Handler is the BEAM edition of the Open University's electronic Tutor Marked Assignment (eTMA) marking tool. Originally written in Java, this project migrates the marking workflow to Elixir/Phoenix for improved reliability, cross-platform distribution, and modern web capabilities.
-
-The application processes student assignment submissions in `.fhi` format, provides a marking interface for tutors, and generates graded `.docx` files with feedback annotations.
-
-=== Key Features
-
-* **Phoenix LiveView UI**: Real-time, reactive marking interface
-* **CubDB Storage**: Crash-proof, pure-Elixir embedded database
-* **Burrito Packaging**: Single binary distribution for all platforms
-* **File Watching**: Automatic ingestion from Downloads folder
-* **WASM Plugins**: Sandboxed extension support
-* **Post-Quantum Ready**: Kyber key exchange (optional)
-* **Offline First**: Works without network connectivity
+**Mark Open University assignments without the pain.**
 
 == Quick Start
 
-=== Prerequisites
-
-* Elixir 1.14+ with OTP 25+
-* Node.js 18+ (for assets)
-* Or: Nix with flakes enabled
-
-=== Installation
+=== One Command Install
 
 [source,bash]
 ----
-# Using Nix (recommended)
-nix develop
-mix setup
+# Linux/macOS
+curl -fsSL https://raw.githubusercontent.com/Hyperpolymath/tma-mark2/main/setup.sh | bash
 
-# Or manually
-mix deps.get
-mix assets.setup
-mix assets.build
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/Hyperpolymath/tma-mark2/main/setup.ps1 | iex
 ----
 
-=== Running
+=== Or Just Run It
+
+If you have https://podman.io[Podman] installed:
 
 [source,bash]
 ----
-# Development server
-mix phx.server
-
-# Or with Just
-just dev
-
-# Production release
-just release
+podman run -p 4000:4000 -v ~/.local/share/etma_handler:/data ghcr.io/hyperpolymath/etma-handler
 ----
 
-Then open http://localhost:4000 in your browser.
+Then open http://localhost:4000
 
-== Usage
-
-=== Marking Workflow
-
-1. **Drop Files**: Place `.fhi` files in your Downloads folder (or configured watch directory)
-2. **Review**: Files appear automatically in the eTMA Handler interface
-3. **Mark**: Use the marking grid to assign grades and feedback
-4. **Export**: Generate graded `.docx` files for return to students
-
-=== CLI Commands
+=== Or Clone and Go
 
 [source,bash]
 ----
-# Process a single file
-./etma_handler mark assignment.fhi
-
-# Batch process directory
-./etma_handler batch ~/assignments/
-
-# Export grades
-./etma_handler export --format csv
+git clone https://github.com/Hyperpolymath/tma-mark2.git
+cd tma-mark2
+just do-it
 ----
 
-== Architecture
+That's it. `just do-it` handles everything.
 
-=== Technology Stack
+== What You Need
+
+* **Podman** - That's it. The container has everything else.
 
 [cols="1,2"]
 |===
-|Component |Technology
+|Platform |Install Podman
 
-|Language |Elixir 1.14+ / OTP 25+
-|Web Framework |Phoenix 1.7 + LiveView
-|HTTP Server |Bandit
-|Database |CubDB (embedded)
-|Frontend |Tailwind CSS + Alpine.js
-|Packaging |Burrito (cross-platform binaries)
-|File Parsing |SweetXml
-|Security |Argon2id, XChaCha20-Poly1305
+|Fedora |`sudo dnf install podman`
+|Ubuntu |`sudo apt install podman`
+|Arch |`sudo pacman -S podman`
+|macOS |`brew install podman`
+|Windows |`winget install RedHat.Podman`
 |===
 
-=== Module Structure
+== What This Is
+
+eTMA Handler replaces the legacy Java marking tool for Open University tutors:
+
+[cols="1,1"]
+|===
+|Old Java Tool |eTMA Handler
+
+|Windows only |Linux, macOS, Windows
+|Requires Java 6 |Requires nothing (container)
+|Word-dependent |Built-in annotation
+|Clunky file handler |Drag and drop
+|Manual PT3 forms |Auto-generated
+|No batch release |Release all at once
+|===
+
+== Commands
+
+[source,bash]
+----
+just do-it      # Set everything up and run
+just start      # Run in background
+just stop       # Stop the container
+just update     # Update to latest version
+just backup     # Backup your data
+just logs       # View logs
+just status     # Check if running
+----
+
+== Your Data
+
+Your data stays on your machine:
 
 [source]
 ----
-lib/
-├── etma_handler/           # Core business logic
-│   ├── application.ex      # OTP Application
-│   ├── assignments/        # Assignment CRUD
-│   ├── marking/            # Marking logic
-│   ├── parser/             # .fhi and .docx parsing
-│   └── watcher/            # File system watcher
-├── etma_handler_web/       # Phoenix web layer
-│   ├── controllers/        # HTTP controllers
-│   ├── live/               # LiveView modules
-│   ├── components/         # UI components
-│   └── router.ex           # Routes
-└── etma_handler.ex         # Public API
+Linux/macOS: ~/.local/share/etma_handler/
+Windows:     %APPDATA%\etma_handler\
 ----
 
-== Configuration
+Override with: `ETMA_DATA_DIR=/your/path just do-it`
 
-Configuration is managed through `config/`:
+== For Developers
 
-[source,elixir]
-----
-# config/config.exs
-config :etma_handler,
-  watch_directory: System.get_env("ETMA_WATCH_DIR", "~/Downloads"),
-  storage_path: System.get_env("ETMA_DATA_DIR", "~/.local/share/etma_handler"),
-  auto_backup: true
-----
-
-=== Environment Variables
-
-[cols="1,2,1"]
-|===
-|Variable |Description |Default
-
-|`ETMA_WATCH_DIR`
-|Directory to watch for new files
-|`~/Downloads`
-
-|`ETMA_DATA_DIR`
-|Data storage directory
-|`~/.local/share/etma_handler`
-
-|`ETMA_PORT`
-|HTTP server port
-|`4000`
-
-|`ETMA_HOST`
-|HTTP server host
-|`localhost`
-|===
-
-== Development
-
-=== Building
+If you want to hack on the code:
 
 [source,bash]
 ----
-# Development build
-just build
+# Enter dev environment (requires Nix)
+nix develop
 
-# Release build
-just release
-
-# Cross-platform binaries (via Burrito)
-just release-all
+# Or install Elixir and run
+mix deps.get
+mix phx.server
 ----
 
-=== Testing
+Development requires:
 
-[source,bash]
+* Elixir 1.16+ / OTP 26+
+* Node.js 20+
+* Or just use: `nix develop`
+
+== How It Works
+
+[source]
 ----
-# Run all tests
-just test
-
-# With coverage
-just test-coverage
-
-# Specific test
-mix test test/etma_handler/parser_test.exs
-----
-
-=== Documentation
-
-[source,bash]
-----
-# Generate ExDoc
-just docs
-
-# Open in browser
-just docs-open
-----
-
-== Deployment
-
-=== Binary Distribution
-
-Burrito creates self-contained binaries:
-
-[source,bash]
-----
-# Build for current platform
-just release
-
-# Build for all platforms
-just release-all
-
-# Output in _build/burrito/
+┌─────────────────────────────────────────────────────────────┐
+│                     Your Computer                            │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              Podman Container                        │    │
+│  │  ┌─────────────┬─────────────┬──────────────┐       │    │
+│  │  │   Phoenix   │   Elixir    │    CubDB     │       │    │
+│  │  │  LiveView   │   Logic     │   Storage    │       │    │
+│  │  └─────────────┴─────────────┴──────────────┘       │    │
+│  │               Wolfi Base (minimal)                   │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            │                                 │
+│                    ┌───────┴───────┐                        │
+│                    ▼               ▼                        │
+│              http://localhost:4000                          │
+│               ~/.local/share/etma_handler (your data)       │
+└─────────────────────────────────────────────────────────────┘
 ----
 
-=== Container
+The container bundles:
 
-[source,bash]
-----
-# Build container
-podman build -t etma-handler:latest .
+* Wolfi base (minimal, secure)
+* Erlang/OTP runtime
+* Elixir release
+* Phoenix web app
+* All dependencies
 
-# Run
-podman run -p 4000:4000 -v ~/assignments:/data etma-handler:latest
-----
+Your data lives outside the container. Update the container, keep your data.
 
-== Contributing
+== Documentation
 
-See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc] for guidelines.
+* link:ROADMAP.md[Roadmap] - Where we're going
+* link:CONTRIBUTING.adoc[Contributing] - How to help
+* link:SECURITY.md[Security] - Vulnerability reporting
+* link:docs/COMPETITORS.md[Competitors] - Market analysis
+* link:docs/IDEAS.md[Ideas] - Innovation brainstorm
+* link:CLAUDE.adoc[AI Guide] - For AI assistants
 
 == License
 
-MIT License - see link:LICENSE.txt[LICENSE.txt] for details.
-
-== Security
-
-See link:SECURITY.md[SECURITY.md] for security policies and vulnerability reporting.
+MIT License - see link:LICENSE.txt[LICENSE.txt]
 
 == Acknowledgements
 
-* The Open University for the original Java implementation
+* The Open University for the original (and the pain that inspired this)
 * The Elixir and Phoenix communities
-* CubDB for the excellent embedded database
-* Burrito for cross-platform packaging
+* Chainguard for Wolfi
+* Every tutor who's ever rage-quit the Java tool
