@@ -157,6 +157,99 @@ The container bundles:
 
 Your data lives outside the container. Update the container, keep your data.
 
+== Security
+
+**Your marking data deserves Fort Knox-level protection.**
+
+eTMA Handler implements defense-in-depth cryptography using best-in-class algorithms:
+
+=== Encryption (Post-Quantum Hybrid)
+
+[cols="1,2,1"]
+|===
+|Algorithm |Purpose |Security
+
+|**ML-KEM-1024**
+|Key encapsulation (NIST FIPS 203)
+|Post-quantum safe
+
+|**X25519**
+|Classical ECDH (defense-in-depth)
+|~128-bit
+
+|**XChaCha20-Poly1305**
+|Authenticated encryption
+|256-bit key, 192-bit nonce
+|===
+
+*Hybrid encryption* means an attacker must break **both** ML-KEM-1024 (quantum-safe) and X25519 (classical) to decrypt your data.
+
+=== Signatures
+
+[cols="1,2,1"]
+|===
+|Algorithm |Purpose |Security
+
+|**Ed448**
+|Primary signatures (SHAKE256)
+|~224-bit
+
+|**Ed25519**
+|Fallback for older systems
+|~128-bit
+|===
+
+=== Hashing
+
+[cols="1,2,1"]
+|===
+|Algorithm |Purpose |Speed
+
+|**BLAKE3**
+|General hashing, KDF (default)
+|5x faster than SHA-256
+
+|**SHA3-512**
+|Maximum security margin
+|~256-bit security
+
+|**SHAKE256**
+|Variable-length XOF
+|Ed448 signatures
+|===
+
+=== Password & Authentication
+
+[cols="1,2"]
+|===
+|Technology |Properties
+
+|**Argon2id**
+|Memory-hard (64MB), 3 iterations, side-channel resistant
+
+|**FIDO2/WebAuthn**
+|Hardware keys, biometrics, passkeys (phishing-resistant)
+|===
+
+=== Algorithm Summary
+
+[source]
+----
+Encryption:     ML-KEM-1024 + X25519 → XChaCha20-Poly1305
+Signatures:     Ed448 (primary) / Ed25519 (fallback)
+Hashing:        BLAKE3 / SHA3-512 / SHAKE256
+Passwords:      Argon2id (64MB, 3 iterations)
+Authentication: FIDO2/WebAuthn (YubiKey, Touch ID, Passkeys)
+Key Derivation: BLAKE3-KDF / HKDF-SHA256
+----
+
+=== Zero Trust
+
+* **Data at rest**: Encrypted with hybrid post-quantum crypto
+* **Passwords**: Argon2id (defeats GPU attacks)
+* **2FA**: FIDO2 hardware keys or passkeys
+* **No telemetry**: Zero data collection
+
 == Documentation
 
 * link:ROADMAP.md[Roadmap] - Where we're going

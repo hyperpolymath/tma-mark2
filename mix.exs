@@ -61,12 +61,15 @@ defmodule EtmaHandler.MixProject do
       {:optimist, "~> 0.2", optional: true},
 
       # --- The Fort Knox Vault (Security) ---
-      # Argon2id for password hashing
+      # Argon2id for password hashing (memory-hard, side-channel resistant)
       {:argon2_elixir, "~> 3.0"},
-      # libsodium bindings for XChaCha20-Poly1305 & BLAKE3
-      {:ex_libsodium, "~> 0.7", optional: true},
-      # Post-quantum key exchange (Kyber)
-      {:kcl, "~> 1.0", optional: true},
+      # BLAKE3 - blazing fast, secure hash function
+      {:blake3, "~> 1.0", optional: true},
+      # Post-quantum cryptography (ML-KEM-1024 / CRYSTALS-Kyber)
+      # Falls back to OTP 27+ native if available
+      {:pqclean, "~> 0.1", optional: true, github: "potatosalad/erlang-pqclean"},
+      # CBOR encoding for WebAuthn attestation parsing
+      {:cbor, "~> 1.0", optional: true},
       # WASM plugins (sandboxed execution)
       {:wasmex, "~> 0.8", optional: true},
 
