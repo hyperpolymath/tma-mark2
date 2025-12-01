@@ -17,8 +17,10 @@ eTMA Handler is an Elixir/Phoenix application for marking Open University studen
 * **Language**: Elixir 1.14+ / OTP 25+
 * **Web Framework**: Phoenix 1.7 + LiveView
 * **Database**: CubDB (embedded, pure Elixir)
-* **Frontend**: Tailwind CSS, Alpine.js
+* **HTTP Server**: Bandit (pure Elixir)
+* **Frontend**: Tailwind CSS, Alpine.js, Heroicons
 * **Packaging**: Burrito (cross-platform binaries)
+* **Container**: Wolfi base (Chainguard) with Podman
 
 == Directory Structure
 
@@ -27,16 +29,63 @@ eTMA Handler is an Elixir/Phoenix application for marking Open University studen
 tma-mark2/
 ├── lib/
 │   ├── etma_handler/           # Core business logic
-│   │   ├── application.ex      # OTP application
-│   │   ├── assignments/        # Assignment management
-│   │   ├── marking/            # Marking logic
-│   │   └── parser/             # File parsing
-│   └── etma_handler_web/       # Phoenix web layer
+│   │   ├── application.ex      # OTP application supervisor
+│   │   ├── bouncer.ex          # Access control/authorization
+│   │   ├── security.ex         # Security utilities
+│   │   ├── repo.ex             # CubDB data repository
+│   │   ├── crypto/             # Cryptography modules
+│   │   │   ├── crypto.ex       # Core crypto operations
+│   │   │   ├── hashing.ex      # BLAKE3/Argon2 hashing
+│   │   │   ├── signatures.ex   # Digital signatures
+│   │   │   ├── hybrid.ex       # Hybrid encryption
+│   │   │   ├── webauthn.ex     # WebAuthn/FIDO2 support
+│   │   │   ├── backend.ex      # Crypto backend abstraction
+│   │   │   └── encrypted_storage.ex
+│   │   ├── logic/              # Logic/reasoning engine
+│   │   │   └── calculator.ex   # miniKanren-based calculator
+│   │   └── marking/            # Marking functionality
+│   │       └── audit.ex        # Audit trail
+│   ├── etma_handler.ex         # Public API
+│   ├── etma_handler_web/       # Phoenix web layer
+│   │   ├── endpoint.ex         # HTTP endpoint
+│   │   ├── router.ex           # Route definitions
+│   │   ├── telemetry.ex        # Metrics/telemetry
+│   │   ├── controllers/        # HTTP controllers
+│   │   │   ├── api_controller.ex
+│   │   │   ├── error_html.ex
+│   │   │   └── error_json.ex
+│   │   ├── plugs/              # Custom Plug middleware
+│   │   │   ├── security_headers.ex
+│   │   │   ├── rate_limiter.ex
+│   │   │   ├── force_ssl.ex
+│   │   │   └── request_id.ex
+│   │   ├── components/         # Phoenix components
+│   │   │   ├── layouts.ex
+│   │   │   └── core_components.ex
+│   │   └── live/               # LiveView modules
+│   │       ├── marking_live.ex
+│   │       ├── refinery_live.ex
+│   │       ├── settings_live.ex
+│   │       └── course_live/
+│   │           ├── index.ex
+│   │           └── show.ex
+│   └── etma_handler_web.ex     # Web module definitions
 ├── config/                     # Configuration files
-├── test/                       # ExUnit tests
+│   ├── config.exs              # Base config
+│   ├── dev.exs                 # Development config
+│   ├── prod.exs                # Production config
+│   ├── test.exs                # Test config
+│   ├── runtime.exs             # Runtime config
+│   └── runtime_security.exs    # Security runtime config
 ├── assets/                     # Frontend assets
-├── priv/                       # Static files, migrations
-└── scripts/                    # Helper scripts
+├── priv/                       # Static files
+├── scripts/                    # Helper scripts
+├── docs/                       # Documentation
+│   └── architecture/           # Architecture docs (MAA/RMR/RMO)
+├── Justfile                    # Task runner commands
+├── Containerfile               # Container build (primary)
+├── Dockerfile                  # Docker-compatible build
+└── flake.nix                   # Nix flake for reproducibility
 ----
 
 == Key Concepts
@@ -102,13 +151,38 @@ mix test
 # Or: just test
 ----
 
+=== Building Container
+
+[source,bash]
+----
+just build
+# Or: podman build -t etma-handler:latest -f Containerfile .
+----
+
+=== Running Container
+
+[source,bash]
+----
+just do-it    # One-command setup and run
+just run      # Run container (foreground)
+just start    # Run container (background)
+----
+
 === Building Release
 
 [source,bash]
 ----
 MIX_ENV=prod mix release
-# Or: just release
 ----
+
+== Container Build Notes
+
+The `Containerfile` and `Dockerfile` generate `mix.lock` during the build process. This allows building even when `mix.lock` is not committed to the repository. The build process:
+
+1. Copies `mix.exs` and `config/`
+2. Runs `mix deps.get` (generates `mix.lock`)
+3. Compiles dependencies and application
+4. Builds the release
 
 == RSR Gold Compliance
 
