@@ -62,7 +62,7 @@ do-it: _check-podman _ensure-dirs
 # Pull the latest container image
 pull:
     @echo "  Pulling container image..."
-    -podman pull {{ container_image }}
+    podman pull {{ container_image }}
 
 # Build the container locally
 build:
@@ -72,6 +72,7 @@ build:
 
 # Run the container (foreground)
 run:
+    @podman image exists {{ container_image }} || just build
     podman run --rm -it \
         -p {{ port }}:4000 \
         -v {{ data_dir }}:/data:Z \
@@ -228,4 +229,4 @@ _ensure-dirs:
 
 # Try to pull, fall back to build
 _pull-or-build:
-    @just pull 2>/dev/null || just build
+    @just pull || just build
