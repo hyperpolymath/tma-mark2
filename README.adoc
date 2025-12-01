@@ -239,12 +239,71 @@ Authentication: FIDO2/WebAuthn (YubiKey, Touch ID, Passkeys)
 Key Derivation: BLAKE3-KDF / HKDF-SHA256
 ----
 
+=== Transport Security (The Plastic Prison)
+
+**TLS 1.3 only.** No downgrade attacks. No legacy ciphers.
+
+[source]
+----
+TLS Version:    1.3 only (no 1.2, no 1.1, no 1.0)
+Ciphers:        TLS_CHACHA20_POLY1305_SHA256
+                TLS_AES_256_GCM_SHA384
+                TLS_AES_128_GCM_SHA256
+Key Exchange:   X448, X25519, secp521r1, secp384r1
+Signatures:     Ed448, Ed25519, ECDSA P-521/P-384
+HSTS:           max-age=63072000; includeSubDomains; preload
+----
+
+=== HTTP Security Headers
+
+Every header cranked to maximum:
+
+[cols="1,2"]
+|===
+|Header |Value
+
+|**Content-Security-Policy**
+|Strict nonce-based, no inline scripts, no eval
+
+|**Strict-Transport-Security**
+|2 years, includeSubDomains, preload
+
+|**X-Content-Type-Options**
+|nosniff
+
+|**X-Frame-Options**
+|DENY
+
+|**Cross-Origin-Embedder-Policy**
+|require-corp
+
+|**Cross-Origin-Opener-Policy**
+|same-origin
+
+|**Permissions-Policy**
+|Deny all except WebAuthn
+|===
+
+=== Rate Limiting
+
+[cols="1,1,1"]
+|===
+|Endpoint |Requests |Window
+
+|General |100 |1 minute
+|Auth/Login |5 |1 minute
+|API |60 |1 minute
+|File Upload |10 |1 minute
+|===
+
 === Zero Trust
 
 * **Data at rest**: Encrypted with hybrid post-quantum crypto
+* **Data in transit**: TLS 1.3 with perfect forward secrecy
 * **Passwords**: Argon2id (defeats GPU attacks)
 * **2FA**: FIDO2 hardware keys or passkeys
-* **No telemetry**: Zero data collection
+* **Sessions**: Encrypted, HttpOnly, Secure, SameSite=Strict
+* **No telemetry**: Zero data collection, zero phone home
 
 == Documentation
 
