@@ -7,7 +7,7 @@
 # =============================================================================
 # Stage 1: Build
 # =============================================================================
-FROM docker.io/hexpm/elixir:1.16.0-erlang-26.2.1-alpine-3.19.0 AS builder
+FROM docker.io/elixir:1.16-alpine AS builder
 
 # Install build deps
 RUN apk add --no-cache build-base git nodejs npm
