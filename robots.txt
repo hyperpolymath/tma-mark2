@@ -1,0 +1,36 @@
+# robots.txt for eTMA Handler repository
+# This file primarily applies to hosted documentation/GitHub Pages
+
+User-agent: *
+Allow: /
+
+# AI crawlers - permitted with conditions
+# See /.well-known/aibdp.json for full boundary declaration
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+# Rate limiting hint (advisory)
+Crawl-delay: 1
+
+# Sitemap (if hosted documentation exists)
+# Sitemap: https://hyperpolymath.github.io/tma-mark2/sitemap.xml
+
+# Related declarations
+# AI Boundary Declaration: /.well-known/aibdp.json
+# LLMs context: /llms.txt
+# Security: /.well-known/security.txt
