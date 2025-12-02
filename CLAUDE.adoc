@@ -14,13 +14,332 @@ eTMA Handler is an Elixir/Phoenix application for marking Open University studen
 
 == Technology Stack
 
-* **Language**: Elixir 1.14+ / OTP 25+
-* **Web Framework**: Phoenix 1.7 + LiveView
-* **Database**: CubDB (embedded, pure Elixir)
-* **HTTP Server**: Bandit (pure Elixir)
-* **Frontend**: Tailwind CSS, Alpine.js, Heroicons
-* **Packaging**: Burrito (cross-platform binaries)
-* **Container**: Wolfi base (Chainguard) with Podman
+[cols="1,2,3"]
+|===
+| Layer | Technology | Purpose
+
+| **Language**
+| Elixir 1.14+ / OTP 25+
+| Functional, fault-tolerant runtime
+
+| **Web Framework**
+| Phoenix 1.7 + LiveView
+| Server-rendered real-time UI via WebSocket
+
+| **HTTP Server**
+| Bandit
+| Pure Elixir HTTP/2 server
+
+| **Database**
+| CubDB
+| Embedded, append-only B-tree (pure Elixir)
+
+| **Styling**
+| Tailwind CSS
+| Utility-first CSS framework
+
+| **Icons**
+| Heroicons
+| SVG icon library
+
+| **Client JS**
+| Alpine.js (minimal)
+| Lightweight interactivity hooks
+
+| **Packaging**
+| Burrito
+| Cross-platform single-binary distribution
+
+| **Container**
+| Wolfi (Chainguard)
+| Minimal, secure container base
+|===
+
+== System Architecture
+
+=== High-Level Overview
+
+[source]
+----
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          TUTOR WORKSTATION                              │
+│                                                                         │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │                       eTMA Handler (BEAM VM)                       │  │
+│  │                                                                    │  │
+│  │  ┌─────────────────────────────────────────────────────────────┐  │  │
+│  │  │                    PRESENTATION LAYER                        │  │  │
+│  │  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐   │  │  │
+│  │  │  │MarkingLive  │ │RefinaryLive │ │    SettingsLive     │   │  │  │
+│  │  │  │ (3-pane UI) │ │(comment bank)│ │  (configuration)    │   │  │  │
+│  │  │  └──────┬──────┘ └──────┬──────┘ └──────────┬──────────┘   │  │  │
+│  │  │         │               │                   │               │  │  │
+│  │  │         └───────────────┼───────────────────┘               │  │  │
+│  │  │                         │ Phoenix.PubSub                    │  │  │
+│  │  │                         ▼                                   │  │  │
+│  │  └─────────────────────────────────────────────────────────────┘  │  │
+│  │                            │                                       │  │
+│  │  ┌─────────────────────────▼───────────────────────────────────┐  │  │
+│  │  │                    BUSINESS LOGIC LAYER                      │  │  │
+│  │  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐ │  │  │
+│  │  │  │   Bouncer    │ │  Calculator  │ │       Audit          │ │  │  │
+│  │  │  │(file ingest) │ │ (safe eval)  │ │  (QA feedback)       │ │  │  │
+│  │  │  └──────────────┘ └──────────────┘ └──────────────────────┘ │  │  │
+│  │  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐ │  │  │
+│  │  │  │   Security   │ │    Crypto    │ │       Parser         │ │  │  │
+│  │  │  │  (policies)  │ │  (hashing)   │ │   (.fhi/.docx)       │ │  │  │
+│  │  │  └──────────────┘ └──────────────┘ └──────────────────────┘ │  │  │
+│  │  └─────────────────────────────────────────────────────────────┘  │  │
+│  │                            │                                       │  │
+│  │  ┌─────────────────────────▼───────────────────────────────────┐  │  │
+│  │  │                      DATA LAYER                              │  │  │
+│  │  │  ┌────────────────────────────────────────────────────────┐ │  │  │
+│  │  │  │                   CubDB (GenServer)                     │ │  │  │
+│  │  │  │     Append-only B-tree · ACID · Pure Elixir             │ │  │  │
+│  │  │  └────────────────────────────────────────────────────────┘ │  │  │
+│  │  └─────────────────────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│                                  │                                       │
+│          ┌───────────────────────┼───────────────────────┐              │
+│          ▼                       ▼                       ▼              │
+│    ┌───────────┐          ┌───────────┐          ┌───────────┐         │
+│    │.fhi Files │          │  .docx    │          │  ~/.local │         │
+│    │  (Input)  │          │ (Output)  │          │  /share/  │         │
+│    └───────────┘          └───────────┘          └───────────┘         │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+----
+
+=== OTP Supervision Tree
+
+[source]
+----
+EtmaHandler.Application (Supervisor, strategy: one_for_one)
+│
+├── EtmaHandler.Repo ─────────────────── CubDB GenServer
+│                                        Persistent embedded database
+│
+├── EtmaHandlerWeb.Telemetry ─────────── Metrics & instrumentation
+│                                        :telemetry handlers
+│
+├── {Phoenix.PubSub, name: :etma_handler} ── Inter-process messaging
+│                                            LiveView broadcasts
+│
+├── EtmaHandlerWeb.Endpoint ──────────── Bandit HTTP server
+│   │                                    WebSocket connections
+│   │
+│   ├── Phoenix.Router ───────────────── Route dispatch
+│   │   ├── /                            Redirect to /marking
+│   │   ├── /marking                     MarkingLive
+│   │   ├── /refinary                    RefinaryLive
+│   │   ├── /settings                    SettingsLive
+│   │   ├── /courses                     CourseLive
+│   │   └── /api/*                       ApiController
+│   │
+│   └── Plug Pipeline ────────────────── Request processing
+│       ├── SecurityHeaders             CSP, HSTS, CORP, COEP
+│       ├── RateLimiter                 Token bucket algorithm
+│       ├── ForceSSL                    HTTPS enforcement
+│       └── RequestId                   Request tracing
+│
+└── EtmaHandler.Bouncer ──────────────── File watcher (conditional)
+                                         Downloads folder monitoring
+----
+
+=== LiveView UI Architecture
+
+[source]
+----
+┌─────────────────────────────────────────────────────────────────────┐
+│                         MarkingLive (Main UI)                        │
+│                                                                      │
+│  ┌──────────────┐  ┌─────────────────────────┐  ┌─────────────────┐ │
+│  │   MANIFEST   │  │      WORKSURFACE        │  │    CO-PILOT     │ │
+│  │    PANE      │  │                         │  │                 │ │
+│  │              │  │  ┌───────────────────┐  │  │  ┌───────────┐  │ │
+│  │ □ Student 1  │  │  │  Student Details  │  │  │  │ Comment   │  │ │
+│  │ ■ Student 2  │◄─┼──│  ───────────────  │  │  │  │   Bank    │  │ │
+│  │ □ Student 3  │  │  │  Q1: [  ] / 10    │  │  │  │           │  │ │
+│  │ □ Student 4  │  │  │  Q2: [  ] / 15    │──┼──┼─►│ [Drag me] │  │ │
+│  │              │  │  │  Q3: [  ] / 25    │  │  │  │ [Drag me] │  │ │
+│  │              │  │  │  ───────────────  │  │  │  │           │  │ │
+│  │  [Export]    │  │  │  Feedback:        │  │  │  └───────────┘  │ │
+│  │              │  │  │  ┌─────────────┐  │  │  │                 │ │
+│  │              │  │  │  │             │  │  │  │  ┌───────────┐  │ │
+│  │              │  │  │  │             │  │  │  │  │  Audit    │  │ │
+│  │              │  │  │  └─────────────┘  │  │  │  │  Checks   │  │ │
+│  │              │  │  └───────────────────┘  │  │  │  ✓ Length │  │ │
+│  │              │  │                         │  │  │  ✗ Tone   │  │ │
+│  └──────────────┘  └─────────────────────────┘  └─────────────────┘ │
+│                                                                      │
+│  JavaScript Hooks:                                                   │
+│  ├── Calculator ──── Real-time arithmetic in mark inputs            │
+│  ├── AutoSave ────── 2-second debounced persistence                 │
+│  ├── KeyboardShortcuts ── Ctrl+S, Ctrl+Enter, Escape                │
+│  └── DragDrop ────── Comment bank drag-and-drop                     │
+└─────────────────────────────────────────────────────────────────────┘
+----
+
+== Isolation & Security Architecture
+
+=== Defense in Depth
+
+[source]
+----
+┌─────────────────────────────────────────────────────────────────────┐
+│                        SECURITY BOUNDARIES                           │
+│                                                                      │
+│  LAYER 1: Network Isolation                                          │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  • Localhost-only by default (127.0.0.1:4000)                  │ │
+│  │  • No cloud sync, no telemetry, no external API calls          │ │
+│  │  • Air-gapped operation capability                              │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  LAYER 2: HTTP Security (Plugs)                                      │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  SecurityHeaders:                                               │ │
+│  │  ├── CSP: script-src 'nonce-{random}' (per-request)            │ │
+│  │  ├── HSTS: max-age=63072000; includeSubDomains; preload        │ │
+│  │  ├── X-Frame-Options: DENY                                      │ │
+│  │  ├── X-Content-Type-Options: nosniff                           │ │
+│  │  ├── Cross-Origin-Embedder-Policy: require-corp                │ │
+│  │  ├── Cross-Origin-Opener-Policy: same-origin                   │ │
+│  │  └── Permissions-Policy: camera=(), microphone=(), etc.        │ │
+│  │                                                                 │ │
+│  │  RateLimiter (Token Bucket):                                    │ │
+│  │  ├── General:     100 req/min                                   │ │
+│  │  ├── Auth:          5 req/min                                   │ │
+│  │  ├── API:          60 req/min                                   │ │
+│  │  └── File Upload:  10 req/min                                   │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  LAYER 3: Input Validation                                           │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  Bouncer (File Ingestion):                                      │ │
+│  │  ├── Extension whitelist: .doc .docx .rtf .pdf .zip .fhi .odt  │ │
+│  │  ├── Filename regex: OU format validation                      │ │
+│  │  ├── File existence & readability checks                       │ │
+│  │  └── Size limits                                                │ │
+│  │                                                                 │ │
+│  │  Calculator (Safe Evaluation):                                  │ │
+│  │  ├── NO Code.eval!() - custom recursive descent parser         │ │
+│  │  ├── Whitelist regex: /^[\d\+\-\*\/\(\)\.\s]+$/                │ │
+│  │  ├── Only: digits, +, -, *, /, (, ), decimal point             │ │
+│  │  └── Safe division-by-zero handling                            │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  LAYER 4: Process Isolation (OTP)                                    │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  • one_for_one supervision: crash isolation                    │ │
+│  │  • GenServer boundaries: state encapsulation                   │ │
+│  │  • Message passing: no shared mutable state                    │ │
+│  │  • Crash recovery: automatic restart with backoff              │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  LAYER 5: Cryptography                                               │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  • Argon2id: password hashing (memory-hard, side-channel safe) │ │
+│  │  • BLAKE3: fast secure hashing (optional)                      │ │
+│  │  • AES-256-GCM: data-at-rest encryption                        │ │
+│  │  • Post-quantum ready: ML-KEM-1024 support planned             │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  LAYER 6: Data Integrity (CubDB)                                     │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  • Append-only: no in-place updates, corruption-resistant      │ │
+│  │  • ACID transactions: consistency guaranteed                   │ │
+│  │  • Automatic compaction: space reclamation                     │ │
+│  │  • Local-only: ~/.local/share/etma_handler/data/               │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+----
+
+=== Future: WASM Plugin Sandbox
+
+[source]
+----
+┌─────────────────────────────────────────────────────────────────────┐
+│                    PLANNED: WASM ISOLATION                           │
+│                                                                      │
+│  ┌────────────────────────────────────────────────────────────────┐ │
+│  │  Host (BEAM)                                                    │ │
+│  │  ┌──────────────────────────────────────────────────────────┐  │ │
+│  │  │  Wasmex Runtime                                           │  │ │
+│  │  │  ┌────────────────────────────────────────────────────┐  │  │ │
+│  │  │  │  WASM Sandbox                                       │  │  │ │
+│  │  │  │  ├── Memory: isolated linear memory                 │  │  │ │
+│  │  │  │  ├── Imports: whitelisted host functions only       │  │  │ │
+│  │  │  │  ├── No filesystem access                           │  │  │ │
+│  │  │  │  ├── No network access                              │  │  │ │
+│  │  │  │  └── Bounded execution time                         │  │  │ │
+│  │  │  └────────────────────────────────────────────────────┘  │  │ │
+│  │  └──────────────────────────────────────────────────────────┘  │ │
+│  └────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  Status: Commented in mix.exs, awaiting implementation              │
+└─────────────────────────────────────────────────────────────────────┘
+----
+
+== Data Flow Diagrams
+
+=== Import Flow (.fhi → Database)
+
+[source]
+----
+┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│Downloads │    │ Bouncer  │    │  Parser  │    │Validation│    │  CubDB   │
+│  Folder  │───►│(Watcher) │───►│  (.fhi)  │───►│  (Ecto)  │───►│  (Repo)  │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+     │               │               │               │               │
+     │  file_added   │  validate     │  parse_xml    │  changeset    │  put
+     │               │  extension    │  extract      │  validate     │  persist
+     │               │  filename     │  metadata     │  constraints  │
+     │               │  readable     │               │               │
+     ▼               ▼               ▼               ▼               ▼
+                                                              ┌──────────┐
+                                                              │ LiveView │
+                                                              │ Broadcast│
+                                                              └──────────┘
+----
+
+=== Marking Flow (User → Database → UI)
+
+[source]
+----
+┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│  User    │    │ LiveView │    │Calculator│    │  CubDB   │    │  PubSub  │
+│  Input   │───►│  Handle  │───►│  (Safe)  │───►│  (Repo)  │───►│Broadcast │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+     │               │               │               │               │
+     │  phx-change   │  handle_event │  evaluate     │  put          │  broadcast
+     │  "5+5"        │  parse input  │  arithmetic   │  {:mark, 10}  │  :mark_updated
+     │               │               │  return 10    │               │
+     ▼               ▼               ▼               ▼               ▼
+                                                              ┌──────────┐
+                                                              │ All      │
+                                                              │ Clients  │
+                                                              └──────────┘
+----
+
+=== Export Flow (Database → .docx)
+
+[source]
+----
+┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│  User    │    │ LiveView │    │  CubDB   │    │ Template │    │   File   │
+│  Click   │───►│  Export  │───►│  (Repo)  │───►│  Engine  │───►│  System  │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+     │               │               │               │               │
+     │  phx-click    │  handle_event │  get          │  render       │  write
+     │  "export"     │  export_docx  │  assignment   │  docx_xml     │  .docx
+     │               │               │  + marks      │               │
+     ▼               ▼               ▼               ▼               ▼
+                                                              ┌──────────┐
+                                                              │ Download │
+                                                              │ Folder   │
+                                                              └──────────┘
+----
 
 == Directory Structure
 
@@ -28,86 +347,114 @@ eTMA Handler is an Elixir/Phoenix application for marking Open University studen
 ----
 tma-mark2/
 ├── lib/
-│   ├── etma_handler/           # Core business logic
-│   │   ├── application.ex      # OTP application supervisor
-│   │   ├── bouncer.ex          # Access control/authorization
-│   │   ├── security.ex         # Security utilities
-│   │   ├── repo.ex             # CubDB data repository
-│   │   ├── crypto/             # Cryptography modules
-│   │   │   ├── crypto.ex       # Core crypto operations
-│   │   │   ├── hashing.ex      # BLAKE3/Argon2 hashing
-│   │   │   ├── signatures.ex   # Digital signatures
-│   │   │   ├── hybrid.ex       # Hybrid encryption
-│   │   │   ├── webauthn.ex     # WebAuthn/FIDO2 support
-│   │   │   ├── backend.ex      # Crypto backend abstraction
-│   │   │   └── encrypted_storage.ex
-│   │   ├── logic/              # Logic/reasoning engine
-│   │   │   └── calculator.ex   # miniKanren-based calculator
-│   │   └── marking/            # Marking functionality
-│   │       └── audit.ex        # Audit trail
-│   ├── etma_handler.ex         # Public API
-│   ├── etma_handler_web/       # Phoenix web layer
-│   │   ├── endpoint.ex         # HTTP endpoint
-│   │   ├── router.ex           # Route definitions
-│   │   ├── telemetry.ex        # Metrics/telemetry
-│   │   ├── controllers/        # HTTP controllers
-│   │   │   ├── api_controller.ex
-│   │   │   ├── error_html.ex
-│   │   │   └── error_json.ex
-│   │   ├── plugs/              # Custom Plug middleware
-│   │   │   ├── security_headers.ex
-│   │   │   ├── rate_limiter.ex
-│   │   │   ├── force_ssl.ex
-│   │   │   └── request_id.ex
-│   │   ├── components/         # Phoenix components
-│   │   │   ├── layouts.ex
-│   │   │   └── core_components.ex
-│   │   └── live/               # LiveView modules
-│   │       ├── marking_live.ex
-│   │       ├── refinery_live.ex
-│   │       ├── settings_live.ex
-│   │       └── course_live/
-│   │           ├── index.ex
-│   │           └── show.ex
-│   └── etma_handler_web.ex     # Web module definitions
-├── config/                     # Configuration files
-│   ├── config.exs              # Base config
-│   ├── dev.exs                 # Development config
-│   ├── prod.exs                # Production config
-│   ├── test.exs                # Test config
-│   ├── runtime.exs             # Runtime config
-│   └── runtime_security.exs    # Security runtime config
-├── assets/                     # Frontend assets
-├── priv/                       # Static files
-├── scripts/                    # Helper scripts
-├── docs/                       # Documentation
-│   └── architecture/           # Architecture docs (MAA/RMR/RMO)
-├── Justfile                    # Task runner commands
-├── Containerfile               # Container build (primary)
-├── Dockerfile                  # Docker-compatible build
-└── flake.nix                   # Nix flake for reproducibility
+│   ├── etma_handler/                 # Core business logic
+│   │   ├── application.ex            # OTP application supervisor
+│   │   ├── bouncer.ex                # File watcher & validation
+│   │   ├── security.ex               # Security policies
+│   │   ├── repo.ex                   # CubDB data repository
+│   │   ├── crypto/                   # Cryptography modules
+│   │   │   ├── crypto.ex             # Core crypto operations
+│   │   │   ├── hashing.ex            # BLAKE3/Argon2 hashing
+│   │   │   ├── signatures.ex         # Digital signatures
+│   │   │   ├── hybrid.ex             # Hybrid encryption
+│   │   │   ├── webauthn.ex           # WebAuthn/FIDO2 support
+│   │   │   ├── backend.ex            # Crypto backend abstraction
+│   │   │   └── encrypted_storage.ex  # Encrypted data-at-rest
+│   │   ├── logic/                    # Reasoning engine
+│   │   │   └── calculator.ex         # Safe arithmetic evaluator
+│   │   └── marking/                  # Marking functionality
+│   │       └── audit.ex              # QA audit checks
+│   ├── etma_handler.ex               # Public API module
+│   ├── etma_handler_web/             # Phoenix web layer
+│   │   ├── endpoint.ex               # HTTP endpoint config
+│   │   ├── router.ex                 # Route definitions
+│   │   ├── telemetry.ex              # Metrics & telemetry
+│   │   ├── controllers/              # HTTP controllers
+│   │   │   ├── api_controller.ex     # REST API endpoints
+│   │   │   ├── error_html.ex         # HTML error pages
+│   │   │   └── error_json.ex         # JSON error responses
+│   │   ├── plugs/                    # Middleware
+│   │   │   ├── security_headers.ex   # CSP, HSTS, CORP, etc.
+│   │   │   ├── rate_limiter.ex       # Token bucket rate limiting
+│   │   │   ├── force_ssl.ex          # HTTPS enforcement
+│   │   │   └── request_id.ex         # Request tracing
+│   │   ├── components/               # Phoenix components
+│   │   │   ├── layouts.ex            # Layout templates
+│   │   │   └── core_components.ex    # Shared UI components
+│   │   └── live/                     # LiveView modules
+│   │       ├── marking_live.ex       # Main marking interface
+│   │       ├── refinery_live.ex      # Comment bank editor
+│   │       ├── settings_live.ex      # Settings UI
+│   │       └── course_live/          # Course management
+│   │           ├── index.ex          # Course list
+│   │           └── show.ex           # Course detail
+│   └── etma_handler_web.ex           # Web module definitions
+├── assets/                           # Frontend assets
+│   ├── js/app.js                     # JS hooks (Calculator, AutoSave, etc.)
+│   ├── css/app.css                   # Tailwind CSS
+│   └── vendor/                       # Third-party assets
+├── config/                           # Configuration
+│   ├── config.exs                    # Base config
+│   ├── dev.exs                       # Development overrides
+│   ├── prod.exs                      # Production settings
+│   ├── test.exs                      # Test config
+│   ├── runtime.exs                   # Runtime config (env vars)
+│   └── runtime_security.exs          # Security runtime config
+├── priv/                             # Static files
+├── test/                             # ExUnit tests
+├── docs/                             # Documentation
+│   └── architecture/                 # Architecture docs
+│       ├── overview.adoc             # System architecture
+│       ├── decisions.adoc            # ADRs
+│       ├── maa.adoc                  # Accountability framework
+│       ├── rmo.adoc                  # Role matrix
+│       └── rmr.adoc                  # RACI matrix
+├── scripts/                          # Helper scripts
+├── Justfile                          # Task runner
+├── Containerfile                     # Podman/Docker build
+├── Dockerfile                        # Docker-compatible build
+├── flake.nix                         # Nix reproducibility
+└── mix.exs                           # Elixir project config
 ----
 
 == Key Concepts
 
 === .fhi Files
 
-Proprietary XML-based format for student submissions. Contains:
-- Student metadata
-- Submission content
-- Attachment references
+Proprietary XML-based format for Open University student submissions:
+
+[source,xml]
+----
+<submission>
+  <student id="A1234567" name="Jane Doe"/>
+  <assignment code="TMA01" module="M269"/>
+  <content>
+    <question number="1">
+      <answer>...</answer>
+      <attachments>
+        <file name="diagram.png" encoding="base64">...</file>
+      </attachments>
+    </question>
+  </content>
+</submission>
+----
 
 === Marking Grid
 
-Tutors assign grades using a grid interface. Each cell has:
-- Criterion
-- Grade (A-F or numeric)
-- Feedback text
+Three-pane interface for efficient marking:
+
+1. **Manifest Pane** - List of students, progress tracking
+2. **Worksurface Pane** - Current student's questions and mark inputs
+3. **Co-pilot Pane** - Comment bank, audit checks, AI suggestions (future)
 
 === CubDB
 
-Embedded database. No external dependencies. Data stored in:
-`~/.local/share/etma_handler/data/`
+Embedded database with zero external dependencies:
+
+* **Location**: `~/.local/share/etma_handler/data/`
+* **Structure**: Append-only B-tree
+* **Guarantees**: ACID transactions
+* **Recovery**: Automatic on crash
 
 == Code Conventions
 
@@ -135,76 +482,85 @@ All source files must have:
 
 == Common Tasks
 
-=== Running Development Server
+=== Development
 
 [source,bash]
 ----
+# Enter Nix development shell
+just dev
+
+# Run development server
 mix phx.server
-# Or: just dev
-----
 
-=== Running Tests
-
-[source,bash]
-----
+# Run tests
 mix test
-# Or: just test
+just test
+
+# Format & lint
+mix format
+mix credo --strict
+just check
 ----
 
-=== Building Container
+=== Container Operations
 
 [source,bash]
 ----
+# One-command setup and run
+just do-it
+
+# Build container (generates mix.lock during build)
 just build
-# Or: podman build -t etma-handler:latest -f Containerfile .
+podman build -t etma-handler:latest -f Containerfile .
+
+# Run container
+just run       # foreground
+just start     # background
+
+# View logs
+just logs
+
+# Stop container
+just stop
 ----
 
-=== Running Container
+=== Release
 
 [source,bash]
 ----
-just do-it    # One-command setup and run
-just run      # Run container (foreground)
-just start    # Run container (background)
-----
-
-=== Building Release
-
-[source,bash]
-----
+# Build Elixir release
 MIX_ENV=prod mix release
+
+# Build with Burrito (single binary)
+MIX_ENV=prod mix release --burrito
 ----
-
-== Container Build Notes
-
-The `Containerfile` and `Dockerfile` generate `mix.lock` during the build process. This allows building even when `mix.lock` is not committed to the repository. The build process:
-
-1. Copies `mix.exs` and `config/`
-2. Runs `mix deps.get` (generates `mix.lock`)
-3. Compiles dependencies and application
-4. Builds the release
 
 == RSR Gold Compliance
 
 This project follows RSR Gold standards:
 
-* All documentation in AsciiDoc where possible
+* All documentation in AsciiDoc
 * SPDX headers on all files
 * TPCF contribution framework
 * MAA/RMR/RMO accountability frameworks
 * Nix flakes for reproducibility
 * Containerfile with Wolfi base
+* No telemetry or tracking
 
 == What NOT to Do
 
-* Don't use TypeScript/JavaScript (except minimal Alpine.js)
+* Don't use TypeScript/JavaScript (except minimal Alpine.js hooks)
 * Don't add external database dependencies
 * Don't break backward compatibility without RFC
 * Don't commit secrets or credentials
 * Don't use `unsafe` patterns
+* Don't use `Code.eval!()` for user input (use Calculator instead)
+* Don't add cloud sync or telemetry
+* Don't use Elm, ReScript, or complex frontend frameworks
 
 == Getting Help
 
 * Read README.adoc for setup
 * Check lib/etma_handler.ex for public API
 * See CONTRIBUTING.adoc for contribution process
+* Architecture details in docs/architecture/
