@@ -1,0 +1,36 @@
+= tma-mark2 - Citation Guide
+:toc:
+
+== BibTeX
+
+[source,bibtex]
+----
+@software{tma-mark2_2025,
+  author = {Polymath, Hyper},
+  title = {tma-mark2},
+  year = {2025},
+  url = {https://github.com/hyperpolymath/tma-mark2},
+  license = {AGPL-3.0-or-later}
+}
+----
+
+== Harvard Style
+
+Polymath, H. (2025) _tma-mark2_ [Computer software]. Available at: https://github.com/hyperpolymath/tma-mark2
+
+== OSCOLA
+
+Hyper Polymath, 'tma-mark2' (2025) <https://github.com/hyperpolymath/tma-mark2>
+
+== MLA
+
+Polymath, Hyper. "tma-mark2." 2025, github.com/hyperpolymath/tma-mark2.
+
+== APA 7
+
+Polymath, H. (2025). _tma-mark2_ [Computer software]. GitHub. https://github.com/hyperpolymath/tma-mark2
+
+== See Also
+
+* link:../CITATION.cff[CITATION.cff]
+* link:../codemeta.json[codemeta.json]
