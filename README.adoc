@@ -1,76 +1,253 @@
-= tma-mark2
-Jonathan D.A. Jewell <jonathan.jewell@gmail.com>
-:toc: macro
+// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
+// SPDX-License-Identifier: MIT
+= eTMA Handler
+:toc: left
+:toclevels: 3
 :icons: font
 :source-highlighter: rouge
 :experimental:
-:url-github: https://github.com/hyperpolymath/tma-mark2
-:url-gitlab: https://gitlab.com/hyperpolymath/tma-mark2
-:url-bitbucket: https://bitbucket.org/hyperpolymath/tma-mark2
-:url-codeberg: https://codeberg.org/hyperpolymath/tma-mark2
+:sectnums:
 
-TMA Mark 2 iteration toolkit
-
-image:https://img.shields.io/badge/RSR-Certified-gold[RSR Certified]
-image:https://img.shields.io/badge/License-AGPL%20v3-blue[License]
-
-toc::[]
+image:https://img.shields.io/badge/version-2.0.0-blue[Version]
+image:https://img.shields.io/badge/license-MIT-green[License]
+image:https://img.shields.io/badge/RSR-Gold-gold[RSR Gold]
+image:https://img.shields.io/badge/elixir-1.14+-purple[Elixir Version]
+image:https://img.shields.io/badge/OTP-25+-red[OTP Version]
 
 == Overview
 
-tma-mark2 is part of the link:https://rhodium.sh[Rhodium Standard] (RSR) ecosystem.
+eTMA Handler is the BEAM edition of the Open University's electronic Tutor Marked Assignment (eTMA) marking tool. Originally written in Java, this project migrates the marking workflow to Elixir/Phoenix for improved reliability, cross-platform distribution, and modern web capabilities.
 
-Domain: *software-development*
+The application processes student assignment submissions in `.fhi` format, provides a marking interface for tutors, and generates graded `.docx` files with feedback annotations.
 
-== Installation
+=== Key Features
+
+* **Phoenix LiveView UI**: Real-time, reactive marking interface
+* **CubDB Storage**: Crash-proof, pure-Elixir embedded database
+* **Burrito Packaging**: Single binary distribution for all platforms
+* **File Watching**: Automatic ingestion from Downloads folder
+* **WASM Plugins**: Sandboxed extension support
+* **Post-Quantum Ready**: Kyber key exchange (optional)
+* **Offline First**: Works without network connectivity
+
+== Quick Start
+
+=== Prerequisites
+
+* Elixir 1.14+ with OTP 25+
+* Node.js 18+ (for assets)
+* Or: Nix with flakes enabled
+
+=== Installation
 
 [source,bash]
 ----
-# Clone from GitHub (primary)
-git clone {url-github}
+# Using Nix (recommended)
+nix develop
+mix setup
 
-# Or from mirrors
-git clone {url-gitlab}
-git clone {url-codeberg}
+# Or manually
+mix deps.get
+mix assets.setup
+mix assets.build
 ----
 
-== RSR Stack
+=== Running
 
-This project follows RSR conventions:
+[source,bash]
+----
+# Development server
+mix phx.server
 
-* ✅ ReScript for frontend/logic
-* ✅ Deno for JS runtime
-* ✅ WASM for performance-critical code
-* ✅ Rust/OCaml/Haskell for systems/proofs
-* ✅ Guile/Scheme for configuration
-* ❌ No TypeScript
-* ❌ No Go
-* ❌ No npm
+# Or with Just
+just dev
 
-== Mirrors
+# Production release
+just release
+----
+
+Then open http://localhost:4000 in your browser.
+
+== Usage
+
+=== Marking Workflow
+
+1. **Drop Files**: Place `.fhi` files in your Downloads folder (or configured watch directory)
+2. **Review**: Files appear automatically in the eTMA Handler interface
+3. **Mark**: Use the marking grid to assign grades and feedback
+4. **Export**: Generate graded `.docx` files for return to students
+
+=== CLI Commands
+
+[source,bash]
+----
+# Process a single file
+./etma_handler mark assignment.fhi
+
+# Batch process directory
+./etma_handler batch ~/assignments/
+
+# Export grades
+./etma_handler export --format csv
+----
+
+== Architecture
+
+=== Technology Stack
 
 [cols="1,2"]
 |===
-| Platform | URL
+|Component |Technology
 
-| GitHub (primary) | {url-github}
-| GitLab | {url-gitlab}
-| Bitbucket | {url-bitbucket}
-| Codeberg | {url-codeberg}
+|Language |Elixir 1.14+ / OTP 25+
+|Web Framework |Phoenix 1.7 + LiveView
+|HTTP Server |Bandit
+|Database |CubDB (embedded)
+|Frontend |Tailwind CSS + Alpine.js
+|Packaging |Burrito (cross-platform binaries)
+|File Parsing |SweetXml
+|Security |Argon2id, XChaCha20-Poly1305
 |===
 
-== License
+=== Module Structure
 
-Licensed under AGPL-3.0-or-later OR LicenseRef-Palimpsest-0.5.
+[source]
+----
+lib/
+├── etma_handler/           # Core business logic
+│   ├── application.ex      # OTP Application
+│   ├── assignments/        # Assignment CRUD
+│   ├── marking/            # Marking logic
+│   ├── parser/             # .fhi and .docx parsing
+│   └── watcher/            # File system watcher
+├── etma_handler_web/       # Phoenix web layer
+│   ├── controllers/        # HTTP controllers
+│   ├── live/               # LiveView modules
+│   ├── components/         # UI components
+│   └── router.ex           # Routes
+└── etma_handler.ex         # Public API
+----
 
-See link:LICENSE[LICENSE] for details.
+== Configuration
+
+Configuration is managed through `config/`:
+
+[source,elixir]
+----
+# config/config.exs
+config :etma_handler,
+  watch_directory: System.get_env("ETMA_WATCH_DIR", "~/Downloads"),
+  storage_path: System.get_env("ETMA_DATA_DIR", "~/.local/share/etma_handler"),
+  auto_backup: true
+----
+
+=== Environment Variables
+
+[cols="1,2,1"]
+|===
+|Variable |Description |Default
+
+|`ETMA_WATCH_DIR`
+|Directory to watch for new files
+|`~/Downloads`
+
+|`ETMA_DATA_DIR`
+|Data storage directory
+|`~/.local/share/etma_handler`
+
+|`ETMA_PORT`
+|HTTP server port
+|`4000`
+
+|`ETMA_HOST`
+|HTTP server host
+|`localhost`
+|===
+
+== Development
+
+=== Building
+
+[source,bash]
+----
+# Development build
+just build
+
+# Release build
+just release
+
+# Cross-platform binaries (via Burrito)
+just release-all
+----
+
+=== Testing
+
+[source,bash]
+----
+# Run all tests
+just test
+
+# With coverage
+just test-coverage
+
+# Specific test
+mix test test/etma_handler/parser_test.exs
+----
+
+=== Documentation
+
+[source,bash]
+----
+# Generate ExDoc
+just docs
+
+# Open in browser
+just docs-open
+----
+
+== Deployment
+
+=== Binary Distribution
+
+Burrito creates self-contained binaries:
+
+[source,bash]
+----
+# Build for current platform
+just release
+
+# Build for all platforms
+just release-all
+
+# Output in _build/burrito/
+----
+
+=== Container
+
+[source,bash]
+----
+# Build container
+podman build -t etma-handler:latest .
+
+# Run
+podman run -p 4000:4000 -v ~/assignments:/data etma-handler:latest
+----
 
 == Contributing
 
-See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc].
+See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc] for guidelines.
 
-== Metadata
+== License
 
-* Domain: software-development
-* Framework: RSR (Rhodium Standard Repository)
-* Dublin Core: link:.well-known/dc.xml[.well-known/dc.xml]
+MIT License - see link:LICENSE.txt[LICENSE.txt] for details.
+
+== Security
+
+See link:SECURITY.md[SECURITY.md] for security policies and vulnerability reporting.
+
+== Acknowledgements
+
+* The Open University for the original Java implementation
+* The Elixir and Phoenix communities
+* CubDB for the excellent embedded database
+* Burrito for cross-platform packaging
