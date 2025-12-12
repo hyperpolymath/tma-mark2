@@ -1,51 +1,65 @@
-# SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
-# SPDX-License-Identifier: MIT
+# eTMA Handler - Wolfi Container
+# Secure, minimal container using Chainguard's Wolfi base
+#
+# Build:
+#   podman build -t etma-handler:latest .
+#
+# Run:
+#   podman run -p 4000:4000 etma-handler:latest
+#
+# Features:
+#   - Wolfi base (secure, minimal)
+#   - Multi-stage build (small final image)
+#   - Non-root user (security best practice)
+#   - Health check included
 
-# eTMA Handler Container Image
-# Using Chainguard Wolfi for minimal attack surface
-
-# =============================================================================
-# Stage 1: Build
-# =============================================================================
-FROM cgr.dev/chainguard/wolfi-base:latest AS builder
+# ===========================================
+# STAGE 1: Builder
+# ===========================================
+FROM cgr.dev/chainguard/wolfi-base AS builder
 
 # Install build dependencies
-RUN apk add --no-cache \
-    erlang-26 \
+RUN apk add --no-cache --no-cache \
     elixir \
-    nodejs-20 \
-    npm \
+    erlang \
+    erlang-dev \
     git \
-    build-base
-
-# Set build environment
-ENV MIX_ENV=prod \
-    MIX_HOME=/opt/mix \
-    HEX_HOME=/opt/hex \
-    LANG=C.UTF-8
+    build-base \
+    nodejs \
+    npm
 
 WORKDIR /app
 
-# Install hex and rebar
+# Install Hex and Rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# Copy dependency files first (for better caching)
-# Note: mix.lock is generated during build if not present
+# Set build environment
+ENV MIX_ENV=prod
+
+# Cache dependencies (mix.lock generated during build if not present)
 COPY mix.exs ./
+RUN mix deps.get --only $MIX_ENV
+
+# Copy config (needed for deps.compile)
 COPY config config
 
-# Fetch dependencies (generates mix.lock if missing)
-RUN mix deps.get --only prod && \
-    mix deps.compile
+# Compile dependencies
+RUN mix deps.compile
 
-# Copy assets and compile them
-COPY assets assets
-COPY priv priv
-RUN mix assets.deploy
-
-# Copy application source
+# Copy application code
 COPY lib lib
+COPY priv priv
+COPY assets assets
+
+# Install Node dependencies and build assets
+WORKDIR /app/assets
+RUN npm install
+
+WORKDIR /app
+
+# Build assets
+RUN mix assets.deploy
 
 # Compile application
 RUN mix compile
@@ -53,56 +67,44 @@ RUN mix compile
 # Build release
 RUN mix release
 
-# =============================================================================
-# Stage 2: Runtime
-# =============================================================================
-FROM cgr.dev/chainguard/wolfi-base:latest AS runtime
+# ===========================================
+# STAGE 2: Runner
+# ===========================================
+FROM cgr.dev/chainguard/wolfi-base AS runner
 
-# Install runtime dependencies only
-RUN apk add --no-cache \
-    ncurses-libs \
+# Install runtime dependencies
+RUN apk add --no-cache --no-cache \
     libstdc++ \
+    ncurses \
     openssl
 
-# Create non-root user
-RUN addgroup -g 1000 etma && \
-    adduser -u 1000 -G etma -h /app -D etma
-
 WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup -S etma && adduser -S etma -G etma
 
 # Copy release from builder
 COPY --from=builder --chown=etma:etma /app/_build/prod/rel/etma_handler ./
 
 # Create data directory
-RUN mkdir -p /data && chown etma:etma /data
+RUN mkdir -p /app/data && chown etma:etma /app/data
 
 # Switch to non-root user
 USER etma
 
 # Environment configuration
-ENV PHX_HOST=0.0.0.0 \
-    PHX_PORT=4000 \
-    ETMA_DATA_DIR=/data \
-    LANG=C.UTF-8 \
-    RELEASE_TMP=/tmp
+ENV HOME=/app \
+    PORT=4000 \
+    PHX_HOST=localhost \
+    MIX_ENV=prod \
+    ETMA_DATA_DIR=/app/data
 
 # Expose port
 EXPOSE 4000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
-
-# Volume for persistent data
-VOLUME ["/data"]
-
-# Labels for OCI compliance
-LABEL org.opencontainers.image.title="eTMA Handler" \
-      org.opencontainers.image.description="Open University Marking Tool (BEAM Edition)" \
-      org.opencontainers.image.version="2.0.0" \
-      org.opencontainers.image.vendor="eTMA Handler Contributors" \
-      org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.source="https://github.com/Hyperpolymath/tma-mark2"
+    CMD wget --no-verbose --tries=1 --spider http://localhost:4000/api/health || exit 1
 
 # Start the application
 CMD ["bin/etma_handler", "start"]
