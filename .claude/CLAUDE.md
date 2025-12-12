@@ -23,3 +23,8 @@ This repository needs FULL conversion from TS/JS to ReScript.
 - Use tsc or TypeScript compiler
 
 See TS_CONVERSION_NEEDED.md for full migration guide.
+
+## Exceptions
+
+- `assets/vendor/topbar.js` - Third-party library, not for conversion
+- `assets/tailwind.config.js` - Build configuration, not app code
