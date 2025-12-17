@@ -6,7 +6,7 @@
   (version "1.0.0")
   (name "tma-mark2")
   (type "project")
-  (purpose "// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors")
+  (purpose "Open University marking tool with BEAM-powered reliability")
 
   (position-in-ecosystem
     "Part of hyperpolymath ecosystem. Follows RSR guidelines.")
@@ -16,5 +16,5 @@
              (url "https://github.com/hyperpolymath/rhodium-standard-repositories")
              (relationship "standard")))
 
-  (what-this-is "// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors")
+  (what-this-is "A local-first marking tool for tutors handling Open University assignments")
   (what-this-is-not "- NOT exempt from RSR compliance"))

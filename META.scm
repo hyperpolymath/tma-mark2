@@ -10,7 +10,7 @@
      (title . "RSR Compliance")
      (status . "accepted")
      (date . "2025-12-15")
-     (context . "// SPDX-FileCopyrightText: 2024 eTMA Handler Contributors")
+     (context . "Project requires consistent guidelines across all hyperpolymath repos")
      (decision . "Follow Rhodium Standard Repository guidelines")
      (consequences . ("RSR Gold target" "SHA-pinned actions" "SPDX headers" "Multi-platform CI")))))
 

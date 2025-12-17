@@ -13,9 +13,9 @@ name: "CodeQL Advanced"
 
 on:
   push:
-    branches: [ "claude/migrate-java-marking-handler-01Jpdv2VFckmYCfMgCRP3hcH" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "claude/migrate-java-marking-handler-01Jpdv2VFckmYCfMgCRP3hcH" ]
+    branches: [ "main" ]
   schedule:
     - cron: '19 2 * * 2'
 

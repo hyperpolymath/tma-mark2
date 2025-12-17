@@ -97,7 +97,7 @@
           meta = with pkgs.lib; {
             description = "Open University Marking Tool (BEAM Edition)";
             homepage = "https://github.com/Hyperpolymath/tma-mark2";
-            license = licenses.mit;
+            license = with licenses; [ mit agpl3Plus ];  # MIT OR AGPL-3.0-or-later
             platforms = platforms.unix;
             maintainers = [];
           };

@@ -1,5 +1,5 @@
-<!-- SPDX-FileCopyrightText: 2024 eTMA Handler Contributors -->
-<!-- SPDX-License-Identifier: MIT -->
+<!-- SPDX-FileCopyrightText: 2024-2025 eTMA Handler Contributors -->
+<!-- SPDX-License-Identifier: MIT OR AGPL-3.0-or-later -->
 
 # Roadmap
 
@@ -8,6 +8,23 @@ This document outlines the planned development direction for eTMA Handler.
 ## Current Version: 2.0.0
 
 The BEAM edition is now feature-complete for basic marking workflows.
+
+## Immediate (v2.0.x - Maintenance)
+
+### Security & Compliance
+- [x] SHA-pinned GitHub Actions (security)
+- [x] CodeQL scanning on main branch
+- [x] Dependabot for dependency updates
+- [x] OSSF Scorecard integration
+- [x] Dual-license compliance (MIT OR AGPL-3.0-or-later)
+- [ ] Full SHA pinning for all actions (ongoing via Dependabot)
+
+### SCM & Build
+- [x] guix.scm package definition
+- [x] flake.nix Nix derivation
+- [x] Containerfile (Wolfi-based)
+- [ ] flake.lock generation for reproducibility
+- [ ] Guix channel publishing
 
 ## Short Term (v2.1 - v2.3)
 
@@ -40,6 +57,11 @@ The BEAM edition is now feature-complete for basic marking workflows.
 - [ ] Raft consensus for multi-node
 - [ ] CRDTs for offline sync
 - [ ] Event sourcing
+
+### RSR Compliance
+- [ ] Complete ReScript migration (TypeScript removal)
+- [ ] Full SHA-pinned actions audit
+- [ ] Security hardening review
 
 ## Long Term (v4.0+)
 
@@ -76,4 +98,4 @@ Items we've decided against:
 
 ---
 
-Last updated: 2024-12-01
+Last updated: 2025-12-17

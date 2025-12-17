@@ -14,7 +14,7 @@ jobs:
           elixir-version: '1.15'
       
       - name: Cache deps
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: deps
           key: deps-${{ hashFiles('mix.lock') }}

@@ -19,7 +19,7 @@
     (synopsis "Elixir application")
     (description "Elixir application - part of the RSR ecosystem.")
     (home-page "https://github.com/hyperpolymath/tma-mark2")
-    (license license:agpl3+)))
+    (license (list license:expat license:agpl3+))))  ;; MIT OR AGPL-3.0-or-later
 
 ;; Return package for guix shell
 tma_mark2
