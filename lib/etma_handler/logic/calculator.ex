@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 defmodule EtmaHandler.Logic.Calculator do
   @moduledoc """
   The "What-If" Calculator Engine.

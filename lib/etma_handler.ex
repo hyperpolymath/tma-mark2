@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 defmodule EtmaHandler do
   @moduledoc """
   eTMA Handler - Open University Marking Tool (BEAM Edition)

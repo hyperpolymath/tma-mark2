@@ -1,0 +1,177 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// bebop/schemas/security.bop - Security & Crypto Message Types
+//
+// Post-quantum cryptographic operations and security protocols.
+
+// ============================================================
+// CRYPTO ENUMS
+// ============================================================
+
+enum KeyType {
+    Ed448 = 1;
+    Dilithium5 = 2;
+    Kyber1024 = 3;
+    ChaCha20Poly1305 = 4;
+}
+
+enum SignatureAlgorithm {
+    Ed448 = 1;
+    Dilithium5 = 2;
+    Hybrid = 3;  // Ed448 + Dilithium5
+}
+
+enum HashAlgorithm {
+    Blake3 = 1;
+    Shake256 = 2;
+    Sha256 = 3;  // Compatibility only
+}
+
+// ============================================================
+// KEY MANAGEMENT
+// ============================================================
+
+struct PublicKey {
+    guid keyId;
+    KeyType type;
+    byte[] data;
+    date createdAt;
+    date expiresAt;
+    bool revoked;
+}
+
+struct KeyPair {
+    guid keyId;
+    KeyType type;
+    byte[] publicKey;
+    byte[] encryptedPrivateKey;  // Encrypted with master key
+    byte[] salt;
+    date createdAt;
+}
+
+struct KeyRotation {
+    guid oldKeyId;
+    guid newKeyId;
+    KeyType type;
+    date rotatedAt;
+    string reason;
+}
+
+// ============================================================
+// SIGNATURES
+// ============================================================
+
+struct Signature {
+    guid signerId;
+    SignatureAlgorithm algorithm;
+    byte[] signature;
+    byte[] publicKeyFingerprint;  // BLAKE3 of public key
+    date signedAt;
+}
+
+struct HybridSignature {
+    Signature classical;   // Ed448
+    Signature postQuantum; // Dilithium5
+}
+
+struct SignedMessage {
+    byte[] message;
+    HybridSignature signature;
+    date timestamp;
+    byte[] nonce;
+}
+
+// ============================================================
+// KEY ENCAPSULATION (Kyber)
+// ============================================================
+
+struct KemEncapsulation {
+    guid recipientKeyId;
+    byte[] ciphertext;      // Kyber encapsulated key
+    byte[] ephemeralPublic; // For hybrid mode
+    date encapsulatedAt;
+}
+
+struct KemDecapsulationRequest {
+    guid recipientKeyId;
+    byte[] ciphertext;
+}
+
+// ============================================================
+// AUTHENTICATED ENCRYPTION
+// ============================================================
+
+struct EncryptedPayload {
+    byte[] ciphertext;
+    byte[] nonce;
+    byte[] aad;       // Additional authenticated data
+    byte[] tag;       // Authentication tag
+}
+
+struct SealedBox {
+    guid recipientKeyId;
+    KemEncapsulation kem;
+    EncryptedPayload payload;
+    date sealedAt;
+}
+
+// ============================================================
+// SESSION SECURITY
+// ============================================================
+
+struct SecureSession {
+    guid sessionId;
+    guid deviceId;
+    byte[] sessionKey;      // Derived from Kyber KEM
+    byte[] handshakeHash;   // Transcript hash
+    uint32 messageCounter;
+    date establishedAt;
+    date expiresAt;
+}
+
+struct SessionTicket {
+    guid sessionId;
+    byte[] encryptedState;
+    byte[] authTag;
+    date issuedAt;
+    date expiresAt;
+}
+
+// ============================================================
+// VPN / SDP
+// ============================================================
+
+struct WireGuardConfig {
+    byte[] privateKey;
+    byte[] publicKey;
+    byte[] presharedKey;
+    string endpoint;
+    uint16 listenPort;
+    string[] allowedIPs;
+    uint32 keepaliveSeconds;
+}
+
+struct SdpGrant {
+    guid grantId;
+    string resource;
+    string action;
+    date grantedAt;
+    date expiresAt;
+    byte[] token;
+    Signature authorization;
+}
+
+// ============================================================
+// AUDIT LOG ENTRY
+// ============================================================
+
+struct AuditEntry {
+    guid entryId;
+    guid sessionId;
+    string action;
+    string resource;
+    string outcome;
+    date timestamp;
+    byte[] contextHash;
+    Signature signature;
+}

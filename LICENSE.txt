@@ -1,41 +1,12 @@
-SPDX-License-Identifier: MIT OR AGPL-3.0-or-later
+SPDX-License-Identifier: AGPL-3.0-or-later
 SPDX-FileCopyrightText: 2024-2025 hyperpolymath
 
 ================================================================================
-DUAL LICENSE: MIT OR AGPL-3.0-or-later
+GNU AFFERO GENERAL PUBLIC LICENSE v3.0 OR LATER
 ================================================================================
 
-This project is dual-licensed under the MIT License OR the GNU Affero General
-Public License v3.0 or later. You may choose to use, copy, modify, and
-distribute this work under the terms of EITHER license (your choice).
-
---------------------------------------------------------------------------------
-MIT LICENSE
---------------------------------------------------------------------------------
-
-Copyright (c) 2024-2025 hyperpolymath
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
---------------------------------------------------------------------------------
-GNU AFFERO GENERAL PUBLIC LICENSE v3.0 OR LATER
---------------------------------------------------------------------------------
+tma-mark2 - eTMA Handler for Open University Tutors
+Copyright (C) 2024-2025 hyperpolymath
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License as published by the Free
@@ -50,41 +21,52 @@ details.
 You should have received a copy of the GNU Affero General Public License along
 with this program. If not, see <https://www.gnu.org/licenses/>.
 
-The full text of the AGPL-3.0 is available at:
-  https://www.gnu.org/licenses/agpl-3.0.txt
-
---------------------------------------------------------------------------------
-CHOOSING YOUR LICENSE
---------------------------------------------------------------------------------
-
-You may choose to use this work under:
-  1. MIT License - Standard permissive open source license
-  2. AGPL-3.0-or-later - Copyleft license requiring source disclosure for
-     network services
-
-For most uses, MIT License provides maximum flexibility.
-For ensuring open source remains open (especially for SaaS/network services),
-AGPL-3.0-or-later provides stronger protections.
+The full text of the AGPL-3.0 is available in:
+  LICENSES/AGPL-3.0-or-later.txt
 
 ================================================================================
-PALIMPSEST PHILOSOPHICAL OVERLAY (NON-BINDING)
+PALIMPSEST PHILOSOPHICAL OVERLAY (v0.5)
 ================================================================================
 
-This project encourages (but does not legally require) adherence to the
-principles of the Palimpsest License - a framework for consent-based digital
-interaction and the future web.
+In addition to the AGPL-3.0-or-later license, this project adopts the
+Palimpsest philosophical framework. While the AGPL provides the legal
+foundation, Palimpsest articulates our ethical commitments:
 
-Core Principles (Encouraged):
-  - Respect for emotional and creative lineage
-  - Transparent AI training practices with explicit consent
-  - Preservation of metadata and attribution
-  - Protection of narrative intent and cultural context
+Core Principles:
+  1. CONSENT - Explicit permission for AI training and derivative works
+  2. ATTRIBUTION - Preserve the chain of creation and contribution
+  3. COMPASSION - Technology should reduce suffering, not amplify it
+  4. REVERSIBILITY - Actions should be undoable where possible
+  5. TRANSPARENCY - No hidden behaviors or undisclosed data collection
 
-The Palimpsest principles represent our vision for a consent-based internet.
-While not legally binding for use of this software, we encourage all users
-and contributors to familiarize themselves with these principles.
+The Palimpsest principles are not legally binding beyond what the AGPL
+requires, but represent the spirit in which this software is offered.
+
+Philosophy: "Copyleft with compassion"
+
+The full text of Palimpsest v0.5 is available in:
+  LICENSES/Palimpsest-0.5.txt
 
 Learn more: https://github.com/hyperpolymath/palimpsest-license
+
+================================================================================
+ADDITIONAL PERMISSIONS (Section 7)
+================================================================================
+
+As additional permissions under AGPL Section 7, you are granted:
+
+1. EDUCATIONAL USE EXCEPTION
+   Academic institutions may run this software for non-commercial educational
+   purposes without the network disclosure requirement of AGPL Section 13,
+   provided that:
+   - The use is strictly internal to the institution
+   - No commercial services are built upon it
+   - This exception does not extend to modifications or derivatives
+
+2. INTEROPERABILITY EXCEPTION
+   Linking with the Open University's official APIs or data formats does not
+   create a derivative work, allowing data interchange without license
+   propagation to OU systems.
 
 ================================================================================
 END OF LICENSE

@@ -1,0 +1,282 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# eTMA Handler - Hardened Container Build
+#
+# Build Strategy: Guix first, Nix fallback, direct build emergency
+#
+# Build (single arch):
+#   nerdctl build -t tma-mark2:latest -f Containerfile.hardened .
+#
+# Build (multi-arch):
+#   nerdctl build --platform linux/amd64,linux/arm64,linux/riscv64 \
+#     -t ghcr.io/hyperpolymath/tma-mark2:latest -f Containerfile.hardened .
+#
+# Run:
+#   nerdctl run --rm -p 4000:4000 \
+#     --security-opt no-new-privileges \
+#     --read-only \
+#     --cap-drop ALL \
+#     -v ~/tma-data:/data:rw \
+#     tma-mark2:latest
+#
+# Security Features:
+#   - Wolfi base (Chainguard hardened, minimal CVEs)
+#   - Guix-first reproducible builds (Nix fallback)
+#   - Non-root user (UID 65532)
+#   - Read-only rootfs compatible
+#   - Dropped all capabilities
+#   - No new privileges
+#   - Health check included
+#   - ClamAV for virus scanning
+#   - Tesseract for OCR
+#   - WireGuard for VPN
+#   - nftables for firewall
+
+# ===========================================
+# ARG: Build method selection
+# ===========================================
+ARG BUILD_METHOD=auto
+# Options: guix, nix, direct, auto (try guix, then nix, then direct)
+
+# ===========================================
+# STAGE 1: Guix Builder (Primary)
+# ===========================================
+FROM debian:bookworm-slim AS guix-builder
+
+# Install Guix
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    xz-utils \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Guix binary (reproducible package manager)
+RUN curl -L https://git.savannah.gnu.org/cgit/guix.git/plain/etc/guix-install.sh | \
+    bash -s -- --unattend || true
+
+# Copy source
+WORKDIR /build
+COPY . .
+
+# Build with Guix if available
+RUN if command -v guix &> /dev/null && [ -f guix.scm ]; then \
+        echo ">>> Building with Guix (primary)" && \
+        guix build -f guix.scm && \
+        cp -r $(guix build -f guix.scm) /guix-output; \
+    else \
+        echo ">>> Guix not available, skipping" && \
+        mkdir -p /guix-output && \
+        touch /guix-output/.guix-failed; \
+    fi
+
+# ===========================================
+# STAGE 2: Nix Builder (Fallback)
+# ===========================================
+FROM nixos/nix:2.24.10 AS nix-builder
+
+WORKDIR /build
+COPY . .
+
+# Check if Guix succeeded, otherwise build with Nix
+COPY --from=guix-builder /guix-output /guix-check
+
+RUN if [ -f /guix-check/.guix-failed ]; then \
+        echo ">>> Building with Nix (fallback)" && \
+        nix build .#default \
+            --extra-experimental-features "nix-command flakes" \
+            --no-link \
+            --print-out-paths > /nix-output-path && \
+        cp -r $(cat /nix-output-path) /nix-output; \
+    else \
+        echo ">>> Guix build succeeded, skipping Nix" && \
+        mkdir -p /nix-output && \
+        cp -r /guix-check/* /nix-output/; \
+    fi
+
+# ===========================================
+# STAGE 3: Direct Builder (Emergency)
+# ===========================================
+FROM cgr.dev/chainguard/wolfi-base:latest AS direct-builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    elixir \
+    erlang \
+    erlang-dev \
+    git \
+    build-base \
+    rust \
+    cargo \
+    openssl-dev \
+    ncurses-dev
+
+WORKDIR /app
+
+# Install Hex and Rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+# Set build environment
+ENV MIX_ENV=prod
+
+# Copy source
+COPY mix.exs mix.lock* ./
+COPY config config
+
+# Get dependencies
+RUN mix deps.get --only prod && \
+    mix deps.compile
+
+# Build Rust NIFs if present
+COPY native native
+RUN if [ -d native/tma_crypto ]; then \
+        cargo build --release --manifest-path native/tma_crypto/Cargo.toml; \
+    fi && \
+    if [ -d native/tma_nlp ]; then \
+        cargo build --release --manifest-path native/tma_nlp/Cargo.toml; \
+    fi
+
+# Copy application code
+COPY lib lib
+COPY priv priv
+COPY assets assets
+COPY src src
+
+# Build assets (if assets exist)
+RUN if [ -d assets ]; then \
+        mix assets.deploy 2>/dev/null || echo "No assets to deploy"; \
+    fi
+
+# Compile and release
+RUN mix compile && mix release
+
+# ===========================================
+# STAGE 4: Final Runner (Hardened Wolfi)
+# ===========================================
+FROM cgr.dev/chainguard/wolfi-base:latest AS runner
+
+LABEL org.opencontainers.image.title="tma-mark2"
+LABEL org.opencontainers.image.description="eTMA Handler - Open University Marking Tool"
+LABEL org.opencontainers.image.source="https://github.com/hyperpolymath/tma-mark2"
+LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
+LABEL org.opencontainers.image.vendor="hyperpolymath"
+
+# Install runtime dependencies + security tools
+RUN apk add --no-cache \
+    # Runtime essentials
+    libstdc++ \
+    ncurses \
+    openssl \
+    ca-certificates \
+    # Security: Virus scanning
+    clamav \
+    clamav-libunrar \
+    # Security: Firewall
+    nftables \
+    iptables \
+    # Security: VPN
+    wireguard-tools \
+    # OCR
+    tesseract-ocr \
+    tesseract-ocr-data-eng \
+    # PDF processing
+    poppler-utils \
+    # Fonts for document rendering
+    font-liberation \
+    font-dejavu \
+    # Health check
+    wget
+
+# Create non-root user with specific UID (Chainguard convention)
+RUN addgroup -g 65532 -S tma && \
+    adduser -u 65532 -S -G tma -h /app tma
+
+# Create directory structure
+RUN mkdir -p /app /data /data/etmas /data/returns /data/cache /data/logs /run/tma && \
+    chown -R tma:tma /app /data /run/tma
+
+WORKDIR /app
+
+# Copy built application (prefer Nix output, fallback to direct)
+COPY --from=nix-builder --chown=tma:tma /nix-output/ ./nix-build/
+COPY --from=direct-builder --chown=tma:tma /app/_build/prod/rel/etma_handler ./direct-build/
+
+# Select the build that succeeded
+RUN if [ -d nix-build/bin ]; then \
+        echo ">>> Using Guix/Nix build" && \
+        cp -r nix-build/* . && \
+        rm -rf nix-build direct-build; \
+    elif [ -d direct-build/bin ]; then \
+        echo ">>> Using direct build" && \
+        cp -r direct-build/* . && \
+        rm -rf nix-build direct-build; \
+    else \
+        echo "ERROR: No successful build found!" && exit 1; \
+    fi
+
+# Copy ClamAV signatures (if pre-baked)
+# RUN mkdir -p /var/lib/clamav && chown tma:tma /var/lib/clamav
+# COPY --chown=tma:tma clamav-signatures/ /var/lib/clamav/
+
+# Set up default nftables rules (paranoid: default deny)
+COPY --chown=root:root <<'EOF' /etc/nftables.conf
+#!/usr/sbin/nft -f
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# tma-mark2 default-deny firewall
+
+flush ruleset
+
+table inet tma_filter {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state established,related accept
+        iif "lo" accept
+        tcp dport 4000 ip saddr 127.0.0.1 accept
+        log prefix "TMA-IN-DROP: " drop
+    }
+
+    chain output {
+        type filter hook output priority 0; policy drop;
+        ct state established,related accept
+        oif "lo" accept
+        # DNS allowed for name resolution
+        udp dport 53 accept
+        # Ephemeral rules added dynamically by SDP module
+        log prefix "TMA-OUT-DROP: " drop
+    }
+
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+    }
+}
+EOF
+
+# Switch to non-root user
+USER tma
+
+# Environment configuration
+ENV HOME=/app \
+    PORT=4000 \
+    PHX_HOST=localhost \
+    MIX_ENV=prod \
+    ETMA_DATA_DIR=/data \
+    ETMA_CACHE_DIR=/data/cache \
+    ETMA_LOG_DIR=/data/logs \
+    # Disable ClamAV auto-update (use pre-baked sigs)
+    CLAMAV_NO_FRESHCLAM=1 \
+    # Locale
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+# Expose port (localhost only in default config)
+EXPOSE 4000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:4000/api/health || exit 1
+
+# Volume for persistent data
+VOLUME ["/data"]
+
+# Start the application
+ENTRYPOINT ["bin/etma_handler"]
+CMD ["start"]

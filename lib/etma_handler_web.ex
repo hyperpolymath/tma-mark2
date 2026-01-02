@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 defmodule EtmaHandlerWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such

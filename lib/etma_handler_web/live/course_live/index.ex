@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 defmodule EtmaHandlerWeb.CourseLive.Index do
   @moduledoc """
   Course management - list and configure courses.

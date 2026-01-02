@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 defmodule EtmaHandler.Repo do
   @moduledoc """
   The Crash-Proof Data Layer.

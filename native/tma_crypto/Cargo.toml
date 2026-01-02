@@ -1,0 +1,67 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# tma_crypto - Post-Quantum Cryptography NIF for tma-mark2
+#
+# Provides: BLAKE3, SHAKE-256, Ed448, Kyber-1024, Dilithium5
+
+[package]
+name = "tma_crypto"
+version = "2.0.0"
+authors = ["hyperpolymath <hyperpolymath@users.noreply.github.com>"]
+edition = "2021"
+license = "AGPL-3.0-or-later"
+description = "Post-quantum cryptography NIF for tma-mark2"
+repository = "https://github.com/hyperpolymath/tma-mark2"
+keywords = ["cryptography", "post-quantum", "elixir", "nif", "kyber"]
+categories = ["cryptography"]
+
+[lib]
+name = "tma_crypto"
+crate-type = ["cdylib"]
+
+[dependencies]
+# Rustler for Elixir NIF bindings
+rustler = "0.35"
+
+# BLAKE3 - Fast cryptographic hash
+blake3 = "1.5"
+
+# SHA-3/SHAKE - NIST standard XOF
+sha3 = "0.10"
+
+# Ed448 - Edwards curve signatures (Curve448)
+ed448-goldilocks = "0.9"
+
+# Post-quantum: Kyber (ML-KEM) and Dilithium
+pqcrypto-kyber = "0.8"
+pqcrypto-dilithium = "0.5"
+
+# ChaCha20-Poly1305 AEAD
+chacha20poly1305 = "0.10"
+
+# Constant-time operations
+subtle = "2.5"
+
+# Random number generation
+rand = "0.8"
+getrandom = { version = "0.2", features = ["std"] }
+
+# Hex encoding for debug output
+hex = "0.4"
+
+# Zeroize secrets on drop
+zeroize = { version = "1.8", features = ["derive"] }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "crypto_bench"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

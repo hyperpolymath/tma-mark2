@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# tma_nlp - Natural Language Processing NIF for tma-mark2
+#
+# Provides: Spell checking, similarity detection, text analysis
+
+[package]
+name = "tma_nlp"
+version = "2.0.0"
+authors = ["hyperpolymath <hyperpolymath@users.noreply.github.com>"]
+edition = "2021"
+license = "AGPL-3.0-or-later"
+description = "Natural language processing NIF for tma-mark2"
+repository = "https://github.com/hyperpolymath/tma-mark2"
+keywords = ["nlp", "spell-check", "similarity", "elixir", "nif"]
+categories = ["text-processing"]
+
+[lib]
+name = "tma_nlp"
+crate-type = ["cdylib"]
+
+[dependencies]
+# Rustler for Elixir NIF bindings
+rustler = "0.35"
+
+# Approximate string matching (agrep-like)
+strsim = "0.11"
+
+# Unicode handling
+unicode-segmentation = "1.11"
+unicode-normalization = "0.1"
+
+# N-gram generation
+ngram = "0.4"
+
+# Rayon for parallel processing
+rayon = "1.10"
+
+# Memory-efficient string storage
+smartstring = "1.0"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "nlp_bench"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

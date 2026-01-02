@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 defmodule EtmaHandlerWeb.CoreComponents do
   @moduledoc """
   Core UI Components for eTMA Handler.

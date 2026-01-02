@@ -1,0 +1,206 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// bebop/schemas/messages.bop - Core Message Types
+//
+// Bebop protocol definitions for tma-mark2 secure communication.
+// Used for sync, inter-process communication, and mobile companion.
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum MessageType {
+    Request = 1;
+    Response = 2;
+    Notification = 3;
+    Error = 4;
+    Heartbeat = 5;
+}
+
+enum ErrorCode {
+    Ok = 0;
+    InvalidRequest = 1;
+    Unauthorized = 2;
+    NotFound = 3;
+    Conflict = 4;
+    RateLimited = 5;
+    InternalError = 6;
+    CryptoError = 7;
+    NetworkError = 8;
+}
+
+enum SubmissionStatus {
+    New = 1;
+    InProgress = 2;
+    Marked = 3;
+    Reviewed = 4;
+    Submitted = 5;
+    Archived = 6;
+}
+
+enum FeedbackType {
+    Praise = 1;
+    Constructive = 2;
+    Correction = 3;
+    Question = 4;
+    Reference = 5;
+}
+
+// ============================================================
+// CORE MESSAGE WRAPPER
+// ============================================================
+
+struct MessageHeader {
+    guid id;
+    uint32 sequence;
+    MessageType type;
+    string version;
+    date timestamp;
+}
+
+struct Message {
+    MessageHeader header;
+    byte[] payload;
+    byte[] signature;  // Ed448 or Dilithium5 signature
+    byte[] nonce;      // For replay protection
+}
+
+// ============================================================
+// STUDENT SUBMISSION
+// ============================================================
+
+struct Submission {
+    guid id;
+    string studentId;
+    string moduleCode;
+    string assignmentCode;
+    string title;
+    date submittedAt;
+    date dueDate;
+    SubmissionStatus status;
+    byte[] contentHash;  // BLAKE3 hash of content
+    uint64 contentSize;
+}
+
+struct SubmissionContent {
+    guid submissionId;
+    string mimeType;
+    byte[] content;
+    string originalFilename;
+}
+
+// ============================================================
+// FEEDBACK
+// ============================================================
+
+struct FeedbackItem {
+    guid id;
+    guid submissionId;
+    FeedbackType type;
+    string category;
+    string content;
+    uint32 startOffset;  // Position in document
+    uint32 endOffset;
+    date createdAt;
+}
+
+struct FeedbackSummary {
+    guid submissionId;
+    string overallComment;
+    float32 mark;
+    float32 maxMark;
+    bool passed;
+    date completedAt;
+}
+
+// ============================================================
+// SYNC PROTOCOL
+// ============================================================
+
+struct SyncRequest {
+    guid deviceId;
+    string deviceName;
+    date lastSyncAt;
+    byte[] publicKey;  // Kyber-1024 public key
+}
+
+struct SyncResponse {
+    ErrorCode code;
+    guid sessionId;
+    byte[] encapsulatedKey;  // Kyber encapsulated shared secret
+    date expiresAt;
+    Submission[] pendingSubmissions;
+}
+
+struct SyncChunk {
+    guid sessionId;
+    uint32 chunkNumber;
+    uint32 totalChunks;
+    byte[] data;          // ChaCha20-Poly1305 encrypted
+    byte[] authTag;
+}
+
+// ============================================================
+// VIRUSTOTAL INTEGRATION
+// ============================================================
+
+struct VTScanRequest {
+    guid fileId;
+    byte[] fileHash;  // BLAKE3 + SHA-256
+    string filename;
+    uint64 fileSize;
+    bool userConsented;
+}
+
+struct VTScanResult {
+    guid fileId;
+    bool malicious;
+    uint32 positives;
+    uint32 total;
+    string[] detections;
+    date scannedAt;
+    string permalink;
+}
+
+// ============================================================
+// NETWORK ACCESS GRANTS
+// ============================================================
+
+struct AccessGrant {
+    guid id;
+    string destination;  // Domain or IP
+    uint16 port;
+    string protocol;
+    date grantedAt;
+    date expiresAt;
+    string reason;
+    bool userApproved;
+}
+
+struct AccessRevokeRequest {
+    guid grantId;
+    string reason;
+}
+
+// ============================================================
+// COMMENT BANK
+// ============================================================
+
+struct CommentTemplate {
+    guid id;
+    string category;
+    string shortcut;
+    string content;
+    FeedbackType type;
+    uint32 useCount;
+    date lastUsedAt;
+}
+
+struct CommentBank {
+    guid id;
+    string name;
+    string moduleCode;
+    CommentTemplate[] templates;
+    date createdAt;
+    date updatedAt;
+}

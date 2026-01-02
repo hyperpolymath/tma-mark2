@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
-# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2024-2025 hyperpolymath
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 defmodule EtmaHandler.Security do
   @moduledoc """
