@@ -1,3 +1,6 @@
+image:https://img.shields.io/badge/License-MPL_2.0-blue.svg[MPL-2.0,link="https://opensource.org/licenses/MPL-2.0"]
+image:https://img.shields.io/badge/Philosophy-Palimpsest-purple.svg[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-licence"]
+
 // SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
 // SPDX-License-Identifier: MIT
 = eTMA Handler
@@ -9,7 +12,6 @@
 :sectnums:
 
 image:https://img.shields.io/badge/version-2.0.0-blue[Version]
-image:https://img.shields.io/badge/license-MIT-green[License]
 image:https://img.shields.io/badge/RSR-Gold-gold[RSR Gold]
 image:https://img.shields.io/badge/elixir-1.14+-purple[Elixir Version]
 image:https://img.shields.io/badge/OTP-25+-red[OTP Version]
