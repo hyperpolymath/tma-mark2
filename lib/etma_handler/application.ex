@@ -24,7 +24,10 @@ defmodule EtmaHandler.Application do
       # Must start first as other services depend on it
       {EtmaHandler.Repo, data_dir: get_data_dir()},
 
-      # 2. The Telemetry (Metrics collection)
+      # 2. Settings Manager (persisted configuration)
+      EtmaHandler.Settings,
+
+      # 3. The Telemetry (Metrics collection)
       EtmaHandlerWeb.Telemetry,
 
       # 3. The PubSub (For real-time UI updates via LiveView)

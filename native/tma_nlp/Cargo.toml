@@ -30,8 +30,8 @@ strsim = "0.11"
 unicode-segmentation = "1.11"
 unicode-normalization = "0.1"
 
-# N-gram generation
-ngram = "0.4"
+# N-gram generation (latest is 0.1.x)
+ngram = "0.1"
 
 # Rayon for parallel processing
 rayon = "1.10"
@@ -39,12 +39,12 @@ rayon = "1.10"
 # Memory-efficient string storage
 smartstring = "1.0"
 
-[dev-dependencies]
-criterion = "0.5"
-
-[[bench]]
-name = "nlp_bench"
-harness = false
+# Benchmarks disabled until bench file is created
+# [dev-dependencies]
+# criterion = "0.5"
+# [[bench]]
+# name = "nlp_bench"
+# harness = false
 
 [profile.release]
 opt-level = 3

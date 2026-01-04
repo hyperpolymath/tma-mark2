@@ -12,6 +12,19 @@
 use rustler::{Binary, Encoder, Env, NifResult, OwnedBinary, Term};
 use zeroize::Zeroize;
 
+// pqcrypto trait imports (required for from_bytes/as_bytes methods)
+use pqcrypto_traits::kem::{
+    Ciphertext as KemCiphertext,
+    PublicKey as KemPublicKey,
+    SecretKey as KemSecretKey,
+    SharedSecret as KemSharedSecret,
+};
+use pqcrypto_traits::sign::{
+    PublicKey as SignPublicKey,
+    SecretKey as SignSecretKey,
+    SignedMessage,
+};
+
 mod atoms {
     rustler::atoms! {
         ok,

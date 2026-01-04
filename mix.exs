@@ -57,6 +57,7 @@ defmodule EtmaHandler.MixProject do
       {:jason, "~> 1.4"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.1"},
+      {:phoenix_live_dashboard, "~> 0.8"},
 
       # --- The "Magic Bullet" Data Layer ---
       # CubDB: Pure Elixir, crash-proof, append-only B-Tree database
@@ -68,6 +69,8 @@ defmodule EtmaHandler.MixProject do
       {:ecto, "~> 3.12"},
       # SweetXml for parsing legacy .fhi and .docx files
       {:sweet_xml, "~> 0.7"},
+      # Timex for date parsing (FHI dates use "23-Nov-2025 23:52:29" format)
+      {:timex, "~> 3.7"},
 
       # --- The Fort Knox Vault (Security) ---
       # Argon2id for password hashing (memory-hard, side-channel resistant)
@@ -86,11 +89,11 @@ defmodule EtmaHandler.MixProject do
       # Watch Downloads folder for automatic file ingestion
       {:file_system, "~> 1.0"},
       # RSS/Atom parsing for forum monitoring
-      {:fast_rss, "~> 0.5"},
+      # TODO: Add when compatible parser available (feeder needs OTP update, feedraptor needs floki update)
 
       # --- Logic & Rules ---
-      # Erlog - Prolog interpreter for rules learning (no LLMs)
-      {:erlog, "~> 0.8"},
+      # Guesswork - Logic programming for learning rules (no LLMs)
+      {:guesswork, "~> 0.8"},
 
       # --- Optional/Experimental ---
       # CBOR encoding for efficient serialization

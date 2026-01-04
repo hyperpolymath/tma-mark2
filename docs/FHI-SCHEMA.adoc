@@ -1,0 +1,555 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+= FHI (File Handler Info) Schema Specification
+:toc:
+:toclevels: 3
+:sectnums:
+
+== Overview
+
+FHI (File Handler Info) files are XML metadata files that accompany eTMA (electronic Tutor Marked Assignment) submissions in the Open University's marking system. They contain all structured data about a submission including student details, tutor details, submission metadata, and question scores.
+
+== File Format
+
+* **Encoding**: ISO-8859-1 (Latin-1)
+* **Extension**: `.fhi`
+* **MIME Type**: `application/xml` or `text/xml`
+* **Root Element**: `<student_submission>`
+
+== Schema Structure
+
+[source,xml]
+----
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<student_submission>
+    <student_details>...</student_details>
+    <tutor_details>...</tutor_details>
+    <submission_details>...</submission_details>
+    <question_details>...</question_details>
+</student_submission>
+----
+
+== Section: student_details
+
+Contains information about the student who submitted the TMA.
+
+[cols="2,1,1,4"]
+|===
+| Element | Type | Required | Description
+
+| `ou_computer_user_name`
+| String
+| Yes
+| Student's OUCU (Open University Computer Username), e.g., "zx378951"
+
+| `personal_id`
+| String
+| Yes
+| Student's PI (Personal Identifier), e.g., "H4604506"
+
+| `title`
+| String
+| Yes
+| Title (Mr, Mrs, Ms, Miss, Dr, etc.)
+
+| `initials`
+| String
+| Yes
+| First name initial(s)
+
+| `forenames`
+| String
+| Yes
+| Full first name(s)
+
+| `surname`
+| String
+| Yes
+| Family name
+
+| `email_address`
+| String
+| Yes
+| Student's email address
+
+| `address_line1`
+| String
+| Yes
+| First line of postal address
+
+| `address_line2`
+| String
+| No
+| Second line (can be empty)
+
+| `address_line3`
+| String
+| No
+| Third line (can be empty)
+
+| `address_line4`
+| String
+| No
+| City/Town
+
+| `address_line5`
+| String
+| No
+| County/Region
+
+| `postcode`
+| String
+| Yes
+| Postal code
+|===
+
+=== Example
+
+[source,xml]
+----
+<student_details>
+    <ou_computer_user_name>zx378951</ou_computer_user_name>
+    <personal_id>H4604506</personal_id>
+    <title>Miss</title>
+    <initials>T</initials>
+    <forenames>Tyana</forenames>
+    <surname>McCalla</surname>
+    <email_address>tyanamccalla@hotmail.co.uk</email_address>
+    <address_line1>24 Portland Place</address_line1>
+    <address_line2></address_line2>
+    <address_line3></address_line3>
+    <address_line4>GREENHITHE</address_line4>
+    <address_line5>Kent</address_line5>
+    <postcode>DA9 9FE</postcode>
+</student_details>
+----
+
+== Section: tutor_details
+
+Contains information about the Associate Lecturer (tutor) marking the TMA.
+
+[cols="2,1,1,4"]
+|===
+| Element | Type | Required | Description
+
+| `staff_id`
+| String
+| Yes
+| Staff ID number (8 digits), e.g., "01866186"
+
+| `staff_title`
+| String
+| Yes
+| Tutor's title
+
+| `staff_initials`
+| String
+| Yes
+| Tutor's initials
+
+| `staff_forenames`
+| String
+| Yes
+| Tutor's full first name(s)
+
+| `staff_surname`
+| String
+| Yes
+| Tutor's family name
+
+| `region_code`
+| String
+| Yes
+| OU Region code, e.g., "R06" (London)
+|===
+
+=== Region Codes
+
+[cols="1,3"]
+|===
+| Code | Region
+
+| R01 | Scotland
+| R02 | North
+| R03 | Yorkshire
+| R04 | North West
+| R05 | West Midlands
+| R06 | London
+| R07 | South East
+| R08 | South
+| R09 | South West
+| R10 | East Midlands
+| R11 | East of England
+| R12 | Wales
+| R13 | Ireland
+|===
+
+=== Example
+
+[source,xml]
+----
+<tutor_details>
+    <staff_id>01866186</staff_id>
+    <staff_title>Mr</staff_title>
+    <staff_initials>JDAJ</staff_initials>
+    <staff_forenames>Jonathan David Anthony</staff_forenames>
+    <staff_surname>Jewell</staff_surname>
+    <region_code>R06</region_code>
+</tutor_details>
+----
+
+== Section: submission_details
+
+Contains metadata about the TMA submission itself.
+
+[cols="2,1,1,4"]
+|===
+| Element | Type | Required | Description
+
+| `course_code`
+| String
+| Yes
+| Module code, e.g., "DD210"
+
+| `course_version_num`
+| Integer
+| Yes
+| Version of the course (usually 1)
+
+| `pres_code`
+| String
+| Yes
+| Presentation code (year + session), e.g., "25J" = 2025 October
+
+| `assgnmt_suffix`
+| String
+| Yes
+| TMA number, e.g., "01", "02"
+
+| `e_tma_submission_num`
+| Integer
+| Yes
+| Which submission attempt (1 = first)
+
+| `e_tma_submission_date`
+| DateTime
+| Yes
+| When student submitted, format: "DD-Mon-YYYY HH:MM:SS"
+
+| `walton_received_date`
+| DateTime
+| No
+| When Walton Hall received (for paper)
+
+| `marked_date`
+| DateTime
+| No
+| When tutor completed marking
+
+| `submission_status`
+| Enum
+| Yes
+| Current status (see below)
+
+| `late_submission_status`
+| String
+| No
+| Late submission details if applicable
+
+| `tma_submitted_after_absolute_cutoff`
+| Y/N
+| No
+| Whether submitted after final deadline
+
+| `zip_date`
+| DateTime
+| No
+| When zipped for return
+
+| `zip_file`
+| String
+| No
+| Name of the zip file created
+
+| `score_update_allowed`
+| Y/N
+| Yes
+| Whether marks can still be modified
+
+| `overall_grade_score`
+| Integer
+| No
+| Total marks awarded (empty until marked)
+
+| `tutor_comments`
+| String
+| No
+| General feedback comments
+
+| `max_assgnmt_score`
+| Integer
+| Yes
+| Maximum possible marks (zero-padded, e.g., "0100")
+
+| `total_question_count`
+| Integer
+| Yes
+| Number of questions (zero-padded, e.g., "02")
+
+| `permitted_question_count`
+| Integer
+| Yes
+| Questions student must answer
+|===
+
+=== Submission Status Values
+
+[cols="1,3"]
+|===
+| Status | Description
+
+| `Unmarked`
+| Awaiting tutor marking
+
+| `Marked`
+| Tutor has entered marks
+
+| `Returned`
+| Sent back to student
+
+| `Queried`
+| Issue requiring attention
+
+| `Substituted`
+| Replaced by another submission
+|===
+
+=== Presentation Code Format
+
+The `pres_code` follows the format `YYX` where:
+
+* `YY` = Last two digits of year (e.g., "25" = 2025)
+* `X` = Session letter:
+** `B` = February start
+** `D` = April start
+** `J` = October start
+** `K` = November start
+
+=== Example
+
+[source,xml]
+----
+<submission_details>
+    <course_code>DD210</course_code>
+    <course_version_num>1</course_version_num>
+    <pres_code>25J</pres_code>
+    <assgnmt_suffix>01</assgnmt_suffix>
+    <e_tma_submission_num>1</e_tma_submission_num>
+    <e_tma_submission_date>23-Nov-2025 23:52:29</e_tma_submission_date>
+    <walton_received_date/>
+    <marked_date/>
+    <submission_status>Unmarked</submission_status>
+    <late_submission_status/>
+    <tma_submitted_after_absolute_cutoff/>
+    <zip_date/>
+    <zip_file/>
+    <score_update_allowed>Y</score_update_allowed>
+    <overall_grade_score></overall_grade_score>
+    <tutor_comments/>
+    <max_assgnmt_score>0100</max_assgnmt_score>
+    <total_question_count>02</total_question_count>
+    <permitted_question_count>02</permitted_question_count>
+</submission_details>
+----
+
+== Section: question_details
+
+Contains per-question scoring information.
+
+=== question Element
+
+Each question is represented by a `<question>` element with a `question_number` attribute.
+
+[cols="2,1,1,4"]
+|===
+| Element/Attribute | Type | Required | Description
+
+| `@question_number`
+| String
+| Yes
+| Question number (zero-padded), e.g., "01"
+
+| `maximum_question_score`
+| Integer
+| Yes
+| Max marks for this question
+
+| `student_question_score`
+| Integer
+| No
+| Marks awarded (empty until marked)
+
+| `question_parts_count`
+| Integer
+| Yes
+| Number of sub-parts (0 if no parts)
+|===
+
+=== Example
+
+[source,xml]
+----
+<question_details>
+    <question question_number="01">
+        <maximum_question_score>60</maximum_question_score>
+        <student_question_score/>
+        <question_parts_count>0</question_parts_count>
+    </question>
+    <question question_number="02">
+        <maximum_question_score>40</maximum_question_score>
+        <student_question_score/>
+        <question_parts_count>0</question_parts_count>
+    </question>
+</question_details>
+----
+
+== Complete Template
+
+[source,xml]
+----
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<student_submission>
+    <student_details>
+        <ou_computer_user_name></ou_computer_user_name>
+        <personal_id></personal_id>
+        <title></title>
+        <initials></initials>
+        <forenames></forenames>
+        <surname></surname>
+        <email_address></email_address>
+        <address_line1></address_line1>
+        <address_line2></address_line2>
+        <address_line3></address_line3>
+        <address_line4></address_line4>
+        <address_line5></address_line5>
+        <postcode></postcode>
+    </student_details>
+    <tutor_details>
+        <staff_id></staff_id>
+        <staff_title></staff_title>
+        <staff_initials></staff_initials>
+        <staff_forenames></staff_forenames>
+        <staff_surname></staff_surname>
+        <region_code></region_code>
+    </tutor_details>
+    <submission_details>
+        <course_code></course_code>
+        <course_version_num></course_version_num>
+        <pres_code></pres_code>
+        <assgnmt_suffix></assgnmt_suffix>
+        <e_tma_submission_num></e_tma_submission_num>
+        <e_tma_submission_date></e_tma_submission_date>
+        <walton_received_date/>
+        <marked_date/>
+        <submission_status>Unmarked</submission_status>
+        <late_submission_status/>
+        <tma_submitted_after_absolute_cutoff/>
+        <zip_date/>
+        <zip_file/>
+        <score_update_allowed>Y</score_update_allowed>
+        <overall_grade_score></overall_grade_score>
+        <tutor_comments/>
+        <max_assgnmt_score></max_assgnmt_score>
+        <total_question_count></total_question_count>
+        <permitted_question_count></permitted_question_count>
+    </submission_details>
+    <question_details>
+        <!-- Repeat for each question -->
+        <question question_number="01">
+            <maximum_question_score></maximum_question_score>
+            <student_question_score/>
+            <question_parts_count>0</question_parts_count>
+        </question>
+    </question_details>
+</student_submission>
+----
+
+== Elixir Type Definitions
+
+For use with the `EtmaHandler.FHI` module:
+
+[source,elixir]
+----
+@type student :: %{
+  oucu: String.t(),           # "zx378951"
+  personal_id: String.t(),    # "H4604506"
+  title: String.t(),          # "Miss"
+  initials: String.t(),       # "T"
+  forenames: String.t(),      # "Tyana"
+  surname: String.t(),        # "McCalla"
+  email: String.t(),
+  address: list(String.t()),  # Non-empty address lines
+  postcode: String.t()
+}
+
+@type tutor :: %{
+  staff_id: String.t(),
+  title: String.t(),
+  initials: String.t(),
+  forenames: String.t(),
+  surname: String.t(),
+  region_code: String.t()     # "R06"
+}
+
+@type question :: %{
+  number: integer(),          # 1, 2, ...
+  max_score: integer(),       # 60
+  student_score: integer() | nil,
+  parts_count: integer()
+}
+
+@type submission :: %{
+  student: student(),
+  tutor: tutor(),
+  course_code: String.t(),    # "DD210"
+  course_version: integer(),
+  presentation: String.t(),   # "25J"
+  tma_number: String.t(),     # "01"
+  submission_number: integer(),
+  submission_date: DateTime.t() | nil,
+  marked_date: DateTime.t() | nil,
+  status: String.t(),         # "Unmarked" | "Marked" | "Returned"
+  overall_score: integer() | nil,
+  max_score: integer(),
+  questions: list(question())
+}
+----
+
+== Validation Rules
+
+1. **OUCU Format**: Should match pattern `[a-z]{2}\d{6}`
+2. **Personal ID Format**: Should match pattern `[A-Z]\d{7}`
+3. **Staff ID**: 8 digits
+4. **Course Code**: Typically 5 characters (e.g., "DD210")
+5. **Presentation Code**: 3 characters (YYX format)
+6. **TMA Number**: 2 digits, zero-padded
+7. **Scores**: Non-negative integers
+8. **Question scores sum** should not exceed `max_assgnmt_score`
+
+== File Naming Convention
+
+FHI files typically follow this naming pattern:
+
+----
+{OUCU}_{CourseCode}_{Presentation}_TMA{Number}.fhi
+----
+
+Example: `zx378951_DD210_25J_TMA01.fhi`
+
+== Related Files
+
+An eTMA submission package typically contains:
+
+* `.fhi` - This metadata file
+* `.doc/.docx/.odt` - Student's submission document
+* `.pt3` - PT3 form (if applicable)
+* `_MARKED.doc` - Marked copy with feedback
