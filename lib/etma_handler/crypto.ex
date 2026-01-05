@@ -126,7 +126,8 @@ defmodule EtmaHandler.Crypto do
   @spec seal(String.t(), binary()) :: {:ok, binary()} | {:error, atom()}
   def seal(password, plaintext) when is_binary(password) and is_binary(plaintext) do
     salt = :crypto.strong_rand_bytes(16)
-    key = Argon2.hash_pwd_salt(password, salt, format: :raw_hash, hash_len: 32)
+    # Use Argon2.Base.hash_password/3 for raw key derivation
+    key = Argon2.Base.hash_password(password, salt, format: :raw_hash, hashlen: 32)
 
     with {:ok, encrypted} <- encrypt(key, plaintext) do
       {:ok, salt <> encrypted}
@@ -140,7 +141,8 @@ defmodule EtmaHandler.Crypto do
   def unseal(password, sealed) when is_binary(password) do
     case sealed do
       <<salt::binary-16, encrypted::binary>> ->
-        key = Argon2.hash_pwd_salt(password, salt, format: :raw_hash, hash_len: 32)
+        # Use Argon2.Base.hash_password/3 for raw key derivation
+        key = Argon2.Base.hash_password(password, salt, format: :raw_hash, hashlen: 32)
         decrypt(key, encrypted)
 
       _ ->

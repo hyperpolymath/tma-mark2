@@ -1,0 +1,133 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+= Java ETMA Handler - Modernised Version 1
+:toc:
+:toc-placement: preamble
+
+== Overview
+
+This directory contains a modernised version of the **etmaHandlerJ** - the cross-platform Java-based eTMA File Handler originally created by **Mike Hay** (Open University Associate Lecturer).
+
+[IMPORTANT]
+====
+This is a stopgap measure. The `tma-mark2` project is a complete rewrite in Elixir/Phoenix that will eventually replace this Java application entirely. This modernised Java version is preserved here for:
+
+1. Backup and reference purposes
+2. Users who need immediate functionality while the Elixir version is completed
+3. Historical continuity
+====
+
+== Original Author Attribution
+
+[cols="1,3"]
+|===
+|Author |Mike Hay
+|Email |mike.hay@open.ac.uk
+|AL Number |00516109
+|Original Page |http://s376541606.websitehome.co.uk/etmahandlerpage.html
+|===
+
+Mike Hay created the original etmaHandlerJ for Open University Associate Lecturers who mark eTMAs and wish to use Mac, Linux, or Windows to do so. He has been noted for being very responsive to user feedback and continuously improving the tool.
+
+== What Changed in the Modernisation
+
+The original etmaHandlerJ was built with Java 10 and dependencies from 2006-2008. This modernisation updates it to work with Java 25 (2026) while maintaining full backwards compatibility with existing .fhi and .etma files.
+
+=== Security Improvements
+
+[cols="2,2,3"]
+|===
+|Component |Before |After
+
+|Java Runtime
+|Java 10 (EOL 2018, multiple CVEs)
+|Temurin 25.0.1 LTS (current, patched)
+
+|Email Library
+|mail-1.4.jar (2006)
+|Jakarta Mail 2.1.3 + Angus Mail 2.0.3
+
+|Activation Framework
+|activation.jar (old Sun/Oracle)
+|Jakarta Activation 2.1.3
+
+|Desktop Integration
+|JDIC (abandoned 2008)
+|java.awt.Desktop (built-in, maintained)
+
+|Apache Commons Codec
+|1.3 (2004)
+|1.17.1 (2024)
+
+|Apache Commons Lang
+|2.0 (2003)
+|3.17.0 (2024)
+|===
+
+=== Removed Dead Dependencies
+
+* **MRJAdapter/MRJToolkit** - Mac-only, obsolete since macOS X 10.4
+* **AppleJavaExtensions** - Replaced by standard Java APIs
+* **JDIC** - Sun Java Desktop Integration, abandoned in 2008
+* **WebKit.jar** - Mac-only, now uses system browser
+
+=== Bug Fixes
+
+* Fixed `ArrayIndexOutOfBoundsException` in `restoreHidePreferences()` when saved preferences are malformed
+* Fixed email functionality to use modern `java.awt.Desktop.mail()` instead of defunct JDIC
+
+== Why tma-mark2 is Better
+
+The Elixir/Phoenix rewrite (`tma-mark2`) offers significant advantages over this Java application:
+
+[cols="1,2,2"]
+|===
+|Aspect |Java Version |Elixir Version (tma-mark2)
+
+|Architecture
+|Monolithic Swing app
+|Phoenix LiveView web app
+
+|Fault Tolerance
+|Crashes lose unsaved work
+|BEAM VM: process isolation, self-healing
+
+|Data Storage
+|Java Preferences API (platform-specific)
+|CubDB: crash-proof, append-only B-tree
+
+|Updates
+|Manual re-download
+|Hot code reloading, zero downtime
+
+|Security
+|Relies on JVM sandbox
+|Per-process isolation, WebAuthn support
+
+|Cross-Platform
+|Requires JRE installation
+|Single executable via Burrito
+
+|Performance
+|JVM cold start ~2-5s
+|BEAM VM optimised for low latency
+|===
+
+== Building
+
+[source,bash]
+----
+# Requires Java 25+ (Temurin recommended)
+./compile.sh
+
+# The compiled JAR is: etmaHandlerJ-modernized.jar
+----
+
+== Running
+
+The modernised handler should be launched via the wrapper script in the parent directory's installation, not directly from this archive.
+
+== License
+
+This modernised version is released under AGPL-3.0-or-later, consistent with the tma-mark2 project.
+
+The original etmaHandlerJ was distributed freely by Mike Hay for Open University staff use.
