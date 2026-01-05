@@ -1,4 +1,4 @@
-OUT_DIR = Some(/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
+OUT_DIR = Some(/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
 OPT_LEVEL = Some(3)
 TARGET = Some(x86_64-unknown-linux-gnu)
 CARGO_ENCODED_RUSTFLAGS = Some()
@@ -51,8 +51,8 @@ ARFLAGS_x86_64_unknown_linux_gnu = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
 ARFLAGS_x86_64-unknown-linux-gnu = None
 cargo:rustc-link-lib=static=kyber512_clean
-cargo:rustc-link-search=native=/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
-OUT_DIR = Some(/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
+cargo:rustc-link-search=native=/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
+OUT_DIR = Some(/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
 OPT_LEVEL = Some(3)
 TARGET = Some(x86_64-unknown-linux-gnu)
 CARGO_ENCODED_RUSTFLAGS = Some()
@@ -111,8 +111,8 @@ ARFLAGS_x86_64_unknown_linux_gnu = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
 ARFLAGS_x86_64-unknown-linux-gnu = None
 cargo:rustc-link-lib=static=kyber512_avx2
-cargo:rustc-link-search=native=/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
-OUT_DIR = Some(/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
+cargo:rustc-link-search=native=/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
+OUT_DIR = Some(/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
 OPT_LEVEL = Some(3)
 TARGET = Some(x86_64-unknown-linux-gnu)
 CARGO_ENCODED_RUSTFLAGS = Some()
@@ -165,8 +165,8 @@ ARFLAGS_x86_64_unknown_linux_gnu = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
 ARFLAGS_x86_64-unknown-linux-gnu = None
 cargo:rustc-link-lib=static=kyber768_clean
-cargo:rustc-link-search=native=/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
-OUT_DIR = Some(/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
+cargo:rustc-link-search=native=/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
+OUT_DIR = Some(/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
 OPT_LEVEL = Some(3)
 TARGET = Some(x86_64-unknown-linux-gnu)
 CARGO_ENCODED_RUSTFLAGS = Some()
@@ -225,8 +225,8 @@ ARFLAGS_x86_64_unknown_linux_gnu = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
 ARFLAGS_x86_64-unknown-linux-gnu = None
 cargo:rustc-link-lib=static=kyber768_avx2
-cargo:rustc-link-search=native=/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
-OUT_DIR = Some(/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
+cargo:rustc-link-search=native=/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
+OUT_DIR = Some(/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
 OPT_LEVEL = Some(3)
 TARGET = Some(x86_64-unknown-linux-gnu)
 CARGO_ENCODED_RUSTFLAGS = Some()
@@ -279,8 +279,8 @@ ARFLAGS_x86_64_unknown_linux_gnu = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
 ARFLAGS_x86_64-unknown-linux-gnu = None
 cargo:rustc-link-lib=static=kyber1024_clean
-cargo:rustc-link-search=native=/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
-OUT_DIR = Some(/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
+cargo:rustc-link-search=native=/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
+OUT_DIR = Some(/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out)
 OPT_LEVEL = Some(3)
 TARGET = Some(x86_64-unknown-linux-gnu)
 CARGO_ENCODED_RUSTFLAGS = Some()
@@ -339,5 +339,5 @@ ARFLAGS_x86_64_unknown_linux_gnu = None
 cargo:rerun-if-env-changed=ARFLAGS_x86_64-unknown-linux-gnu
 ARFLAGS_x86_64-unknown-linux-gnu = None
 cargo:rustc-link-lib=static=kyber1024_avx2
-cargo:rustc-link-search=native=/var/home/hyper/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
+cargo:rustc-link-search=native=/var/mnt/eclipse/repos/tma-mark2/native/tma_crypto/target/release/build/pqcrypto-kyber-0fab91db3bf85df0/out
 cargo:rustc-cfg=enable_x86_avx2

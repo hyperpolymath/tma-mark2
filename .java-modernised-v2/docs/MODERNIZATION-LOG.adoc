@@ -1,0 +1,390 @@
+= eTMA Handler Java Modernization Log
+:author: hyperpolymath
+:revdate: 2026-01-05
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+== Project Overview
+
+=== Purpose
+
+Modernize Mike Hay's eTMA File Handler Java code to follow best modern Java programming practices.
+This is a learning/practice exercise - the production version remains in `.java-modernised-v1`.
+
+=== Source Material
+
+[cols="1,3"]
+|===
+|Original Author |Mike Hay (2007)
+|Source Type |Decompiled from .class files (Procyon v0.6.0)
+|Main File |`EtmaHandlerJ.java` (10,135 lines)
+|Supporting Files |`Capture.java`, `SplashDemo.java`, `Suggest.java`
+|Total Lines |~21,000 (including duplicates in subdirectory)
+|Inner Classes |161 anonymous inner classes
+|===
+
+=== Target Java Version
+
+* **Minimum**: Java 21 LTS
+* **Recommended**: Java 25 (GraalVM or Temurin)
+* **Module System**: Yes (JPMS)
+
+== Initial Code Analysis
+
+=== Anti-Patterns Identified
+
+==== 1. God Class (Critical)
+
+`EtmaHandlerJ` is a 10,135 line monolithic class containing:
+
+* All UI components (300+ Swing components)
+* All business logic
+* All file I/O operations
+* All network operations (email, HTTP)
+* All configuration handling
+* All data models
+
+**Impact**: Impossible to test, maintain, or understand.
+
+==== 2. No Encapsulation (Critical)
+
+[source,java]
+----
+// Current: Everything public
+public String thisVersion;
+public String latestVersion;
+public Map<String, String> studentDetails;
+public Map<String, String> tutorDetails;
+// ... 300+ public fields
+----
+
+**Impact**: Any code can modify any state. No invariants can be enforced.
+
+==== 3. Mixed Concerns (Critical)
+
+UI components (`JTextField`, `JButton`) are declared alongside business data (`studentDetails`, `courseDirectory`). No separation of:
+
+* Model (data)
+* View (UI)
+* Controller (logic)
+
+==== 4. Raw/Legacy Types (Medium)
+
+[source,java]
+----
+public List thisLine;  // Raw type, no generic
+----
+
+Using `Vector` and `Enumeration` (deprecated patterns).
+
+==== 5. Boolean Flag Explosion (Medium)
+
+[source,java]
+----
+public boolean autoFillFlagPreferences;
+public boolean autoMp3Preferences;
+public boolean launchTmaListFlagPreferences;
+public boolean spellCheckFlagPreferences;
+public boolean suggestFlagPreferences;
+public boolean authenticationFlagPreferences;
+public boolean toolTipFlagPreferences;
+public boolean startupScreenFlagPreferences;
+public boolean checkClosureFlagPreferences;
+public boolean sizeWarnFlagPreferences;
+// ... many more
+----
+
+**Impact**: Complex state management, hard to reason about.
+
+==== 6. String-Typed Everything (Medium)
+
+Preferences stored as concatenated strings:
+
+[source,java]
+----
+public final String colorDefaultString = "219;219;219:255;255;255:204;255;255";
+----
+
+==== 7. Naming Convention Violations (Low)
+
+[source,java]
+----
+public final String[] MONTHLIST;      // Should be MONTH_LIST or monthList
+public final String[] LINUXFILEMANAGER; // Should be linuxFileManager
+----
+
+== Modernization Plan
+
+=== Phase 1: Package Structure
+
+Create proper package hierarchy:
+
+[source]
+----
+uk.ac.open.etma/
+├── EtmaApplication.java          # Entry point
+├── model/
+│   ├── Student.java              # record
+│   ├── Tutor.java                # record
+│   ├── Submission.java           # record
+│   ├── Assignment.java           # record
+│   ├── Course.java               # record
+│   └── Grade.java                # record
+├── ui/
+│   ├── MainWindow.java
+│   ├── PreferencesDialog.java
+│   ├── GradesSummaryPanel.java
+│   ├── TmaListPanel.java
+│   └── components/
+│       └── ... reusable components
+├── service/
+│   ├── EmailService.java
+│   ├── FileService.java
+│   ├── SpellCheckService.java
+│   ├── ConfigService.java
+│   └── EtmaSiteService.java
+├── config/
+│   ├── AppConfig.java
+│   ├── PreferencesManager.java
+│   └── AccessibilityConfig.java
+└── util/
+    ├── FileUtils.java
+    ├── StringUtils.java
+    └── DateUtils.java
+----
+
+=== Phase 2: Data Model Extraction
+
+Convert public fields to Java records:
+
+[source,java]
+----
+// Before: scattered fields
+public String forenames;
+public String surname;
+public String email_address;
+public String pi_number;
+
+// After: record
+public record Student(
+    String forenames,
+    String surname,
+    String emailAddress,
+    String piNumber
+) {}
+----
+
+=== Phase 3: Service Layer
+
+Extract business logic into services:
+
+[source,java]
+----
+public class EmailService {
+    private final Session session;
+
+    public CompletableFuture<Void> sendMarkedWork(
+        Student student,
+        Path attachment
+    ) {
+        return CompletableFuture.runAsync(() -> {
+            // Email logic here
+        });
+    }
+}
+----
+
+=== Phase 4: Modern Java Features
+
+|===
+|Feature |Java Version |Application
+
+|Records |16+ |Data classes
+|Sealed classes |17+ |Type hierarchies
+|Pattern matching |21+ |instanceof, switch
+|Virtual threads |21+ |Background tasks
+|Text blocks |15+ |Multi-line strings
+|var |10+ |Local type inference
+|Switch expressions |14+ |Cleaner switches
+|Optional |8+ |Null safety
+|Stream API |8+ |Collection processing
+|try-with-resources |7+ |Resource management
+|===
+
+=== Phase 5: Testing
+
+Add JUnit 5 tests for all extracted services:
+
+[source,java]
+----
+@Test
+void shouldParseStudentFromXml() {
+    var xml = """
+        <student>
+            <forenames>John</forenames>
+            <surname>Smith</surname>
+        </student>
+        """;
+    var student = Student.fromXml(xml);
+    assertEquals("John", student.forenames());
+}
+----
+
+== Progress Log
+
+=== 2026-01-05: Project Initialization
+
+* Created `.java-modernised-v2/` workspace
+* Analyzed `EtmaHandlerJ.java` structure
+* Identified 7 major anti-patterns
+* Created modernization plan
+
+=== 2026-01-05: Sketch Implementation
+
+NOTE: This is sketch/exploration work - not a production replacement!
+The goal is to try out modern Java patterns, not create a polished app.
+
+==== Model Layer Sketches
+
+* `Student.java` - record with validation, Optional returns
+* `Tutor.java` - record with derived initials
+* `Course.java` - record with parsing logic
+* `Submission.java` - **sealed class hierarchy** for type-safe status machine
+* `PrivacyView.java` - **privacy wrapper** implementing IDEAS.md #32 PII redaction
+
+Key patterns demonstrated:
+
+[source,java]
+----
+// Sealed hierarchy - compiler knows all subtypes
+public sealed interface Status permits
+    Status.Pending, Status.InProgress, Status.Marked,
+    Status.Returned, Status.Problem { ... }
+
+// Pattern matching on sealed types
+return switch (status) {
+    case Status.Pending() -> "Awaiting marking";
+    case Status.Marked(var score, var max, _, _) ->
+        "Marked: %d/%d".formatted(score, max);
+    // ...compiler enforces exhaustiveness
+};
+----
+
+==== Service Layer Sketches
+
+* `MarkingBatchService.java` - batch operations with **virtual threads**
+* `InactivityMonitor.java` - timeout/auto-lock from IDEAS.md #33
+
+Key patterns demonstrated:
+
+[source,java]
+----
+// Virtual threads for concurrent operations
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    var futures = submissions.stream()
+        .map(s -> CompletableFuture.supplyAsync(() -> analyze(s), executor))
+        .toList();
+    return futures.stream().map(CompletableFuture::join).toList();
+}
+
+// Sealed interface for state machine
+public sealed interface LockState permits
+    LockState.Active, LockState.Warning,
+    LockState.SoftLocked, LockState.HardLocked { ... }
+----
+
+==== UI Layer Sketches
+
+* `MarkingPlaylistPanel.java` - playlist view from IDEAS.md #6
+
+Key patterns demonstrated:
+
+* View model records (separate from domain model)
+* Pattern matching in renderers
+* Privacy integration via PrivacyView wrapper
+
+==== Statistics from Initial Analysis
+
+[source]
+----
+Total lines:     10,135
+Public fields:   300+
+Inner classes:   161
+Methods:         TBD (analysis in progress)
+UI components:   300+ (JTextField, JButton, JLabel, etc.)
+----
+
+==== Files Analyzed
+
+* [x] EtmaHandlerJ.java (partial - first 500 lines)
+* [ ] Capture.java
+* [ ] SplashDemo.java
+* [ ] Suggest.java
+
+== Technical Decisions
+
+=== ADR-001: Keep Swing UI
+
+**Status**: Accepted
+
+**Context**: The original application uses Swing. Options are:
+1. Keep Swing, modernize patterns
+2. Migrate to JavaFX
+3. Migrate to web UI
+
+**Decision**: Keep Swing. The goal is to learn modern Java patterns, not rewrite the entire UI framework. Swing still works fine and is included in the JDK.
+
+**Consequences**:
+- Can focus on code quality, not framework migration
+- Easier to compare with original
+- Still usable on all platforms
+
+=== ADR-002: Use JPMS Modules
+
+**Status**: Proposed
+
+**Context**: Java Platform Module System (JPMS) provides:
+- Strong encapsulation
+- Explicit dependencies
+- Smaller runtime images
+
+**Decision**: TBD - may add complexity without benefit for this size project.
+
+=== ADR-003: Java Version Target
+
+**Status**: Accepted
+
+**Context**: Need to choose minimum Java version.
+
+**Decision**: Target Java 21 LTS as minimum. This gives us:
+- Records
+- Sealed classes
+- Pattern matching for switch
+- Virtual threads
+- Text blocks
+
+GraalVM 25 or Temurin 25 recommended for best performance.
+
+== Notes
+
+=== Decompilation Artifacts
+
+The source was decompiled by Procyon. Watch for:
+
+* Lost variable names (replaced with `n`, `s`, `b`, etc.)
+* Lost comments
+* Reconstructed control flow (may not match original)
+* Inner class numbering (`$1`, `$2`, etc.) is arbitrary
+
+=== Production vs Development
+
+[IMPORTANT]
+====
+`.java-modernised-v1` = Production (for daily OU tutoring work)
+`.java-modernised-v2` = Development (modernization workspace)
+====
+
+Never break v1 while working on v2.
+

@@ -1,0 +1,59 @@
+// SPDX-License-Identifier: MIT
+= eTMA Monitor - Modernisation Notes
+
+== Overview
+
+*eTMA Monitor* is a companion tool to *eTMA Handler*.
+
+[cols="1,3"]
+|===
+|Tool |Purpose
+
+|eTMA Handler
+|For *tutors* marking student submissions
+
+|eTMA Monitor
+|For *monitors* checking the quality of tutors' marking
+|===
+
+These two tools work together to make marking and monitoring more effective, though they are separate products.
+
+== Original Code Analysis
+
+*Source*: `etmaMonitorEmbedJavaMacSP.zip` (Mike Hay's version 2.1.1NU)
+
+*Main class*: `EtmaMonitorJ.java` (~8,400 lines)
+
+*Technical debt*: Same patterns as eTMA Handler
+- Monolithic Swing application
+- 130+ anonymous inner classes
+- XML-based data storage
+- Jazzy spell checking (legacy library)
+- Tightly coupled UI/logic
+
+== Key Features
+
+=== Monitoring Rubric
+The default rubric for evaluating tutors' marking:
+
+. Acknowledges good work
+. Provides encouragement and support
+. Suggests ways of improving future work
+. Corrects and explains errors and omissions
+. Makes clear and constructive comments
+. Directs student to course materials
+. Clearly explains where marks were gained or lost
+
+=== Categories
+* *Marking*: Too high / Appropriate / Too low
+* *Commenting*: Meets or exceeds requirements / Requires further exploration
+
+== Modernisation Status
+
+[NOTE]
+====
+Like eTMA Handler, this is legacy code maintained for reference.
+The modernised version is in the main tma-mark2 codebase.
+====
+
+See `../docs/IDEAS.md` for modernisation roadmap.

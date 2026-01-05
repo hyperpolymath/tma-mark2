@@ -1,0 +1,98 @@
+---
+student-pi: A1234567
+module: TM129
+tma: 01
+tutor: JB
+date: 2026-01-05
+---
+
+{.overall-feedback #overall}
+# Overall Comments
+
+Your submission demonstrates a _solid understanding_ of networking
+fundamentals. The section on TCP/IP was particularly *well-explained*,
+showing clear grasp of the protocol stack.
+
+{.strengths}
+## What Worked Well
+
+- Clear explanation of the OSI model layers
+- Good use of diagrams to illustrate packet flow
+- Accurate description of IP addressing
+  {.highlight}
+
+{.areas-for-improvement}
+## Areas for Development
+
+- Reference formatting needs attention
+  {.from="ref-harvard" .severity=medium}
+- The comparison of protocols could be deeper --- consider discussing
+  *why* TCP is preferred over UDP for certain applications
+- Your code example works but lacks comments
+  {.from="code-comments" .severity=medium}
+
+{.specific-feedback}
+## Specific Feedback
+
+### Question 1 (20 marks)
+
+Your network diagram correctly shows the topology. The explanation
+of how packets are routed was accurate.
+
+{.inline-comment target="q1-para-3"}
+> "The router examines the destination IP"
+
+Good --- you could also mention how the routing table is consulted.
+
+| Criterion | Mark | Notes |
+|-----------|------|-------|
+| Diagram accuracy | 8/10 | Minor labelling issues |
+| Explanation | 10/10 | Excellent clarity |
+| Total | 18/20 | |
+
+### Question 2 (15 marks)
+
+{.concern}
+The code submission had syntax errors that prevented it from running.
+Always test your code before submission.
+
+```python
+# Your code:
+def calculate(x, y)  # Missing colon here
+    return x + y
+```
+
+Corrected version would be:
+
+```python
+def calculate(x, y):  # Colon added
+    return x + y
+```
+
+| Criterion | Mark | Notes |
+|-----------|------|-------|
+| Logic | 8/10 | Correct approach |
+| Syntax | 2/5 | Errors present |
+| Total | 10/15 | |
+
+{.grade #final-grade}
+## Final Grade
+
+| Component | Mark | Maximum |
+|-----------|------|---------|
+| Q1 | 18 | 20 |
+| Q2 | 10 | 15 |
+| Q3 | 12 | 15 |
+| **Total** | **40** | **50** |
+
+**Grade: Pass 2** (80%)
+
+{.closing}
+---
+
+If you have questions about this feedback, please post on the module
+forum or email me directly.
+
+Best regards,
+{tutor-name}
+TM129 Tutor
