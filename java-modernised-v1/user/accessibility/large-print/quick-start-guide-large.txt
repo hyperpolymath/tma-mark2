@@ -1,0 +1,187 @@
+eTMA FILE HANDLER
+
+QUICK START GUIDE
+
+Large Print Edition
+(Print at 18pt or larger)
+
+
+
+========================================
+
+SECTION 1
+
+WHAT IS THIS APPLICATION?
+
+========================================
+
+
+The eTMA File Handler helps
+Open University tutors manage
+student assignments.
+
+
+YOU CAN:
+
+    Download student work
+
+    Mark assignments
+
+    Write feedback
+
+    Upload marked work
+
+
+
+========================================
+
+SECTION 2
+
+STARTING THE APPLICATION
+
+========================================
+
+
+STEP 1
+
+    Open a terminal window
+    or file manager
+
+
+STEP 2
+
+    Go to the etma handler folder
+
+
+STEP 3
+
+    Run the etmaHandler file
+
+
+STEP 4
+
+    Choose from the menu
+
+
+
+========================================
+
+SECTION 3
+
+MENU OPTIONS
+
+========================================
+
+
+OPTION 1:  Run Now
+
+    Starts the application
+
+
+OPTION 2:  Install
+
+    Creates a desktop shortcut
+
+
+OPTION 3:  Login Help
+
+    Use if login fails
+
+
+OPTION 4:  Check Java
+
+    Verifies Java is installed
+
+
+OPTION 5:  Delete Old Data
+
+    Removes student files safely
+
+
+OPTION 6:  Uninstall
+
+    Removes the application
+
+
+OPTION Q:  Quit
+
+    Exits the menu
+
+
+
+========================================
+
+SECTION 4
+
+KEYBOARD SHORTCUTS
+
+========================================
+
+
+OPEN FILE
+
+    Hold Control, press O
+
+
+SAVE
+
+    Hold Control, press S
+
+
+QUIT
+
+    Hold Control, press Q
+
+
+NEXT FIELD
+
+    Press Tab
+
+
+PREVIOUS FIELD
+
+    Hold Shift, press Tab
+
+
+ACTIVATE BUTTON
+
+    Press Enter
+
+
+CANCEL
+
+    Press Escape
+
+
+
+========================================
+
+SECTION 5
+
+GETTING HELP
+
+========================================
+
+
+FOR TECHNICAL PROBLEMS
+
+    See the Reference Manual
+
+
+FOR OU QUESTIONS
+
+    Contact your Staff Tutor
+
+
+FOR ACCESSIBILITY SUPPORT
+
+    Email:
+    disability@open.ac.uk
+
+
+
+========================================
+
+END OF GUIDE
+
+========================================

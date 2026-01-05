@@ -1,0 +1,235 @@
+# =============================================================================
+# eTMA FILE HANDLER - ACCESSIBILITY CONFIGURATION
+# =============================================================================
+#
+# This file stores your accessibility preferences.
+# Edit this file directly or use the application's Preferences menu.
+#
+# Changes take effect the next time you start the application.
+#
+# To reset to defaults, delete this file - it will be recreated on next run.
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# GENERAL SETTINGS
+# -----------------------------------------------------------------------------
+
+[general]
+# First run wizard: set to false after initial setup
+first_run = true
+
+# Language for interface (ISO 639-1 code)
+# Supported: "en" (English), "cy" (Welsh/Cymraeg)
+language = "en"
+
+# -----------------------------------------------------------------------------
+# DISPLAY SETTINGS
+# -----------------------------------------------------------------------------
+
+[display]
+# Font size multiplier (1.0 = normal, 1.5 = 50% larger, 2.0 = double)
+# Range: 0.75 to 3.0
+font_scale = 1.0
+
+# Font family for the interface
+# Options:
+#   "system"       - Use system default font
+#   "opendyslexic" - OpenDyslexic (designed for dyslexic readers)
+#   "lexie"        - Lexie Readable (dyslexia-friendly)
+#   "atkinson"     - Atkinson Hyperlegible (low vision friendly)
+#   "serif"        - System serif font
+#   "monospace"    - System monospace font
+font_family = "system"
+
+# High contrast mode
+# Options:
+#   "off"          - Normal colours
+#   "high"         - High contrast (black/white)
+#   "yellow-black" - Yellow on black (good for some visual impairments)
+#   "black-yellow" - Black on yellow
+#   "custom"       - Use custom colours below
+high_contrast = "off"
+
+# Custom colours (only used if high_contrast = "custom")
+[display.custom_colours]
+background = "#FFFFFF"
+foreground = "#000000"
+accent = "#0066CC"
+error = "#CC0000"
+
+# -----------------------------------------------------------------------------
+# DYSLEXIA SUPPORT
+# -----------------------------------------------------------------------------
+
+[dyslexia]
+# Enable dyslexia-friendly mode (combines several settings)
+enabled = false
+
+# Use dyslexia-friendly font (OpenDyslexic or similar)
+use_dyslexic_font = false
+
+# Increase letter spacing for better readability
+# Range: 1.0 (normal) to 2.0 (double spacing)
+letter_spacing = 1.0
+
+# Increase word spacing
+# Range: 1.0 (normal) to 2.0 (double spacing)
+word_spacing = 1.0
+
+# Increase line height
+# Range: 1.0 (normal) to 2.5 (very spacious)
+line_height = 1.4
+
+# Use coloured overlay (some dyslexic readers find this helpful)
+# Options: "off", "cream", "light-blue", "light-green", "light-pink"
+overlay_colour = "off"
+
+# Underline current line while reading
+highlight_current_line = false
+
+# -----------------------------------------------------------------------------
+# VISUAL IMPAIRMENT SUPPORT
+# -----------------------------------------------------------------------------
+
+[low_vision]
+# Enable low vision mode (combines several settings)
+enabled = false
+
+# Minimum text size (points) - overrides font_scale if needed
+minimum_font_size = 12
+
+# Bold text throughout
+use_bold_text = false
+
+# Increase cursor size
+large_cursor = false
+
+# Increase focus indicator thickness
+thick_focus_indicator = false
+
+# -----------------------------------------------------------------------------
+# SCREEN READER SUPPORT
+# -----------------------------------------------------------------------------
+
+[screen_reader]
+# Enable screen reader optimisations
+enabled = false
+
+# Announce all interface changes
+verbose_announcements = false
+
+# Provide additional context for buttons and controls
+enhanced_labels = false
+
+# Slow down automatic announcements (milliseconds between)
+announcement_delay = 0
+
+# -----------------------------------------------------------------------------
+# MOTOR ACCESSIBILITY
+# -----------------------------------------------------------------------------
+
+[motor]
+# Sticky keys (modifier keys stay active)
+sticky_keys = false
+
+# Increase click target sizes
+large_click_targets = false
+
+# Increase time before drag operations activate (milliseconds)
+drag_delay = 200
+
+# Enable keyboard-only navigation (no mouse required)
+keyboard_only = false
+
+# -----------------------------------------------------------------------------
+# COGNITIVE ACCESSIBILITY
+# -----------------------------------------------------------------------------
+
+[cognitive]
+# Simplified interface (hide advanced options)
+simplified_mode = false
+
+# Show confirmation dialogs for important actions
+confirm_actions = true
+
+# Auto-save interval (seconds, 0 = disabled)
+auto_save_interval = 60
+
+# Reduce visual clutter
+minimal_interface = false
+
+# -----------------------------------------------------------------------------
+# MOTION AND ANIMATION
+# -----------------------------------------------------------------------------
+
+[motion]
+# Reduce motion (minimise animations)
+reduced_motion = false
+
+# Disable all animations
+disable_animations = false
+
+# Disable auto-scrolling
+disable_auto_scroll = false
+
+# -----------------------------------------------------------------------------
+# AUDIO AND NOTIFICATIONS
+# -----------------------------------------------------------------------------
+
+[audio]
+# Enable sound effects
+sounds_enabled = true
+
+# Volume (0.0 to 1.0)
+volume = 0.5
+
+# Use system notification sounds
+use_system_sounds = true
+
+# Flash screen instead of/as well as sounds (for deaf/hard of hearing)
+visual_alerts = false
+
+# -----------------------------------------------------------------------------
+# KEYBOARD SHORTCUTS
+# -----------------------------------------------------------------------------
+
+[shortcuts]
+# Allow customisation of keyboard shortcuts
+customisable = true
+
+# Use single-key shortcuts where possible (without modifiers)
+single_key_shortcuts = false
+
+# Vim-style navigation (hjkl keys)
+vim_navigation = false
+
+# -----------------------------------------------------------------------------
+# PRESETS
+# -----------------------------------------------------------------------------
+# Quick presets that set multiple options at once
+# Uncomment the preset you want to use
+
+# [preset]
+# name = "dyslexia-friendly"
+# Sets: dyslexia.enabled, display.font_family = "opendyslexic",
+#       dyslexia.line_height = 1.6, dyslexia.overlay_colour = "cream"
+
+# [preset]
+# name = "low-vision"
+# Sets: low_vision.enabled, display.font_scale = 1.5,
+#       display.high_contrast = "high", low_vision.use_bold_text
+
+# [preset]
+# name = "screen-reader"
+# Sets: screen_reader.enabled, screen_reader.enhanced_labels,
+#       motion.disable_animations
+
+# [preset]
+# name = "motor-friendly"
+# Sets: motor.keyboard_only, motor.large_click_targets,
+#       shortcuts.single_key_shortcuts
+
+# =============================================================================
+# END OF CONFIGURATION
+# =============================================================================

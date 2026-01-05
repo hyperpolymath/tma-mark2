@@ -1,0 +1,129 @@
+eTMA FILE HANDLER - QUICK START GUIDE
+Screen Reader Optimised Version
+
+Document Navigation:
+- Use heading navigation (H key in most screen readers) to jump between sections
+- All sections are marked with equals signs for easy identification
+- No tables or complex formatting - linear reading order throughout
+
+================================================================================
+SECTION 1: INTRODUCTION
+================================================================================
+
+The eTMA File Handler is a desktop application for Open University tutors.
+
+Purpose: Manage student assignment submissions and feedback.
+
+Main functions:
+First, download student work from the Open University system.
+Second, mark assignments and write feedback.
+Third, upload marked work back for students to receive.
+
+================================================================================
+SECTION 2: REQUIREMENTS
+================================================================================
+
+Operating System: Linux, macOS, or Windows with WSL or Git Bash.
+
+Java: Version 21 or later. GraalVM 25 recommended.
+
+Internet: Required for connecting to the OU eTMA system.
+
+================================================================================
+SECTION 3: STARTING THE APPLICATION
+================================================================================
+
+Method 1: Using the Terminal
+
+Step 1: Open your terminal application.
+Step 2: Navigate to the etma handler folder using cd command.
+Step 3: Type: ./etmaHandler
+Step 4: Press Enter to run.
+
+Method 2: Using the Desktop Shortcut
+
+If you have installed the application using option 2, look for "eTMA File Handler" in your applications menu under Education or Office category.
+
+================================================================================
+SECTION 4: MAIN MENU
+================================================================================
+
+When you run etmaHandler, you will hear or see this menu:
+
+Option 1: Run here and now.
+This starts the eTMA File Handler application immediately.
+
+Option 2: Install on this machine.
+This creates a desktop shortcut so you can start the application from your applications menu.
+
+Option 3: Browser authentication workaround.
+Use this if you cannot log in through the application. It opens your web browser first to authenticate.
+
+Option 4: Check and optionally install latest Java.
+This verifies your Java installation and offers to install GraalVM if needed.
+
+Option 5: Data protection - Sanitise student data.
+This helps you delete old student files to comply with OU data protection policy.
+
+Option 6: Uninstall eTMA Handler.
+This removes the application from your system.
+
+Option Q: Quit.
+This exits the menu.
+
+================================================================================
+SECTION 5: KEYBOARD NAVIGATION
+================================================================================
+
+Within the application, use these keyboard shortcuts:
+
+Control plus O: Open a file.
+Control plus S: Save current work.
+Control plus Q: Quit the application.
+Tab key: Move forward through form fields and buttons.
+Shift plus Tab: Move backward through form fields and buttons.
+Enter key: Activate the currently focused button.
+Escape key: Cancel current operation or close dialog.
+Alt plus F: Open File menu.
+Alt plus E: Open Edit menu.
+Alt plus H: Open Help menu.
+
+================================================================================
+SECTION 6: ACCESSIBILITY SETTINGS
+================================================================================
+
+The application includes accessibility options. To access them:
+
+Step 1: Start the application.
+Step 2: Open the Edit menu using Alt plus E.
+Step 3: Select Preferences.
+Step 4: Navigate to the Accessibility tab.
+
+Available settings include:
+Dyslexia-friendly font option.
+High contrast mode.
+Large text mode.
+Screen reader optimisations.
+
+You can also edit the configuration file directly at:
+config/accessibility.toml
+
+================================================================================
+SECTION 7: GETTING HELP
+================================================================================
+
+If the application does not start:
+Check that Java is installed by running: java -version
+
+If you cannot log in:
+Use menu option 3 for the browser authentication workaround.
+
+If you need accessibility support:
+Contact OU Disability Services at disability@open.ac.uk
+
+For OU tutor support:
+Contact your Staff Tutor.
+
+================================================================================
+END OF DOCUMENT
+================================================================================

@@ -1,0 +1,406 @@
+#!/bin/bash
+# SPDX-License-Identifier: MPL-2.0
+# =============================================================================
+#                       eTMA FILE HANDLER - MAIN SCRIPT
+# =============================================================================
+#
+# WHAT THIS SCRIPT DOES:
+#   This is the main entry point for OU tutors. It presents a simple menu
+#   that lets you run the application, install it to your desktop, or
+#   troubleshoot login issues. Think of it as a friendly "setup wizard".
+#
+# SAFETY:
+#   - This script does NOT send any data anywhere
+#   - It only reads/writes files on YOUR computer
+#   - It does NOT require administrator/root access
+#   - All operations are local and transparent
+#
+# WHAT IT ACCESSES:
+#   - Your home directory (to install desktop shortcuts)
+#   - The scripts/ folder in this directory
+#   - Your asdf tool manager (if installed) for Java
+#
+# ORIGINAL AUTHOR: Mike Hay (2007)
+# MODERNISATION: hyperpolymath (2026)
+#
+# -----------------------------------------------------------------------------
+
+# Exit immediately if any command fails (safety measure)
+set -e
+
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
+# Find where this script is located (the "etma handler" folder)
+# This ensures the script works no matter where you run it from
+BASEDIR="$(cd "$(dirname "$0")" && pwd)"
+
+# The version of Java we recommend
+# GraalVM is a high-performance Java runtime (64-bit only)
+# Temurin supports both 32-bit and 64-bit systems
+GRAALVM_VERSION="graalvm-community-25.0.1"
+TEMURIN_VERSION="temurin-25.0.1+8.0.LTS"
+
+# =============================================================================
+# ARCHITECTURE DETECTION
+# =============================================================================
+# Detect CPU architecture to choose appropriate JVM.
+# GraalVM is 64-bit only; Temurin supports both 32-bit and 64-bit.
+
+detect_arch() {
+    case "$(uname -m)" in
+        x86_64|amd64|aarch64|arm64)
+            ARCH="64bit"
+            ;;
+        i386|i486|i586|i686|armv7l|armhf)
+            ARCH="32bit"
+            ;;
+        *)
+            ARCH="64bit"  # Assume 64-bit for unknown
+            ;;
+    esac
+}
+detect_arch
+
+# =============================================================================
+# TERMINAL COLOURS
+# =============================================================================
+# These make the menu easier to read - purely cosmetic
+# They only affect how text appears in your terminal
+
+RED='\033[0;31m'      # For errors and warnings
+GREEN='\033[0;32m'    # For success messages and menu numbers
+BLUE='\033[0;34m'     # For headings and status messages
+YELLOW='\033[1;33m'   # For prompts and notes
+NC='\033[0m'          # "No Colour" - resets to normal text
+
+# =============================================================================
+# DISPLAY FUNCTIONS
+# =============================================================================
+
+# Shows the welcome banner when the script starts
+# This is just decorative text - does nothing else
+show_banner() {
+    echo -e "${BLUE}"
+    echo "╔═══════════════════════════════════════════════════════════╗"
+    echo "║          eTMA File Handler                                ║"
+    echo "║          Open University Assignment Manager               ║"
+    echo "╚═══════════════════════════════════════════════════════════╝"
+    echo -e "${NC}"
+}
+
+# =============================================================================
+# JAVA DETECTION AND INSTALLATION
+# =============================================================================
+
+# Checks if Java is installed and offers to install GraalVM if not
+#
+# WHY JAVA?
+#   The eTMA Handler is written in Java, so it needs a Java runtime to work.
+#   We recommend GraalVM because it's fast, free, and well-maintained.
+#
+# WHAT THIS CHECKS:
+#   1. First, looks for GraalVM installed via asdf (best option)
+#   2. Then, looks for Temurin Java via asdf (good fallback)
+#   3. Finally, checks for any system-installed Java
+#   4. If nothing found, offers to install GraalVM for you
+#
+check_and_install_java() {
+    echo -e "${YELLOW}Checking Java installation...${NC}"
+    echo -e "${BLUE}Detected architecture: ${ARCH}${NC}"
+    echo ""
+
+    # Check 1: GraalVM via asdf (64-bit only)
+    if [[ "$ARCH" == "64bit" && -x "$HOME/.asdf/installs/java/${GRAALVM_VERSION}/bin/java" ]]; then
+        echo -e "${GREEN}✓ GraalVM 25.0.1 found (recommended for 64-bit)${NC}"
+        return 0
+    fi
+
+    # Check 2: Temurin Java via asdf (works on both 32-bit and 64-bit)
+    if [[ -x "$HOME/.asdf/installs/java/${TEMURIN_VERSION}/bin/java" ]]; then
+        echo -e "${GREEN}✓ Temurin 25 found${NC}"
+        # On 64-bit, offer GraalVM upgrade; on 32-bit, Temurin is the best option
+        if [[ "$ARCH" == "64bit" ]]; then
+            echo -e "${YELLOW}  GraalVM recommended for best performance on 64-bit${NC}"
+            echo ""
+            read -p "Would you like to install GraalVM 25 instead? [Y/n] " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                install_graalvm
+            fi
+        fi
+        return 0
+    fi
+
+    # Check 3: Any system-installed Java
+    if command -v java &>/dev/null; then
+        local version=$(java -version 2>&1 | head -1)
+        echo -e "${YELLOW}⚠ System Java found: ${version}${NC}"
+        echo ""
+        if [[ "$ARCH" == "64bit" ]]; then
+            echo -e "${YELLOW}  GraalVM 25 is recommended for best performance${NC}"
+            read -p "Would you like to install GraalVM 25? [Y/n] " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                install_graalvm
+            fi
+        else
+            echo -e "${YELLOW}  Temurin 25 is recommended for 32-bit systems${NC}"
+            read -p "Would you like to install Temurin 25? [Y/n] " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                install_temurin
+            fi
+        fi
+        return 0
+    fi
+
+    # Check 4: No Java found at all
+    echo -e "${RED}✗ Java not found${NC}"
+    echo ""
+    if [[ "$ARCH" == "64bit" ]]; then
+        read -p "Would you like to install GraalVM 25 now? [Y/n] " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+            install_graalvm
+            return 0
+        fi
+    else
+        echo -e "${YELLOW}Note: GraalVM is 64-bit only. Installing Temurin for 32-bit.${NC}"
+        read -p "Would you like to install Temurin 25 now? [Y/n] " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+            install_temurin
+            return 0
+        fi
+    fi
+
+    echo -e "${RED}Java is required to run eTMA File Handler${NC}"
+    return 1
+}
+
+# Installs GraalVM using the asdf version manager
+#
+# WHAT IS ASDF?
+#   asdf is a tool that lets you easily install and manage different
+#   versions of programming languages. It's widely used and trusted.
+#   https://asdf-vm.com/
+#
+# WHAT THIS DOES:
+#   1. Checks if asdf is installed
+#   2. Adds the Java plugin to asdf (if not already added)
+#   3. Downloads and installs GraalVM 25.0.1
+#   4. Sets GraalVM as the default Java for this project
+#
+# WHERE DOES IT INSTALL?
+#   GraalVM is installed to: ~/.asdf/installs/java/graalvm-community-25.0.1
+#   This is in your home directory - no admin access needed
+#
+install_graalvm() {
+    echo -e "${BLUE}Installing GraalVM 25...${NC}"
+    echo ""
+
+    # Check if asdf is installed
+    if ! command -v asdf &>/dev/null; then
+        echo -e "${RED}asdf not found. Please install asdf first:${NC}"
+        echo "  https://asdf-vm.com/guide/getting-started.html"
+        echo ""
+        echo "Or install manually:"
+        echo "  git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0"
+        echo "  echo '. \"\$HOME/.asdf/asdf.sh\"' >> ~/.bashrc"
+        echo "  source ~/.bashrc"
+        return 1
+    fi
+
+    # Check if the Java plugin is already added to asdf
+    # If not, add it (this enables asdf to install Java versions)
+    if ! asdf plugin list 2>/dev/null | grep -q "^java$"; then
+        echo -e "${YELLOW}Adding asdf java plugin...${NC}"
+        asdf plugin add java
+    fi
+
+    # Download and install GraalVM
+    # This downloads from GitHub releases - completely safe and verified
+    echo -e "${YELLOW}Downloading and installing GraalVM 25.0.1...${NC}"
+    echo "(This may take a few minutes depending on your internet speed)"
+    echo ""
+    asdf install java ${GRAALVM_VERSION}
+
+    # Set GraalVM as the default Java for THIS project
+    # This creates a .tool-versions file that tells asdf which version to use
+    echo -e "${YELLOW}Setting GraalVM as default for this project...${NC}"
+    cd "$BASEDIR"
+    asdf local java ${GRAALVM_VERSION}
+
+    echo ""
+    echo -e "${GREEN}✓ GraalVM 25.0.1 installed successfully!${NC}"
+}
+
+# Installs Temurin using the asdf version manager
+#
+# WHY TEMURIN?
+#   Temurin (Eclipse Adoptium) is the successor to AdoptOpenJDK.
+#   It provides both 32-bit and 64-bit builds, making it ideal for
+#   older or less common systems where GraalVM isn't available.
+#
+# WHERE DOES IT INSTALL?
+#   Temurin is installed to: ~/.asdf/installs/java/temurin-25.0.1+8.0.LTS
+#   This is in your home directory - no admin access needed
+#
+install_temurin() {
+    echo -e "${BLUE}Installing Temurin 25 (32-bit compatible)...${NC}"
+    echo ""
+
+    # Check if asdf is installed
+    if ! command -v asdf &>/dev/null; then
+        echo -e "${RED}asdf not found. Please install asdf first:${NC}"
+        echo "  https://asdf-vm.com/guide/getting-started.html"
+        echo ""
+        echo "Or install manually:"
+        echo "  git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0"
+        echo "  echo '. \"\$HOME/.asdf/asdf.sh\"' >> ~/.bashrc"
+        echo "  source ~/.bashrc"
+        return 1
+    fi
+
+    # Check if the Java plugin is already added to asdf
+    if ! asdf plugin list 2>/dev/null | grep -q "^java$"; then
+        echo -e "${YELLOW}Adding asdf java plugin...${NC}"
+        asdf plugin add java
+    fi
+
+    # Download and install Temurin
+    echo -e "${YELLOW}Downloading and installing Temurin 25...${NC}"
+    echo "(This may take a few minutes depending on your internet speed)"
+    echo ""
+    asdf install java ${TEMURIN_VERSION}
+
+    # Set Temurin as the default Java for THIS project
+    echo -e "${YELLOW}Setting Temurin as default for this project...${NC}"
+    cd "$BASEDIR"
+    asdf local java ${TEMURIN_VERSION}
+
+    echo ""
+    echo -e "${GREEN}✓ Temurin 25 installed successfully!${NC}"
+}
+
+# =============================================================================
+# APPLICATION FUNCTIONS
+# =============================================================================
+
+# Launches the eTMA File Handler application
+#
+# WHAT THIS DOES:
+#   Calls the file-handler.sh script which starts the Java application.
+#   The "exec" command replaces this script with the application,
+#   so when you close the app, you're fully exited.
+#
+run_now() {
+    echo -e "${BLUE}Starting eTMA File Handler...${NC}"
+    exec "${BASEDIR}/scripts/file-handler.sh"
+}
+
+# Installs a desktop shortcut so you can launch from your applications menu
+#
+# WHAT THIS DOES:
+#   1. Runs the install.sh script
+#   2. Creates a .desktop file in ~/.local/share/applications/
+#   3. Optionally creates a shortcut on your Desktop
+#
+# WHERE IS THE SHORTCUT?
+#   - Applications menu: Look for "eTMA File Handler" in Education or Office
+#   - Desktop: If you have a Desktop folder, a shortcut appears there too
+#
+install_app() {
+    echo -e "${BLUE}Installing desktop shortcut...${NC}"
+    "${BASEDIR}/scripts/install.sh"
+    echo ""
+    echo -e "${GREEN}Installation complete!${NC}"
+    echo ""
+    read -p "Would you like to run the handler now? [Y/n] " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+        run_now
+    fi
+}
+
+# =============================================================================
+# MENU DISPLAY
+# =============================================================================
+
+# Shows the main menu options
+# This is called repeatedly until you choose to quit
+show_menu() {
+    echo ""
+    echo "What would you like to do?"
+    echo ""
+    echo -e "  ${GREEN}1)${NC} Run here and now"
+    echo -e "  ${GREEN}2)${NC} Install on this machine (creates menu shortcut)"
+    echo -e "  ${GREEN}3)${NC} Browser authentication workaround (if login fails)"
+    echo -e "  ${GREEN}4)${NC} Check (and optionally install) latest Java"
+    echo -e "  ${GREEN}5)${NC} ${YELLOW}Data protection: Sanitise student data${NC}"
+    echo -e "  ${GREEN}6)${NC} ${RED}Uninstall eTMA Handler${NC}"
+    echo -e "  ${GREEN}q)${NC} Quit"
+    echo ""
+    read -p "Enter choice [1-6, q]: " -n 1 -r
+    echo ""
+}
+
+# =============================================================================
+# MAIN PROGRAM
+# =============================================================================
+
+# This is where the script starts executing
+# It shows the banner, then loops showing the menu until you quit
+main() {
+    show_banner
+
+    # Loop forever until user chooses quit
+    while true; do
+        show_menu
+
+        # Handle the user's menu choice
+        case $REPLY in
+            1)
+                # Run the application directly
+                check_and_install_java && run_now
+                ;;
+            2)
+                # Install desktop shortcut, then optionally run
+                check_and_install_java && install_app
+                ;;
+            3)
+                # Help with SAML authentication issues
+                echo -e "${BLUE}Running browser authentication workaround...${NC}"
+                "${BASEDIR}/scripts/browser-auth-workaround.sh"
+                ;;
+            4)
+                # Just check/install Java without running the app
+                check_and_install_java
+                ;;
+            5)
+                # Data protection - sanitise student data
+                echo -e "${YELLOW}Launching data sanitisation tool...${NC}"
+                "${BASEDIR}/scripts/sanitise-data.sh"
+                ;;
+            6)
+                # Uninstall the application
+                echo -e "${RED}Launching uninstaller...${NC}"
+                "${BASEDIR}/scripts/uninstall.sh"
+                ;;
+            q|Q)
+                # Exit the script
+                echo -e "${GREEN}Goodbye!${NC}"
+                exit 0
+                ;;
+            *)
+                # Invalid input - show error and loop back to menu
+                echo -e "${RED}Invalid option${NC}"
+                ;;
+        esac
+    done
+}
+
+# Start the main function, passing any command-line arguments
+main "$@"

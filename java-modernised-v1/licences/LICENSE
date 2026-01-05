@@ -1,0 +1,74 @@
+# SPDX-FileCopyrightText: 2007 Mike Hay (Original Author)
+# SPDX-FileCopyrightText: 2026 hyperpolymath (Modernisation)
+# SPDX-License-Identifier: MPL-2.0
+
+================================================================================
+                        OU eTMA File Handler - License
+================================================================================
+
+This project has a dual authorship:
+
+ORIGINAL WORK (2007)
+    Author: Mike Hay (OU Tutor 00516109)
+    Email: mike@hayfamily.co.uk
+
+    The core application logic, UI design, and functionality are entirely
+    Mike Hay's work, generously shared with fellow OU tutors.
+
+MODERNISATION (2026)
+    Author: hyperpolymath
+
+    The modernisation effort consists only of:
+    - Folder and file organisation
+    - Documentation updates (AsciiDoc format)
+    - Dependency updates (Jakarta EE, 2026 library versions)
+    - Java runtime compatibility (GraalVM 25)
+
+--------------------------------------------------------------------------------
+                        LEGAL LICENSE: MPL-2.0
+--------------------------------------------------------------------------------
+
+This project is legally licensed under the Mozilla Public License 2.0.
+See licences/MPL-2.0.txt for the full license text.
+
+SPDX-License-Identifier: MPL-2.0
+
+--------------------------------------------------------------------------------
+                        PHILOSOPHICAL FRAMEWORK: Palimpsest
+--------------------------------------------------------------------------------
+
+This project encourages adoption of the Palimpsest philosophical framework
+for ethical open source collaboration.
+
+Palimpsest recognises that creative works carry meaning beyond commercial value:
+- Layered contribution (each contributor adds to what came before)
+- Transparent provenance (clear attribution of ideas, not just code)
+- Collaborative evolution (improvements that honour the original)
+- Ethical use guidelines (principles beyond legal enforcement)
+
+See: https://github.com/hyperpolymath/palimpsest-license
+
+Note: Palimpsest is not currently legally binding - MPL-2.0 is the legal license.
+
+--------------------------------------------------------------------------------
+                        DEPENDENCY LICENSES
+--------------------------------------------------------------------------------
+
+This project includes dependencies under the following licenses:
+
+Apache License 2.0:
+    - commons-codec (Apache Software Foundation)
+    - commons-lang3 (Apache Software Foundation)
+
+Eclipse Public License 2.0 / GNU GPL 2.0 with Classpath Exception:
+    - angus-mail (Eclipse Foundation)
+    - angus-activation (Eclipse Foundation)
+    - jakarta.mail-api (Eclipse Foundation)
+    - jakarta.activation-api (Eclipse Foundation)
+
+GNU Lesser General Public License 2.1:
+    - Jazzy spell checker
+
+See the licences/ directory for full license texts.
+
+================================================================================

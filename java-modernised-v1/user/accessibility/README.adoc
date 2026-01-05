@@ -1,0 +1,126 @@
+= eTMA Handler Accessibility Resources
+:author: eTMA Handler Project
+:toc: auto
+:icons: font
+
+== Overview
+
+This folder contains alternative format versions of eTMA Handler documentation designed for users with different accessibility needs.
+
+== Available Formats
+
+[cols="1,2,2"]
+|===
+|Folder |Format |Best For
+
+|`braille/`
+|BRF (Braille Ready Format)
+|Braille embossers and refreshable braille displays
+
+|`large-print/`
+|Large text versions (18pt+)
+|Users with low vision
+
+|`plain-text/`
+|Screen reader optimised text
+|Screen readers (JAWS, NVDA, VoiceOver, Orca)
+
+|`audio-scripts/`
+|Narration scripts
+|Audio recording or text-to-speech
+|===
+
+== Braille Format (BRF)
+
+The `.brf` files use Grade 2 contracted braille in ASCII format. They can be:
+
+* Sent directly to a braille embosser
+* Opened on a refreshable braille display
+* Viewed in braille translation software
+
+**Recommended software:**
+
+* **Duxbury Braille Translator** (commercial)
+* **LibLouis** (free, open source) - https://liblouis.io/
+* **BrailleBlaster** (free) - https://brailleblaster.org/
+
+== Large Print Format
+
+Large print versions use:
+
+* **18 point minimum** font size
+* **Sans-serif fonts** for clarity
+* **High contrast** (black on white or cream)
+* **Wide margins** and generous line spacing
+* **Clear headings** with consistent hierarchy
+
+== Plain Text Format
+
+Optimised for screen readers with:
+
+* **Linear document structure** (no columns)
+* **Descriptive headings** for navigation
+* **Alt text** for any referenced images
+* **Logical reading order**
+* **No decorative elements**
+
+== Audio Scripts
+
+Scripts formatted for narration include:
+
+* **Pronunciation guides** for technical terms
+* **Pause markers** for natural reading
+* **Description of visual elements**
+* **Section markers** for navigation
+
+== Application Accessibility Settings
+
+The eTMA Handler includes built-in accessibility options. Edit the configuration file at:
+
+    config/accessibility.toml
+
+Or run the application and access:
+
+    Menu -> Preferences -> Accessibility
+
+=== Available Settings
+
+[cols="1,2"]
+|===
+|Setting |Description
+
+|Dyslexia-friendly font
+|Uses OpenDyslexic or similar font designed for dyslexic readers
+
+|High contrast mode
+|Increases contrast for better visibility
+
+|Large text mode
+|Increases all text sizes
+
+|Screen reader mode
+|Optimises interface for screen reader navigation
+
+|Reduced motion
+|Minimises animations and transitions
+|===
+
+== Requesting Additional Formats
+
+If you need documentation in a format not provided here, please contact:
+
+* Your Staff Tutor (for OU-specific support)
+* The eTMA Handler project (for format requests)
+
+The Open University also provides accessibility support:
+
+* **Student Support Team:** https://help.open.ac.uk/
+* **Disability Support:** disability@open.ac.uk
+
+== Contributing
+
+If you can help improve these accessibility resources (e.g., verify braille accuracy, suggest improvements), contributions are welcome.
+
+== Licence
+
+All accessibility resources are provided under the same licence as the main eTMA Handler documentation (MPL-2.0).

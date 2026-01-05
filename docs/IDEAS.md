@@ -355,6 +355,77 @@ Every feature should reduce friction, not add buttons.
 
 ---
 
+## Data Protection & Compliance
+
+### 31. Built-in Uninstaller
+
+**Problem:** Users need a clean way to completely remove the application.
+
+**Solution:**
+- Menu option to fully uninstall
+- Removes all shortcuts, preferences, cache
+- Lists exactly what will be removed before proceeding
+- Optionally removes application folder
+- Clear confirmation dialogs
+
+### 32. Student Data Sanitisation Tool
+
+**Problem:** OU policy requires tutors to delete student data after one year, but most forget.
+
+**Solution:**
+- Integrated data purge tool
+- Scans for student files (TMAs, PT3s, etc.)
+- Shows data by course and age
+- Safe preview mode (show what would be deleted)
+- Permanent secure deletion
+- Reminder of OU data retention policy
+- Annual reminder notification
+
+**OU Policy Reminder:**
+> "You should not retain student work or personal data for more than ONE YEAR after the student leaves your tuition."
+
+### 33. Data Protection Compliance Dashboard
+
+**Problem:** Tutors don't know what student data they have.
+
+**Solution:**
+- Dashboard showing all stored student data
+- Age indicators (green/yellow/red)
+- One-click deletion by course
+- Export compliance report
+- Automatic detection of sensitive files
+
+---
+
+## Localisation & Specialist Vocabulary
+
+### 34. Dictionary Injector
+
+**Problem:** Specialist vocabularies (medical, legal, scientific, technical) aren't in standard spell checkers, causing false positives.
+
+**Solution:**
+- Built-in dictionary management interface
+- Pre-built specialist vocabulary packs:
+  - Medical/Healthcare (NHS terminology)
+  - Legal (UK law terms)
+  - Computing/IT
+  - Sciences (biology, chemistry, physics)
+  - Education (pedagogical terms)
+  - Business/Management
+- Import custom word lists (.dic, .txt)
+- Per-module dictionary selection
+- Community-contributed vocabulary packs
+- British/American English variants
+
+**Technical approach:**
+- Extend existing Jazzy integration
+- Dictionary files in standard Hunspell format
+- Module-level dictionary configuration
+- User dictionary for custom additions
+- Export/share personal dictionaries
+
+---
+
 ## Implementation Notes
 
 ### What's Feasible Now (Low Effort, High Impact)
@@ -363,6 +434,7 @@ Every feature should reduce friction, not add buttons.
 - Comment bank
 - Batch release
 - Time tracking
+- Dictionary injector (see #31 below)
 
 ### What Needs Research
 - Local AI integration

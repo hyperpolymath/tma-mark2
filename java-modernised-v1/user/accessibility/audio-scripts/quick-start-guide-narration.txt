@@ -1,0 +1,209 @@
+eTMA FILE HANDLER - QUICK START GUIDE
+Audio Narration Script
+
+================================================================================
+NARRATOR INSTRUCTIONS
+================================================================================
+
+Voice: Clear, moderate pace, friendly but professional tone.
+Pronunciation guide included in square brackets.
+Pause markers: [PAUSE] = 1 second, [LONG PAUSE] = 2 seconds.
+Emphasis markers: *word* = slight emphasis.
+
+================================================================================
+BEGIN NARRATION
+================================================================================
+
+[LONG PAUSE]
+
+Welcome to the ee-TMA [pronounced: ee-tee-em-ay] File Handler Quick Start Guide.
+
+[PAUSE]
+
+This guide will help you get started with the application for managing
+Open University student assignments.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+SECTION ONE: INTRODUCTION
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+The ee-TMA File Handler is a desktop application designed specifically for
+Open University tutors. [PAUSE] It allows you to download student submissions,
+mark their work, write feedback, and upload the marked assignments back to
+the university system.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+SECTION TWO: BEFORE YOU BEGIN
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+You will need: [PAUSE]
+
+A computer running Linux, mac-OS [pronounced: mac-oh-ess], or Windows with
+WSL [pronounced: double-you-ess-ell] or Git Bash installed.
+
+[PAUSE]
+
+Java version twenty-one or later. [PAUSE] We recommend GraalVM
+[pronounced: grahl-vee-em] version twenty-five.
+
+[PAUSE]
+
+And an internet connection to access the Open University ee-TMA system.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+SECTION THREE: STARTING THE APPLICATION
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+There are two ways to start the ee-TMA File Handler.
+
+[PAUSE]
+
+*Method one*: Using the terminal.
+
+[PAUSE]
+
+First, open your terminal application. [PAUSE]
+Navigate to the ee-TMA handler folder. [PAUSE]
+Then type: dot slash ee-TMA-Handler [PAUSE] and press Enter.
+
+[PAUSE]
+
+*Method two*: Using the desktop shortcut.
+
+[PAUSE]
+
+If you have already installed the application using menu option two,
+you can find ee-TMA File Handler in your applications menu,
+under the Education or Office category.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+SECTION FOUR: THE MAIN MENU
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+When you run the ee-TMA Handler script, you will see a menu with six options.
+
+[PAUSE]
+
+*Option one*: Run here and now. [PAUSE]
+This starts the application immediately.
+
+[PAUSE]
+
+*Option two*: Install on this machine. [PAUSE]
+This creates a desktop shortcut so you can easily find and start
+the application later.
+
+[PAUSE]
+
+*Option three*: Browser authentication workaround. [PAUSE]
+Use this if you have trouble logging in through the application.
+It opens your web browser first to authenticate with the university.
+
+[PAUSE]
+
+*Option four*: Check and install Java. [PAUSE]
+This verifies that Java is correctly installed on your computer,
+and offers to install GraalVM if needed.
+
+[PAUSE]
+
+*Option five*: Data protection - Sanitise student data. [PAUSE]
+This helps you delete old student files to comply with
+Open University data protection requirements.
+
+[PAUSE]
+
+*Option six*: Uninstall ee-TMA Handler. [PAUSE]
+This completely removes the application from your computer.
+
+[PAUSE]
+
+*Option Q*: Quit. [PAUSE]
+This exits the menu.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+SECTION FIVE: KEYBOARD SHORTCUTS
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+Here are the most important keyboard shortcuts for using the application:
+
+[PAUSE]
+
+To *open a file*: Hold Control and press the letter O.
+
+[PAUSE]
+
+To *save your work*: Hold Control and press the letter S.
+
+[PAUSE]
+
+To *quit the application*: Hold Control and press the letter Q.
+
+[PAUSE]
+
+To *move between fields*: Press the Tab key.
+
+[PAUSE]
+
+To *activate a button*: Press Enter.
+
+[PAUSE]
+
+To *cancel or close a dialog*: Press Escape.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+SECTION SIX: GETTING HELP
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+If you experience technical problems, please refer to the troubleshooting
+section in the Reference Manual.
+
+[PAUSE]
+
+For questions about Open University procedures, contact your Staff Tutor.
+
+[PAUSE]
+
+For accessibility support, contact the Open University Disability Services
+by email at: disability at open dot ac dot uk.
+
+[LONG PAUSE]
+
+--------------------------------------------------------------------------------
+END OF GUIDE
+--------------------------------------------------------------------------------
+
+[PAUSE]
+
+This concludes the ee-TMA File Handler Quick Start Guide. [PAUSE]
+Thank you for listening.
+
+[LONG PAUSE]
+
+================================================================================
+END OF NARRATION
+================================================================================

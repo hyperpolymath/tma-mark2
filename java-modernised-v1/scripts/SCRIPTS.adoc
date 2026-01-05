@@ -1,0 +1,448 @@
+= eTMA Handler Scripts Guide
+:author: Mike Hay (Original), modernised 2026
+:toc: auto
+:icons: font
+
+== Overview
+
+This folder contains simple shell scripts that help you run and install the eTMA File Handler. These scripts are safe, transparent, and do not require administrator access.
+
+[NOTE]
+====
+**For non-technical users:** These scripts are just lists of instructions that your computer follows. They don't do anything harmful - they only set up and run the eTMA application. Each script is fully commented so you can read exactly what it does.
+====
+
+== Safety Statement
+
+All scripts in this folder:
+
+* **Do NOT send data anywhere** (except the application connecting to OU's eTMA site)
+* **Do NOT require administrator/root access**
+* **Do NOT modify system files**
+* **Only affect YOUR home directory**
+* **Are fully open and readable** - no hidden or obfuscated code
+
+== Script Summary
+
+[cols="1,3"]
+|===
+|Script |Purpose
+
+|`file-handler.sh`
+|Launches the eTMA application
+
+|`install.sh`
+|Creates a desktop shortcut
+
+|`browser-auth-workaround.sh`
+|Helps when login doesn't work
+
+|`sanitise-data.sh`
+|Removes student data for OU data protection compliance
+
+|`uninstall.sh`
+|Completely removes eTMA Handler from your system
+
+|`first-run-setup.sh`
+|Accessibility configuration wizard (runs automatically on first launch)
+|===
+
+== Platform Support
+
+All scripts are designed to work across multiple platforms:
+
+[cols="1,3"]
+|===
+|Platform |Support Level
+
+|**Linux**
+|Fully tested (primary platform)
+
+|**macOS**
+|Supported (Homebrew Java recommended)
+
+|**Windows (WSL/Git Bash)**
+|Supported (use Windows Subsystem for Linux or Git Bash)
+|===
+
+The scripts automatically detect your operating system and adjust their behaviour accordingly. Java (the JVM) handles all architecture differences (32/64-bit, ARM/x86) automatically.
+
+== Detailed Explanations
+
+=== file-handler.sh - The Application Launcher
+
+**What it does in plain English:**
+
+1. Finds where Java is installed on your computer
+2. Tells Java where to find the application files (JAR files)
+3. Checks if the application is already running (to avoid duplicates)
+4. Starts the eTMA File Handler application
+
+**Step by step:**
+
+[source]
+----
+1. Find the scripts folder location
+2. Look for Java (GraalVM first, then Temurin, then system Java)
+3. Build a list of all the library files the application needs
+4. Check if eTMA is already open - if so, just bring it to front
+5. Start the Java application
+----
+
+**What it accesses:**
+
+* Your Java installation (in `~/.asdf/installs/java/` or system Java)
+* The JAR files in `dev/modernised/`
+* The `wmctrl` tool (if installed) to check for running windows
+
+**Network connections:**
+
+* The script itself makes NO network connections
+* The Java application connects only to `css3.open.ac.uk` (OU eTMA site)
+
+---
+
+=== install.sh - Desktop Shortcut Creator
+
+**What it does in plain English:**
+
+1. Creates a "shortcut" file that tells Linux about the application
+2. Puts this file where your desktop environment can find it
+3. Optionally puts a shortcut on your Desktop folder
+
+**Step by step:**
+
+[source]
+----
+1. Find the scripts folder location
+2. Create the applications folder if it doesn't exist
+   Location: ~/.local/share/applications/
+3. Write a .desktop file with:
+   - Application name: "eTMA File Handler"
+   - How to run it: the file-handler.sh script
+   - Icon location: the .icon folder
+   - Categories: Office, Education
+4. If you have a Desktop folder, copy the shortcut there too
+5. Tell the system to refresh the applications list
+----
+
+**What it creates:**
+
+* `~/.local/share/applications/etma-file-handler.desktop`
+* `~/Desktop/etma-file-handler.desktop` (if Desktop folder exists)
+
+**What is a .desktop file?**
+
+A `.desktop` file is how Linux knows about applications. It's a simple text file that contains:
+
+* The application's name (what appears in menus)
+* The command to run it
+* The icon to display
+* Which category it belongs in (Office, Games, etc.)
+
+You can open it in any text editor to see exactly what it says.
+
+---
+
+=== browser-auth-workaround.sh - Login Helper
+
+**What it does in plain English:**
+
+1. Opens your web browser to the OU eTMA login page
+2. Waits for you to log in
+3. Then starts the eTMA Handler
+
+**Why is this needed?**
+
+The Open University uses a login system called "SAML". Sometimes the Java application has trouble with this login process. By logging in through your browser first, the necessary session information gets saved, and then the Java application can use it.
+
+**Step by step:**
+
+[source]
+----
+1. Print instructions explaining what to do
+2. Open your default browser to https://css3.open.ac.uk/etma/tutor
+3. Wait for you to press Enter (after you've logged in)
+4. Start the eTMA Handler application
+----
+
+**What it accesses:**
+
+* Your default web browser (via the `xdg-open` command)
+* The OU eTMA website (official Open University site)
+* The `file-handler.sh` script to start the application
+
+---
+
+=== sanitise-data.sh - Student Data Removal Tool
+
+**What it does in plain English:**
+
+1. Scans your etmas folder for student data
+2. Shows you what files are present
+3. Lets you preview or permanently delete student data
+4. Reminds you of the OU data protection policy
+
+**Why is this needed?**
+
+[IMPORTANT]
+====
+**OU Data Protection Policy:** You should NOT retain student work or personal data for more than ONE YEAR after the student leaves your tuition.
+====
+
+This tool helps you comply with OU data protection requirements and UK GDPR by safely removing student files when they're no longer needed.
+
+**Step by step:**
+
+[source]
+----
+1. Locate your etmas folder
+2. Count and list all course folders and student files
+3. Present options:
+   - Preview what would be deleted (safe - no changes)
+   - Delete a specific course folder
+   - Delete ALL student data (requires multiple confirmations)
+   - Delete the returns folder only
+4. Ask for confirmation before any deletion
+5. Remind you of the OU data protection policy
+----
+
+**What it removes:**
+
+* Course folders (e.g., `DD210-24J/`, `E225-25K/`)
+* TMA files (`.fhi`, `.pt3`)
+* Student documents (`.doc`, `.docx`, `.odt`, `.pdf`)
+* Return archives (`.zip` files in returns folder)
+
+**What it does NOT touch:**
+
+* The eTMA application itself
+* Your preferences and settings
+* Any files outside the etmas folder
+
+---
+
+=== uninstall.sh - Application Removal Tool
+
+**What it does in plain English:**
+
+1. Shows you exactly what will be removed
+2. Asks for your confirmation
+3. Removes all shortcuts and preferences
+4. Optionally removes the application folder itself
+
+**Why is this needed?**
+
+If you no longer need the eTMA Handler, this tool provides a clean way to completely remove it from your system, leaving no trace behind.
+
+**Step by step:**
+
+[source]
+----
+1. List all files that would be removed
+2. Ask for confirmation (requires typing YES)
+3. Remove:
+   - Desktop shortcut
+   - Applications menu entry
+   - Java preferences for eTMA
+4. Ask if you want to delete the application folder
+5. Confirm completion
+----
+
+**What it removes:**
+
+* `~/.local/share/applications/etma-file-handler.desktop`
+* `~/Desktop/etma-file-handler.desktop` (if it exists)
+* Java preferences in `~/.java/.userPrefs/etmaHandler/`
+
+**What it does NOT touch:**
+
+* Your student data (use `sanitise-data.sh` for that)
+* Your Java installation
+* Any other applications
+
+=== first-run-setup.sh - Accessibility Setup Wizard
+
+**What it does in plain English:**
+
+1. Checks if this is your first time running the application
+2. Presents accessibility options in a friendly wizard format
+3. Saves your preferences to the configuration file
+
+**Why is this needed?**
+
+Accessibility settings should be offered early, not buried in menus. This wizard runs automatically on first launch so users can configure:
+
+* Large text mode
+* High contrast display
+* Dyslexia-friendly fonts
+* Screen reader optimisations
+* Reduced motion
+
+**Step by step:**
+
+[source]
+----
+1. Detect if this is first run (check config file)
+2. Display welcome banner
+3. Ask about display preferences (text size, contrast)
+4. Ask about reading support (dyslexia options)
+5. Ask about assistive technology (screen reader, motion)
+6. Save settings to config/accessibility.toml
+7. Mark first run as complete
+----
+
+**What it creates:**
+
+* Updates `config/accessibility.toml` with your preferences
+
+**When does it run?**
+
+* Automatically on first launch of the application
+* Only once - skipped after initial setup
+* Can be manually re-run by deleting the config file
+
+== The Main Script (etmaHandler)
+
+The `etmaHandler` script in the root folder is an interactive menu that ties everything together:
+
+[source]
+----
+What would you like to do?
+
+  1) Run here and now
+  2) Install on this machine (creates menu shortcut)
+  3) Browser authentication workaround (if login fails)
+  4) Check (and optionally install) latest Java
+  5) Data protection: Sanitise student data
+  6) Uninstall eTMA Handler
+  q) Quit
+----
+
+Each menu option calls one of the scripts described above:
+
+[cols="1,2"]
+|===
+|Option |Script Called
+
+|1 |`file-handler.sh` (which calls `first-run-setup.sh` on first run)
+|2 |`install.sh`
+|3 |`browser-auth-workaround.sh`
+|4 |Java detection (built-in to etmaHandler)
+|5 |`sanitise-data.sh`
+|6 |`uninstall.sh`
+|===
+
+NOTE: The accessibility wizard (`first-run-setup.sh`) runs automatically the first time you choose option 1 or 2. After initial setup, it won't appear again unless you delete the config file.
+
+== Technical Details for Developers
+
+=== Java Options Explained
+
+The `file-handler.sh` script passes several `--add-opens` options to Java:
+
+[source,bash]
+----
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.desktop/javax.swing=ALL-UNNAMED
+# ... etc
+----
+
+**What these do:** Modern Java (9+) has a module system that restricts access to internal classes. The eTMA Handler was written before this system existed, so it needs permission to access these internal classes. The `--add-opens` options grant this permission.
+
+**Is this safe?** Yes. These options only affect the eTMA application, not the rest of your system. They're a standard way to run older Java applications on modern Java.
+
+=== Classpath Explained
+
+The classpath (the `CP` variable) tells Java where to find:
+
+[cols="1,2"]
+|===
+|JAR File |Purpose
+
+|`etmaHandlerJ-modernised.jar`
+|The main application (Mike Hay's code)
+
+|`angus-mail-*.jar`, `jakarta.mail-*.jar`
+|Email functionality (for returning marked work)
+
+|`commons-codec-*.jar`
+|Encoding utilities (Base64, etc.)
+
+|`commons-lang3-*.jar`
+|String and utility functions
+
+|`jazzy-*.jar`
+|Spell checking in the feedback editor
+|===
+
+=== Single Instance Check
+
+The script checks if eTMA is already running, with platform-specific methods:
+
+[cols="1,2"]
+|===
+|Platform |Method
+
+|**Linux**
+|Uses `wmctrl` (if installed) to detect and activate the window, or `pgrep` as fallback
+
+|**macOS**
+|Uses AppleScript to check for running Java processes and activate the window
+
+|**Windows**
+|Uses PowerShell to check for running Java processes
+|===
+
+[source,bash]
+----
+# Linux example (with wmctrl)
+if wmctrl -l | grep -q "File Handler"; then
+    wmctrl -a "File Handler"  # Bring to front
+    exit 0                     # Don't start another copy
+fi
+----
+
+This prevents you from accidentally opening multiple copies. If the script can't bring the window to front (e.g., `wmctrl` not installed), it will still detect the running process and tell you to find it in your taskbar.
+
+== Troubleshooting
+
+=== Application won't start
+
+1. Check Java is installed: Run `java -version` in a terminal
+2. If no Java, run the main `etmaHandler` script and choose option 4
+
+=== Login fails
+
+1. Run the main `etmaHandler` script and choose option 3
+2. Log in via your browser first
+3. Then the application should work
+
+=== Desktop shortcut doesn't appear
+
+1. Log out and log back in, OR
+2. Run: `update-desktop-database ~/.local/share/applications/`
+
+=== Application closes immediately
+
+Check for errors by running directly:
+
+[source,bash]
+----
+./scripts/file-handler.sh
+----
+
+Any error messages will appear in the terminal.
+
+== Modifying Scripts
+
+If you need to modify these scripts:
+
+1. They use standard Bash shell syntax
+2. Comments explain each section
+3. Test changes in a terminal before relying on them
+4. Keep the safety checks intact
+
+== Questions?
+
+The scripts are fully commented. Open any script in a text editor to see exactly what each line does.

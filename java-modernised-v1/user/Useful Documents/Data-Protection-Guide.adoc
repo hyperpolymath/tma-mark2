@@ -1,0 +1,172 @@
+= OU Tutor Data Protection Guide
+:author: Open University Data Protection Guidance
+:toc: auto
+:icons: font
+
+== Important: Data Retention Policy
+
+[IMPORTANT]
+====
+**You should NOT retain student work or personal data for more than ONE YEAR after the student leaves your tuition.**
+
+This is Open University policy and aligns with UK GDPR requirements.
+====
+
+== What Data Must Be Deleted?
+
+=== Student Work
+
+* TMA submissions (original files)
+* Marked copies of assignments
+* PT3 feedback forms
+* Any annotated or commented documents
+* Draft feedback
+
+=== Personal Information
+
+* Student names
+* PI (Personal Identifier) numbers
+* Email addresses
+* Postal addresses
+* Phone numbers
+* Any other identifiable information
+
+=== Communication Records
+
+* Emails to/from students
+* Tutorial notes with names
+* Assignment queries with identifiers
+
+== When to Delete
+
+[cols="1,2"]
+|===
+|Event |Action Required
+
+|Student completes module
+|Keep data for 1 year maximum
+
+|Student withdraws
+|Delete within 1 year of withdrawal
+
+|Student transfers to another tutor
+|Delete immediately after handover
+
+|Student complaints/appeals
+|Keep until resolved, then delete within 1 year
+
+|End of each academic year
+|Review all stored data for deletion
+|===
+
+== How to Delete Using eTMA Handler
+
+The eTMA Handler includes a built-in data sanitisation tool:
+
+1. Run the main `etmaHandler` script
+2. Choose option **5) Data protection: Sanitise student data**
+3. Follow the prompts to:
+   * Preview what will be deleted
+   * Delete specific courses
+   * Delete all student data
+   * Delete the returns folder
+
+=== Safe Deletion Steps
+
+[source]
+----
+Step 1: Verify all marked work has been uploaded to OU
+Step 2: Run the sanitisation tool in preview mode
+Step 3: Confirm the files are no longer needed
+Step 4: Delete by course or all at once
+----
+
+== Manual Deletion
+
+If you prefer to delete manually:
+
+=== Location of Files
+
+Student data is typically stored in:
+
+* `~/etmas/` (default location)
+* Course folders: `DD210-25J/`, `E225-25J/`, etc.
+* Returns folder: `~/etmas/returns/`
+
+=== What to Delete
+
+* All `.fhi` files (eTMA submission files)
+* All `.pt3` files (PT3 feedback forms)
+* All `.doc`, `.docx`, `.odt` files (student submissions)
+* All `.pdf` files (if student work)
+* All `.zip` files in returns folder
+
+=== Secure Deletion
+
+For additional security, you can use the `shred` command:
+
+[source,bash]
+----
+# Securely delete a file (overwrites data)
+shred -u filename.fhi
+
+# Securely delete all files in a folder
+find ~/etmas/DD210-24J -type f -exec shred -u {} \;
+----
+
+== Record Keeping
+
+=== What You MAY Keep
+
+* Your own teaching notes (without student identifiers)
+* Generic feedback templates
+* Module materials (not student-specific)
+* Statistical records (anonymised)
+
+=== What You MUST NOT Keep
+
+* Named grade lists
+* Individual student records
+* Personal correspondence with students
+* Identifiable performance data
+
+== Annual Review Checklist
+
+At the end of each academic year:
+
+[%interactive]
+* [ ] Review all courses from previous year
+* [ ] Identify courses where students have completed
+* [ ] Verify all marked work has been uploaded
+* [ ] Delete data for completed courses
+* [ ] Empty the returns folder
+* [ ] Check email for old student correspondence
+* [ ] Document deletion for your records
+
+== Data Breach Reporting
+
+If you discover a data breach:
+
+1. **Report immediately** to the OU Data Protection team
+2. Note what data was affected
+3. Identify how the breach occurred
+4. Follow instructions from the OU
+
+Contact: dataprotection@open.ac.uk
+
+== Further Information
+
+* OU Data Protection Policy: https://www.open.ac.uk/about/main/governance-ou/policies-and-statements
+* UK GDPR Guidance: https://ico.org.uk/
+* Your Staff Tutor (for specific questions)
+
+== Summary
+
+[TIP]
+====
+**Golden Rule:** If you haven't used a student file in the past year and the module has finished, delete it.
+
+**When in doubt:** Delete. You can always request data from the OU if needed.
+
+**Remember:** It's easier to explain why you deleted data than why you kept it.
+====

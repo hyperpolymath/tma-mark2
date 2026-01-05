@@ -1,0 +1,188 @@
+OU TUTOR DATA PROTECTION GUIDE
+Screen Reader Optimised Version
+
+Document Navigation:
+- Use heading navigation (H key in most screen readers) to jump between sections
+- All sections are marked with equals signs for easy identification
+- Linear reading order throughout
+
+================================================================================
+IMPORTANT NOTICE - READ FIRST
+================================================================================
+
+Open University policy and UK GDPR law require you to delete student data.
+
+Key rule: Do NOT keep student work or personal data for more than ONE YEAR
+after the student leaves your tuition.
+
+This guide explains what to delete, when to delete it, and how to do so safely.
+
+================================================================================
+SECTION 1: WHAT DATA MUST BE DELETED
+================================================================================
+
+Student Work:
+
+You must delete these types of student work files:
+TMA submissions, which are the original files students send you.
+Marked copies of assignments with your annotations.
+PT3 feedback forms containing your comments.
+Any annotated or commented documents.
+Draft feedback you have written.
+
+Personal Information:
+
+You must delete these types of personal information:
+Student names.
+PI numbers, which are Personal Identifier numbers.
+Email addresses.
+Postal addresses.
+Phone numbers.
+Any other information that identifies a student.
+
+Communication Records:
+
+You must delete these types of communication:
+Emails to and from students.
+Tutorial notes that contain student names.
+Assignment queries that include student identifiers.
+
+================================================================================
+SECTION 2: WHEN TO DELETE
+================================================================================
+
+After Module Completion:
+When a student completes a module, keep their data for a maximum of one year,
+then delete everything.
+
+After Student Withdrawal:
+When a student withdraws from a module, delete their data within one year of
+their withdrawal date.
+
+After Student Transfer:
+When a student transfers to another tutor, delete their data immediately after
+you complete the handover to the new tutor.
+
+During Complaints or Appeals:
+If there is a complaint or appeal in progress, keep the relevant data until
+the matter is resolved, then delete within one year.
+
+Annual Review:
+At the end of each academic year, review all stored data to identify what
+should be deleted.
+
+================================================================================
+SECTION 3: HOW TO DELETE USING eTMA HANDLER
+================================================================================
+
+The eTMA Handler includes a data sanitisation tool. Follow these steps:
+
+Step 1: Run the etmaHandler script from your terminal or applications menu.
+
+Step 2: From the main menu, choose option 5, which is Data protection -
+Sanitise student data.
+
+Step 3: The tool will show you what files are present in your etmas folder.
+
+Step 4: Choose one of these options:
+Option 1 lets you preview what would be deleted without making changes.
+Option 2 lets you delete a specific course folder.
+Option 3 lets you delete all student data.
+Option 4 lets you delete only the returns folder.
+
+Step 5: Confirm your choice when prompted. For full deletion, you must type
+DELETE ALL DATA to confirm.
+
+================================================================================
+SECTION 4: BEFORE YOU DELETE
+================================================================================
+
+Before deleting any data, verify the following:
+
+Checklist item 1: All marked work has been uploaded to the Open University.
+
+Checklist item 2: No outstanding student appeals or queries require the files.
+
+Checklist item 3: The one-year retention period has passed.
+
+Checklist item 4: You do not need the files for any legitimate purpose.
+
+================================================================================
+SECTION 5: WHAT YOU MAY KEEP
+================================================================================
+
+You are allowed to keep the following:
+
+Your own teaching notes, as long as they do not contain student names or
+identifiers.
+
+Generic feedback templates that you have created.
+
+Module materials that are not specific to any student.
+
+Statistical records that have been anonymised so no student can be identified.
+
+================================================================================
+SECTION 6: WHAT YOU MUST NOT KEEP
+================================================================================
+
+You must not keep the following:
+
+Named grade lists showing student names with their marks.
+
+Individual student records of any kind.
+
+Personal correspondence with students.
+
+Performance data that can identify individual students.
+
+================================================================================
+SECTION 7: DATA BREACH REPORTING
+================================================================================
+
+If you discover or suspect a data breach, take these steps immediately:
+
+Step 1: Report the breach immediately to the Open University Data Protection
+team. Do not delay this step.
+
+Step 2: Note what data was affected. Make a list of the types of information
+that may have been compromised.
+
+Step 3: Identify how the breach occurred. Try to understand what happened.
+
+Step 4: Follow any instructions you receive from the Open University.
+
+Contact the Data Protection team by email at: dataprotection@open.ac.uk
+
+================================================================================
+SECTION 8: GOLDEN RULES TO REMEMBER
+================================================================================
+
+Rule 1: If you have not used a student file in the past year and the module
+has finished, delete it.
+
+Rule 2: When you are uncertain whether to keep or delete data, delete it.
+You can always request data from the Open University if you later need it.
+
+Rule 3: It is easier to explain why you deleted data than to explain why you
+kept it longer than necessary.
+
+================================================================================
+SECTION 9: FURTHER INFORMATION
+================================================================================
+
+For more information about data protection:
+
+Open University Data Protection Policy:
+Visit the website at open.ac.uk and navigate to About, then Governance,
+then Policies and Statements.
+
+UK GDPR Guidance:
+Visit the Information Commissioner's Office website at ico.org.uk
+
+For specific questions:
+Contact your Staff Tutor.
+
+================================================================================
+END OF DOCUMENT
+================================================================================

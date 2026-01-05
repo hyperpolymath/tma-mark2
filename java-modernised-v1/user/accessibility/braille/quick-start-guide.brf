@@ -1,0 +1,87 @@
+eTMA FILE HANDLER QUICK START GUIDE
+====================================
+
+FOR BRAILLE DISPLAY OR EMBOSSER
+GRADE 2 ENGLISH BRAILLE
+
+------------------------------------
+SECTION 1: WHAT IS THIS?
+------------------------------------
+
+The eTMA File Handler helps Open University
+tutors manage student assignments.
+
+It lets you:
+- Download student work from the OU
+- Mark assignments with feedback
+- Upload marked work back to students
+
+------------------------------------
+SECTION 2: STARTING THE APPLICATION
+------------------------------------
+
+Step 1: Open a terminal or file manager
+
+Step 2: Navigate to the etma handler folder
+
+Step 3: Run the etmaHandler script
+
+Step 4: Choose option 1 to run now
+        Or choose option 2 to install
+
+------------------------------------
+SECTION 3: MAIN MENU OPTIONS
+------------------------------------
+
+Option 1: Run here and now
+  Starts the application immediately
+
+Option 2: Install on this machine
+  Creates a desktop shortcut
+
+Option 3: Browser authentication workaround
+  Use if login does not work
+
+Option 4: Check Java installation
+  Verifies Java is installed correctly
+
+Option 5: Data protection sanitise
+  Removes old student data
+
+Option 6: Uninstall
+  Removes the application
+
+Option Q: Quit
+  Exits the menu
+
+------------------------------------
+SECTION 4: KEYBOARD SHORTCUTS
+------------------------------------
+
+In the application:
+
+Control plus O: Open file
+Control plus S: Save
+Control plus Q: Quit
+Tab: Move between fields
+Enter: Activate button
+Escape: Cancel or close dialog
+
+------------------------------------
+SECTION 5: GETTING HELP
+------------------------------------
+
+For technical issues:
+  Check the Troubleshooting section in
+  the Reference Manual
+
+For OU-related questions:
+  Contact your Staff Tutor
+
+For accessibility support:
+  Contact OU Disability Services at
+  disability at open.ac.uk
+
+------------------------------------
+END OF DOCUMENT
+------------------------------------
