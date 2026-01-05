@@ -32,6 +32,15 @@ Thumbs.db
 *.ez
 erl_crash.dump
 
+# Phoenix/Elixir runtime
+/priv/static/assets/
+/priv/data/
+*.so
+
+# Native NIFs (compiled by Rustler)
+/native/tma_crypto/target/
+/native/tma_nlp/target/
+
 # Julia
 *.jl.cov
 *.jl.mem
