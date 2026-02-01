@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2007 Mike Hay (Original Author)
 # SPDX-FileCopyrightText: 2026 hyperpolymath (Modernisation)
-# SPDX-License-Identifier: MPL-2.0
+# SPDX-License-Identifier: PMPL-1.0-or-later
 
 ================================================================================
                         OU eTMA File Handler - License
@@ -31,7 +31,7 @@ MODERNISATION (2026)
 This project is legally licensed under the Mozilla Public License 2.0.
 See licences/MPL-2.0.txt for the full license text.
 
-SPDX-License-Identifier: MPL-2.0
+SPDX-License-Identifier: PMPL-1.0-or-later
 
 --------------------------------------------------------------------------------
                         PHILOSOPHICAL FRAMEWORK: Palimpsest

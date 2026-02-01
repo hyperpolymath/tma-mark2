@@ -1,4 +1,4 @@
-;; SPDX-License-Identifier: AGPL-3.0-or-later
+;; SPDX-License-Identifier: PMPL-1.0-or-later
 ;; Session Learning Capture - 2026-01-06
 ;; eTMA Marking with Corrected Comment Style
 

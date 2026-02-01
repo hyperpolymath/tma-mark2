@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: PMPL-1.0-or-later
 = tma-mark2 Comprehensive Seams Review
 :author: hyperpolymath
 :revdate: 2025-01-02
@@ -44,7 +44,7 @@ The review evaluates quality, ergonomics, dependability, safety, and interoperab
 ----
 # lib/etma_handler/security.ex - Line 1-2
 # SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
-# SPDX-License-Identifier: MIT  # <-- SHOULD BE AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 ----
 
 *Recommendation:* Update all file headers to AGPL-3.0-or-later to match LICENSE.txt.

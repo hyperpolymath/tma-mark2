@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: PMPL-1.0-or-later
 = Architecture Decision Records
 :toc: left
 :icons: font

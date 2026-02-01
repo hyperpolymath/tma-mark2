@@ -1,5 +1,5 @@
 ;; guix.scm
-;; SPDX-License-Identifier: AGPL-3.0-or-later
+;; SPDX-License-Identifier: PMPL-1.0-or-later
 ;;
 ;; GNU Guix package definition for tma-mark2
 ;; Primary build system - Nix is fallback
