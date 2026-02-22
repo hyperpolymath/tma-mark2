@@ -252,3 +252,8 @@ See link:SECURITY.md[SECURITY.md] for security policies and vulnerability report
 * The Elixir and Phoenix communities
 * CubDB for the excellent embedded database
 * Burrito for cross-platform packaging
+
+
+== Architecture
+
+See link:TOPOLOGY.md[TOPOLOGY.md] for a visual architecture map and completion dashboard.

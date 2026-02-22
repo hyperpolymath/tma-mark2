@@ -1,41 +1,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
+
 defmodule EtmaHandler do
   @moduledoc """
-  eTMA Handler - Open University Marking Tool (BEAM Edition)
+  eTMA Handler — High-Assurance Marking Infrastructure.
 
-  A modern, crash-proof marking application built on the Erlang VM (BEAM).
-  Designed to run on any platform: Linux, Windows, macOS, RISC-V, and even Minix.
+  This application provides a "crash-proof" environment for the marking 
+  and auditing of student submissions. It is designed to be resilient 
+  to both software failures and hardware power loss.
 
-  ## Features
-
-  - **Crash-Proof Storage**: Uses CubDB (append-only B-tree) - never lose marking data
-  - **Time Machine**: Every save creates a snapshot - undo/redo at any point
-  - **What-If Calculator**: "How much do I need on Q3 to pass?" - solved instantly
-  - **Quality Bot**: Prevents empty summaries, thin feedback, wrong names
-  - **Automatic Ingestion**: Drop files in Downloads - they're validated immediately
-  - **Post-Quantum Security**: Student data encrypted with modern cryptography
-
-  ## Quick Start
-
-      # Start the application
-      mix phx.server
-
-      # Open in browser
-      open http://localhost:4000
-
-  ## Architecture
-
-  The application is structured as follows:
-
-  - `EtmaHandler.Repo` - CubDB-backed data storage with versioning
-  - `EtmaHandler.Bouncer` - File watcher and validator
-  - `EtmaHandler.Marking.Audit` - Feedback quality checks
-  - `EtmaHandler.Logic.Calculator` - Smart mark calculations
-  - `EtmaHandlerWeb` - Phoenix LiveView interface
+  ## Reliability Architecture
+  1. **Persistence**: Uses `CubDB` (append-only storage) to ensure that 
+     marking data is never corrupted, even during a system crash.
+  2. **Auditability**: Maintains a "Time Machine" of every change, 
+     allowing for granular undo/redo and formal verification of results.
+  3. **Verification**: Employs a symbolic "Quality Bot" to enforce 
+     academic rigor and consistency across multiple markers.
   """
 
   @doc """
-  Returns the current version of the application.
+  Returns the current system version.
   """
   def version do
     case :application.get_key(:etma_handler, :vsn) do
@@ -45,16 +28,9 @@ defmodule EtmaHandler do
   end
 
   @doc """
-  Returns the data directory path.
+  Resolves the physical path for data persistence.
   """
   def data_dir do
     Application.get_env(:etma_handler, :data_dir)
-  end
-
-  @doc """
-  Returns the downloads directory path.
-  """
-  def downloads_dir do
-    Application.get_env(:etma_handler, :downloads_dir)
   end
 end
