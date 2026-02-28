@@ -87,5 +87,8 @@ htmlcov/
 *.tmp
 *.bak
 
+# Java
+*.class
+
 # Crash recovery artifacts
 ai-cli-crash-capture/
