@@ -1,0 +1,31 @@
+# Java build artifacts
+*.class
+*.jar
+!modernized/etmaHandlerJ-modernized.jar
+!modernized/lib/*.jar
+!dist/etmaHandlerJ.jar
+
+# Crash logs
+hs_err_pid*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Bundled JRE (large, user should have own Java)
+dist/jre/
+
+# Old installer outputs
+*.desktop
+
+# Decompiled source (reference only, don't track)
+etmaHandlerJ/
+
+# Crash recovery artifacts
+ai-cli-crash-capture/

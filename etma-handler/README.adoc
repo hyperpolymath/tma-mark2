@@ -1,0 +1,189 @@
+image:https://img.shields.io/badge/License-PMPL--1.0-blue.svg[License: PMPL-1.0,link="https://github.com/hyperpolymath/palimpsest-license"]
+
+= OU eTMA File Handler (Unofficial Fork)
+
+
+
+:toc:
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:repo-url: https://github.com/
+<OWNER>/<REPO>
+:upstream-url: https://www.hayfamily.co.uk/etmahandlerpage.html
+
+IMPORTANT: Do not use this fork for real assignment handling. This repository is a work-in-progress and currently has known data integrity issues that can corrupt data. Use the upstream (Mike Hayes’) edition for production use.
+
+== What this is
+
+The Open University eTMA (electronic Tutor-Marked Assignment) handler is a tool for OU tutors.
+
+This repository is an unofficial fork intended for modernization and experimentation (tooling, packaging, documentation, accessibility, cross-platform scripting). It is not the official or production edition.
+
+== Credit and upstream
+
+Original design and upstream implementation: Mike Hayes +
+Upstream page: {upstream-url}
+
+Mike’s edition is the de facto “official-unofficial” production handler used by many tutors. If you need a dependable tool, use upstream.
+
+== Status: not production-ready
+
+This fork currently has data handling problems that can lead to corruption of data. I believe this issue does not exist in the upstream version, but I have not completed a full comparative audit.
+
+Therefore:
+
+✅ Feedback and contributions are welcome.
+
+❌ Do not use this fork for real eTMA/assignment handling.
+
+== Goals of this fork (minimal code change, maximum modernization)
+
+Although the intent is not to rewrite the application logic, this fork aims to modernize the surrounding “platform” pieces:
+
+Directory structure changes to declutter the repository root and separate user vs developer concerns.
+
+Component replacement / refresh (primarily packaging/tooling rather than logic changes):
+** Java VM: migrate to Eclipse Temurin 25 with asdf support and 32/64-bit coverage.
+** (Other replacements are tracked in the roadmap/TODO; see <<Roadmap>>.)
+
+Cross-platform scripting (reduce OS-specific script duplication).
+
+Explicit support for 32-bit and 64-bit processors where feasible.
+
+Improved accessibility outputs (e.g., current accessible PDF formats, braille-friendly outputs, high-contrast considerations).
+
+Single entry script with a simple menu for:
+** install
+** run (including “portable” mode)
+** check for updates (and optionally install them)
+
+Most of the above are “surface” upgrades (dependencies, packaging, docs, standards) rather than deep logic changes.
+
+== Quick start
+
+.Run from the repository directory
+[source,shell]
+./etmaHandler.sh
+
+TIP: On some systems you may need to mark scripts executable first: chmod +x etmaHandler.sh install.sh browser-auth-workaround.sh
+
+== Repository layout
+
+[cols="1,3",options="header"]
+|===
+|Path |Purpose
+
+|etmaHandler.sh
+|Main launcher — start here.
+
+|install.sh
+|Creates desktop shortcut / install integration.
+
+|browser-auth-workaround.sh
+|Use if login/authentication fails (opens browser first, then launches).
+
+|modernized/
+|Modernized build (e.g., Java 25 + Jakarta EE target).
+
+|dist/
+|Legacy build artifacts and/or older Java layout (fallback/compat).
+
+|dist/jre/
+|Bundled JRE fallback (if present).
+
+|etmaDictionary.dic
+|Spell checker dictionary.
+|===
+
+== Troubleshooting
+
+=== Login failed / SAML errors
+
+Run:
+
+[source,shell]
+./browser-auth-workaround.sh
+
+This opens the browser to authenticate first, then launches the handler.
+
+=== Java not found
+
+This fork prefers:
+
+. asdf-managed Temurin 25
+. Bundled JRE in dist/jre/ (if present) as a fallback
+
+Confirm Java is available:
+
+[source,shell]
+java -version
+
+=== Window doesn’t appear
+
+Check if it’s already running:
+
+[source,shell]
+pgrep -f etmaHandler
+
+== Safety and data integrity
+
+WARNING: This fork has known data integrity issues and may corrupt data. Until this is resolved, treat the tool as unsafe for real eTMA workflows.
+
+If you can help:
+
+provide reproducible steps,
+
+share redacted sample inputs,
+
+or help create regression tests that compare behavior against upstream,
+
+…that would be extremely valuable.
+
+== Contributing
+
+Contributions are welcome, especially those that improve correctness, reproducibility, and cross-platform safety.
+
+Suggested priorities:
+
+. Reproduce and isolate the data corruption issue(s).
+. Add regression tests or fixtures to prevent recurrence.
+. Compare critical workflows against upstream to ensure parity.
+. Only then proceed with further modernization.
+
+=== Development principles for this fork
+
+Upstream-first mindset: prefer changes that can be proposed upstream, or at least remain compatible.
+
+Minimize logic changes: focus on packaging/tooling unless correctness requires otherwise.
+
+Be explicit about risk: if behavior changes, document it.
+
+== Roadmap
+
+Data integrity fixes are the top priority. Modernization work is secondary until corruption risks are eliminated.
+
+Planned/ongoing items (high-level):
+
+Identify and fix data corruption pathways
+
+Fill in the component replacement list (items ii–v) with concrete details
+
+Cross-platform scripting consolidation
+
+Accessibility improvements audit + outputs
+
+Update mechanism (safe + optional)
+
+== Licence
+
+Upstream licence: PMPL-1.0 (per upstream)
+
+This fork: PMPL-1.0 + Palimpsest 0.4 (as currently stated)
+
+NOTE: If there is any discrepancy between licence files and this README, the licence files should be treated as authoritative.
+
+== Disclaimer
+
+This repository is not affiliated with or endorsed by The Open University. It is a personal, unofficial fork intended for experimentation and modernization, and it is currently not safe for production use due to data integrity issues.
