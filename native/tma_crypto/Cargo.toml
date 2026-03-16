@@ -7,9 +7,9 @@
 [package]
 name = "tma_crypto"
 version = "2.0.0"
-authors = ["hyperpolymath <hyperpolymath@users.noreply.github.com>"]
+authors = ["Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>"]
 edition = "2021"
-license = "AGPL-3.0-or-later"
+license = "PMPL-1.0-or-later"
 description = "Post-quantum cryptography NIF for tma-mark2"
 repository = "https://github.com/hyperpolymath/tma-mark2"
 keywords = ["cryptography", "post-quantum", "elixir", "nif", "kyber"]

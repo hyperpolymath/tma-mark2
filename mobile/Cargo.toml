@@ -3,9 +3,9 @@
 name = "tma-mobile"
 version = "0.1.0"
 edition = "2024"
-authors = ["hyperpolymath"]
+authors = ["Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>"]
 description = "eTMA Handler Mobile - Post-quantum secure marking companion app"
-license = "AGPL-3.0-or-later"
+license = "PMPL-1.0-or-later"
 repository = "https://github.com/hyperpolymath/tma-mark2"
 
 [dependencies]
