@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: PMPL-1.0-or-later
 //! tma-mobile - eTMA Handler Mobile Companion App
 //!
 //! A post-quantum secure mobile application for:

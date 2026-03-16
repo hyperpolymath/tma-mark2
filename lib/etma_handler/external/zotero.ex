@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 defmodule EtmaHandler.External.Zotero do
   @moduledoc """
   Zotero Integration for Reference Lookup.

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 defmodule EtmaHandlerWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :etma_handler
 

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 defmodule EtmaHandler.Nlp.Native do
   @moduledoc """
   Native Rust NIF bindings for NLP operations.

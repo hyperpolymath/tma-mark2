@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 defmodule EtmaHandler.Nlp do
   @moduledoc """
   High-level Natural Language Processing operations for tma-mark2.
