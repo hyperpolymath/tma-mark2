@@ -9,6 +9,7 @@
 //! - Dilithium5: Post-quantum Digital Signatures (ML-DSA Level 5)
 //! - ChaCha20-Poly1305: AEAD symmetric encryption
 
+#![forbid(unsafe_code)]
 use rustler::{Binary, Encoder, Env, NifResult, OwnedBinary, Term};
 use zeroize::Zeroize;
 

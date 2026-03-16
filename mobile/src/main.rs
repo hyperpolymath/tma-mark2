@@ -9,6 +9,7 @@
 
 #![allow(non_snake_case)]
 
+#![forbid(unsafe_code)]
 mod components;
 mod crypto;
 mod state;

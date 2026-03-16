@@ -8,6 +8,7 @@
 //! - Text normalization (Unicode-aware)
 //! - Word extraction and tokenization
 
+#![forbid(unsafe_code)]
 use rayon::prelude::*;
 use rustler::{Encoder, Env, NifResult, Term};
 use strsim::{
