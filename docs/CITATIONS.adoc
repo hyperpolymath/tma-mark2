@@ -10,7 +10,7 @@
   title = {tma-mark2},
   year = {2025},
   url = {https://github.com/hyperpolymath/tma-mark2},
-  license = {AGPL-3.0-or-later}
+  license = {PMPL-1.0-or-later}
 }
 ----
 

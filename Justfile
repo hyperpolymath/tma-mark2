@@ -350,7 +350,7 @@ db-backup:
 info:
     @echo "Project: {{project}}"
     @echo "Version: {{version}}"
-    @echo "License: AGPL-3.0-or-later + Palimpsest"
+    @echo "License: PMPL-1.0-or-later + Palimpsest"
     @echo ""
     @echo "Build System: Guix (primary), Nix (fallback)"
     @echo "Container: Wolfi (Chainguard)"

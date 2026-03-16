@@ -24,7 +24,7 @@ defmodule EtmaHandler.MixProject do
   defp package do
     [
       name: "etma_handler",
-      licenses: ["AGPL-3.0-or-later"],
+      licenses: ["PMPL-1.0-or-later"],
       links: %{
         "GitHub" => "https://github.com/hyperpolymath/tma-mark2"
       },

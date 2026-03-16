@@ -22,7 +22,7 @@ let platform = import "./contracts/platform.ncl" in
     description = "eTMA Handler - Open University Marking Tool",
 
     license = {
-      spdx = "AGPL-3.0-or-later",
+      spdx = "PMPL-1.0-or-later",
       additional = "LicenseRef-Palimpsest-0.5",
       philosophy = "Copyleft with compassion",
     },
@@ -42,7 +42,7 @@ let platform = import "./contracts/platform.ncl" in
     # Files that MUST exist for valid build
     files_present = [
       # --- Legal & Compliance ---
-      "LICENSES/AGPL-3.0-or-later.txt",
+      "LICENSES/PMPL-1.0-or-later.txt",
       "LICENSES/Palimpsest-0.5.txt",
       "SECURITY.md",
       "CODE_OF_CONDUCT.adoc",
@@ -111,7 +111,7 @@ let platform = import "./contracts/platform.ncl" in
     content_requirements = [
       {
         file = "mix.exs",
-        contains = "AGPL-3.0-or-later",
+        contains = "PMPL-1.0-or-later",
         reason = "License must be declared in mix.exs",
       },
       {

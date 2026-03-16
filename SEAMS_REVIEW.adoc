@@ -47,7 +47,7 @@ The review evaluates quality, ergonomics, dependability, safety, and interoperab
 # SPDX-License-Identifier: PMPL-1.0-or-later
 ----
 
-*Recommendation:* Update all file headers to AGPL-3.0-or-later to match LICENSE.txt.
+*Recommendation:* Update all file headers to PMPL-1.0-or-later to match LICENSE.txt.
 
 === 1.2 Architectural Patterns
 
@@ -252,7 +252,7 @@ The `password_policy/0` function enforces:
 |===
 |Gap |Severity |Recommendation
 
-|MIT license header in security.ex |🟡 MEDIUM |Update to AGPL-3.0-or-later
+|MIT license header in security.ex |🟡 MEDIUM |Update to PMPL-1.0-or-later
 |No rate limiting implementation shown |🟡 MEDIUM |Verify `rate_limiter.ex` is complete
 |HIBP integration not implemented |🟢 LOW |Add Have I Been Pwned API check
 |===
@@ -353,7 +353,7 @@ The Bebop schemas provide:
 |===
 |# |Issue |Resolution
 
-|1 |License header in `security.ex` says MIT |Change to AGPL-3.0-or-later
+|1 |License header in `security.ex` says MIT |Change to PMPL-1.0-or-later
 |2 |No test suite |Create `test/` with ExUnit tests
 |3 |Rust NIFs are stubs |Implement crypto and NLP functions
 |4 |LiveView templates missing |Create `.heex` files for all routes
@@ -409,7 +409,7 @@ The following matrix shows how components integrate:
 
 === Immediate Actions (This Week)
 
-1. ✓ Update license headers to AGPL-3.0-or-later
+1. ✓ Update license headers to PMPL-1.0-or-later
 2. Create `test/` directory with basic ExUnit structure
 3. Generate Bebop code: `just bebop-generate`
 

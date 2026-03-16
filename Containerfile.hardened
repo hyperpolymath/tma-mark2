@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 # eTMA Handler - Hardened Container Build
 #
 # Build Strategy: Guix first, Nix fallback, direct build emergency
@@ -157,7 +157,7 @@ FROM cgr.dev/chainguard/wolfi-base:latest AS runner
 LABEL org.opencontainers.image.title="tma-mark2"
 LABEL org.opencontainers.image.description="eTMA Handler - Open University Marking Tool"
 LABEL org.opencontainers.image.source="https://github.com/hyperpolymath/tma-mark2"
-LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
+LABEL org.opencontainers.image.licenses="PMPL-1.0-or-later"
 LABEL org.opencontainers.image.vendor="hyperpolymath"
 
 # Install runtime dependencies + security tools
@@ -220,7 +220,7 @@ RUN if [ -d nix-build/bin ]; then \
 # Set up default nftables rules (paranoid: default deny)
 COPY --chown=root:root <<'EOF' /etc/nftables.conf
 #!/usr/sbin/nft -f
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: PMPL-1.0-or-later
 # tma-mark2 default-deny firewall
 
 flush ruleset
