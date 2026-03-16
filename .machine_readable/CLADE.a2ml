@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
+# Clade declaration — part of the gv-clade-index registry
+# See: https://github.com/hyperpolymath/gv-clade-index
+
+[identity]
+uuid = "60c10dfb-4ba2-5d36-9dd1-9a38329e1b96"
+primary-forge = "github"
+primary-owner = "hyperpolymath"
+canonical-name = "tma-mark2"
+prefixed-name = "dx-tma-mark2"
+
+[clade]
+primary = "dx"
+secondary = []
+assigned = "2026-03-16"
+rationale = ""
+
+[forges]
+github = "hyperpolymath/tma-mark2"
+gitlab = "hyperpolymath/tma-mark2"
+bitbucket = "hyperpolymath/tma-mark2"
+
+[lineage]
+type = "standalone"
+parent = "TMA mark 2 tool"
+born = "2026-03-16"
