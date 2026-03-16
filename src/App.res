@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: PMPL-1.0-or-later
 // eTMA Handler - Main ReScript Entry Point
 // Phoenix LiveView + Custom Hooks
 

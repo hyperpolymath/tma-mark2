@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: PMPL-1.0-or-later
 // Phoenix LiveView bindings
 
 // External imports (will be bundled)
