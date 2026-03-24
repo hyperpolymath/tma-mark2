@@ -356,6 +356,204 @@ info:
     @echo "Container: Wolfi (Chainguard)"
     @echo "Security: Post-quantum crypto, SDP, VPN support"
 
+# ============================================================
+# DIAGNOSTICS & ONBOARDING
+# ============================================================
+
+# Diagnose environment problems — checks every tool this project needs
+doctor:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    echo "=== tma-mark2 doctor ==="
+    echo ""
+    ok=0; warn=0; fail=0
+    check() {
+        if command -v "$1" &>/dev/null; then
+            printf "  [OK]   %-18s %s\n" "$1" "$($1 --version 2>&1 | head -1)"
+            ((ok++))
+        elif [ "${2:-required}" = "optional" ]; then
+            printf "  [SKIP] %-18s not installed (optional)\n" "$1"
+            ((warn++))
+        else
+            printf "  [FAIL] %-18s not installed\n" "$1"
+            ((fail++))
+        fi
+    }
+    echo "-- Core toolchain --"
+    check elixir
+    check erl
+    check mix
+    check rustc
+    check cargo
+    echo ""
+    echo "-- Build / task --"
+    check just
+    check git
+    check nix optional
+    check guix optional
+    check nickel optional
+    echo ""
+    echo "-- Container --"
+    check podman optional
+    check nerdctl optional
+    echo ""
+    echo "-- Security --"
+    check panic-attack optional
+    check trivy optional
+    check cosign optional
+    echo ""
+    echo "-- Quality --"
+    check mix  # credo/format via mix
+    echo ""
+    echo "-- Files --"
+    for f in mix.exs Justfile 0-AI-MANIFEST.a2ml LICENSE SECURITY.md; do
+        if [ -f "$f" ]; then
+            printf "  [OK]   %s exists\n" "$f"
+            ((ok++))
+        else
+            printf "  [FAIL] %s missing\n" "$f"
+            ((fail++))
+        fi
+    done
+    echo ""
+    echo "-- Ports --"
+    if ss -tlnp 2>/dev/null | grep -q ':4000 '; then
+        printf "  [WARN] Port 4000 already in use\n"
+        ((warn++))
+    else
+        printf "  [OK]   Port 4000 available\n"
+        ((ok++))
+    fi
+    echo ""
+    echo "=== Results: $ok OK, $warn warnings, $fail failures ==="
+    if [ "$fail" -gt 0 ]; then
+        echo "Run 'just heal' to attempt automatic fixes."
+        exit 1
+    fi
+
+# Attempt automatic repair of common problems
+heal:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    echo "=== tma-mark2 heal ==="
+    echo ""
+    # Hex / Rebar
+    if ! mix local.hex --check 2>/dev/null; then
+        echo "[heal] Installing Hex..."
+        mix local.hex --force
+    fi
+    if ! command -v rebar3 &>/dev/null; then
+        echo "[heal] Installing Rebar..."
+        mix local.rebar --force
+    fi
+    # Deps
+    if [ ! -d deps ] || [ ! -d _build ]; then
+        echo "[heal] Fetching dependencies..."
+        mix deps.get
+    fi
+    # CubDB lock
+    if ls data/db/*.lock 2>/dev/null; then
+        echo "[heal] Removing stale CubDB lock files..."
+        rm -f data/db/*.lock
+    fi
+    # Assets
+    if [ -d assets ] && [ ! -d priv/static/assets ]; then
+        echo "[heal] Building assets..."
+        mix assets.setup 2>/dev/null || true
+        mix assets.build 2>/dev/null || true
+    fi
+    # Rust NIFs
+    if [ -d native/tma_crypto ] && [ ! -d native/tma_crypto/target ]; then
+        echo "[heal] Building Rust NIFs..."
+        cargo build --release --manifest-path native/tma_crypto/Cargo.toml 2>/dev/null || true
+    fi
+    echo ""
+    echo "[heal] Done. Run 'just doctor' to verify."
+
+# Guided tour of the codebase — read this if you are new
+tour:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    echo "=== tma-mark2 Codebase Tour ==="
+    echo ""
+    echo "tma-mark2 (eTMA Handler) is a marking tool for Open University tutors."
+    echo "It reads .fhi student submissions, provides a browser UI for grading,"
+    echo "and exports .docx feedback files. Runs entirely offline."
+    echo ""
+    echo "--- Supervision Tree ---"
+    echo "  EtmaHandler.Application"
+    echo "    +-- EtmaHandler.Repo       (CubDB — embedded database)"
+    echo "    +-- EtmaHandler.Scanner    (watches Downloads for .fhi files)"
+    echo "    +-- EtmaHandler.Bouncer    (rate limiting)"
+    echo "    +-- Cachex                 (in-process cache)"
+    echo "    +-- Phoenix.PubSub"
+    echo "    +-- EtmaHandlerWeb.Endpoint (Bandit HTTP on port 4000)"
+    echo ""
+    echo "--- Key Directories ---"
+    echo "  lib/etma_handler/           Core business logic"
+    echo "    fhi.ex                    FHI parser (student submissions)"
+    echo "    marking/                  Grading engine, rubrics"
+    echo "    crypto/                   Argon2id hashing via Rust NIF"
+    echo "    scanner.ex                Downloads folder watcher"
+    echo "    repo.ex                   CubDB data layer"
+    echo "  lib/etma_handler_web/       Phoenix LiveView UI"
+    echo "  native/tma_crypto/          Rust NIF (cryptography)"
+    echo "  config/                     Environment-specific config"
+    echo "  test/                       ExUnit tests"
+    echo "  bebop/schemas/              Binary serialization schemas"
+    echo "  must/                       Nickel invariant definitions"
+    echo "  .machine_readable/          AI checkpoint metadata"
+    echo ""
+    echo "--- Data Flow ---"
+    echo "  .fhi file -> Scanner -> FHI Parser -> CubDB -> LiveView UI -> .docx"
+    echo ""
+    echo "--- Quick Commands ---"
+    echo "  just dev          Start Phoenix server (http://localhost:4000)"
+    echo "  just test         Run ExUnit + Rust NIF tests"
+    echo "  just doctor       Check environment health"
+    echo "  just heal         Auto-fix common problems"
+    echo "  just help-me      Interactive help menu"
+    echo ""
+    echo "Read QUICKSTART-USER.adoc for full setup instructions."
+
+# Interactive help menu — pick what you need
+help-me:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    echo "=== tma-mark2 Help ==="
+    echo ""
+    echo "  1) I want to SET UP the project for the first time"
+    echo "  2) I want to START the development server"
+    echo "  3) I want to RUN TESTS"
+    echo "  4) I want to BUILD a release / container"
+    echo "  5) I want to DIAGNOSE a problem"
+    echo "  6) I want to understand the CODEBASE"
+    echo "  7) I want to check SECURITY"
+    echo ""
+    read -rp "Pick a number (1-7): " choice
+    case "$choice" in
+        1) echo ""; echo "Run: nix develop  (or install Elixir 1.17+ and Rust manually)"
+           echo "Then: mix deps.get && mix assets.setup && mix phx.server"
+           echo "See: QUICKSTART-USER.adoc" ;;
+        2) echo ""; echo "Run: just dev"
+           echo "Opens http://localhost:4000 with live reload." ;;
+        3) echo ""; echo "Run: just test           (all tests)"
+           echo "      just test-coverage  (with coverage)"
+           echo "      just test-integration (integration only)" ;;
+        4) echo ""; echo "Run: just build              (Guix > Nix > Mix cascade)"
+           echo "      just build-container    (Chainguard image)"
+           echo "      just release 2.1.0      (full release cycle)" ;;
+        5) echo ""; echo "Run: just doctor   (diagnose)"
+           echo "      just heal     (auto-fix)"
+           echo "Common issues: CubDB lock, missing Rust, port 4000 in use." ;;
+        6) echo ""; echo "Run: just tour     (guided walkthrough)"
+           echo "Read: README.adoc, EXPLAINME.adoc, llm-warmup-dev.md" ;;
+        7) echo ""; echo "Run: just security-audit  (dep audit + Trivy)"
+           echo "      just assail           (panic-attacker scan)"
+           echo "      just sbom-generate    (SBOM)" ;;
+        *) echo "Invalid choice. Run 'just --list' to see all commands." ;;
+    esac
+
 # Run panic-attacker pre-commit scan
 assail:
     @command -v panic-attack >/dev/null 2>&1 && panic-attack assail . || echo "panic-attack not found — install from https://github.com/hyperpolymath/panic-attacker"

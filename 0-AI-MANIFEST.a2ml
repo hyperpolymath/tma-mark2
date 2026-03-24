@@ -1,15 +1,144 @@
+; SPDX-License-Identifier: PMPL-1.0-or-later
+; 0-AI-MANIFEST.a2ml — Universal AI entry point for tma-mark2
+;
+; ALL AI agents (Claude, Gemini, OpenAI, etc.) MUST read this file FIRST.
+; This file defines canonical locations, critical invariants, and context tiers.
 
-# AI Assistant Instructions
+(ai-manifest
+  (version "2.0.0")
+  (repo "tma-mark2")
+  (display-name "eTMA Handler Mark 2")
+  (purpose "Offline-first marking tool for Open University tutors")
+  (author "Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>")
+  (license "PMPL-1.0-or-later")
 
-## Repository Focus
-- `rsr-template-repo` is treated as a Rhodium Standard Repository; obey the Rhodium policies, maintain `.bot_directives`, and keep `.machines_readable/6scm/` authoritative.
-- Prefer to keep generated files out of source control, and regenerate them with the documented commands before committing.
+  ; ── Context Tiers ──────────────────────────────────────────────────
+  ; Agents should load tiers incrementally based on task scope.
+  ; Tier 0: Always read. Tier 1: Read for any code task. Tier 2: On demand.
 
-## Workflow
-1. Inspect `.machines_readable/6scm/STATE.scm` for blockers and next actions.
-2. Respect any constraints listed inside `.machines_readable/6scm/AGENTIC.scm` when tooling changes are requested.
-3. After finishing edits, update STATE with your outcomes and commit with a concise, imperative message.
+  (context-tiers
+    (tier-0 "orientation"
+      (files
+        "0-AI-MANIFEST.a2ml"         ; This file — read first
+        ".machine_readable/MUST.contractile"   ; Hard invariants — never violate
+        ".machine_readable/TRUST.contractile"  ; Permission boundaries
+        ".machine_readable/INTENT.contractile" ; Purpose and anti-purpose
+        ".machine_readable/ADJUST.contractile" ; Accessibility invariants
+      )
+      (summary
+        "tma-mark2 is an Elixir/Phoenix LiveView app for OU tutors to mark
+         student .fhi submissions and export graded .docx feedback. It runs
+         entirely offline with CubDB embedded storage. Rust NIFs handle
+         cryptography. Burrito packages single-binary releases for 6 platforms.
+         The UI must be fully accessible (WCAG 2.2 AA)."))
 
-## Delivery Promises
-- Mention in summaries whether STATE, `contractiles/`, or `.bot_directives/` changed.
-- Keep this file in sync with the repository’s status; update it if the governance changes.
+    (tier-1 "development"
+      (files
+        ".claude/CLAUDE.md"                    ; Language policy, dev patterns
+        "Justfile"                             ; Task runner — all commands here
+        "mix.exs"                              ; Elixir dependencies and config
+        "llm-warmup-dev.md"                    ; Developer-oriented LLM briefing
+        "QUICKSTART-USER.adoc"                 ; User setup instructions
+      )
+      (summary
+        "Elixir 1.17+ / OTP 27+. Phoenix LiveView for UI. CubDB for storage.
+         Rust NIFs via Rustler for crypto (native/tma_crypto/). Bebop for
+         binary sync. ReScript for frontend hooks. Nickel for config validation.
+         Build: Guix (primary), Nix (fallback), Mix (emergency)."))
+
+    (tier-2 "deep-dive"
+      (files
+        ".machine_readable/6a2/STATE.a2ml"     ; Current progress and blockers
+        ".machine_readable/6a2/META.a2ml"      ; Architecture decisions
+        ".machine_readable/6a2/ECOSYSTEM.a2ml" ; Ecosystem position
+        ".machine_readable/6a2/AGENTIC.a2ml"   ; AI agent patterns
+        "ROADMAP.adoc"                         ; Planned features
+        "CHANGELOG.adoc"                       ; Version history
+        "TOPOLOGY.md"                          ; Infrastructure topology
+        "EXPLAINME.adoc"                       ; Evidence backing README claims
+      )
+      (summary
+        "State tracking, architecture decision records, ecosystem relationships,
+         and operational runbooks. Read when making strategic decisions or
+         investigating cross-cutting concerns.")))
+
+  ; ── Canonical File Locations ───────────────────────────────────────
+
+  (canonical-locations
+    (machine-readable ".machine_readable/"
+      (note "SCM files ONLY in .machine_readable/ — NEVER in repo root")
+      (subdirs "6a2/" "contractiles/" "anchors/" "bot_directives/"
+               "agent_instructions/" "integrations/" "policies/"))
+    (contractiles
+      ".machine_readable/MUST.contractile"
+      ".machine_readable/TRUST.contractile"
+      ".machine_readable/INTENT.contractile"
+      ".machine_readable/ADJUST.contractile"
+      "contractiles/must/"
+      "contractiles/dust/"
+      "contractiles/k9/")
+    (source-code
+      "lib/etma_handler/"       ; Core business logic
+      "lib/etma_handler_web/"   ; Phoenix LiveView UI
+      "native/tma_crypto/"      ; Rust NIFs (security-critical)
+      "src/"                    ; ReScript frontend components
+      "bebop/schemas/")         ; Binary serialization
+    (configuration
+      "config/"                 ; Elixir config (dev/test/prod/runtime)
+      "must/must.ncl"           ; Nickel structural invariants
+      "rescript.json")          ; ReScript compiler config
+    (containers
+      "Containerfile.hardened"  ; Production container
+      "Containerfile.simple"    ; Development container
+      "Containerfile")          ; Base container
+    (packaging
+      "guix.scm"               ; GNU Guix (primary)
+      "flake.nix"))             ; Nix (fallback)
+
+  ; ── Critical Invariants ────────────────────────────────────────────
+
+  (critical-invariants
+    (invariant "offline-first"
+      "No feature may require network connectivity. Student data never
+       leaves the tutor's machine. CubDB is the sole data store.")
+    (invariant "student-privacy"
+      "No telemetry, no cloud storage, no external API calls with student
+       data. Real .fhi files must never be committed.")
+    (invariant "language-policy"
+      "No TypeScript, Python, Go, npm, Bun. Use ReScript, Deno, Rust.
+       See .claude/CLAUDE.md for full policy.")
+    (invariant "accessibility"
+      "WCAG 2.2 AA minimum. Keyboard navigation, screen reader support,
+       focus indicators on all interactive elements.")
+    (invariant "crypto-safety"
+      "Argon2id only for hashing. No MD5/SHA1. Rust NIF changes require
+       human review (TRUST.trust-deny)."))
+
+  ; ── Lifecycle Hooks ────────────────────────────────────────────────
+
+  (lifecycle
+    (on-enter
+      "1. Read this manifest and acknowledge canonical locations."
+      "2. Read MUST.contractile — these are hard constraints."
+      "3. Read TRUST.contractile — know your permission boundaries."
+      "4. Check .machine_readable/6a2/STATE.a2ml for current blockers.")
+    (on-exit
+      "1. Update STATE.a2ml with outcomes."
+      "2. Run 'just assail' (panic-attacker pre-commit scan)."
+      "3. Mention in summary if contractiles or STATE changed."))
+
+  ; ── Quick Reference ────────────────────────────────────────────────
+
+  (quick-reference
+    (dev-server "just dev"                    "http://localhost:4000")
+    (tests      "just test"                   "ExUnit + Rust NIF tests")
+    (lint       "just lint"                   "mix format + credo + clippy")
+    (build      "just build"                  "Guix > Nix > Mix cascade")
+    (container  "just build-container"        "Chainguard Wolfi image")
+    (diagnose   "just doctor"                 "Environment health check")
+    (repair     "just heal"                   "Auto-fix common problems")
+    (tour       "just tour"                   "Guided codebase walkthrough")
+    (help       "just help-me"                "Interactive help menu")
+    (security   "just security-audit"         "Dep audit + Trivy scan")
+    (precommit  "just assail"                 "panic-attacker scan"))
+)

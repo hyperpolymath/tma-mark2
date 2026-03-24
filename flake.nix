@@ -143,7 +143,8 @@
             meta = with pkgs.lib; {
               description = "eTMA Handler - Open University Marking Tool";
               homepage = "https://github.com/hyperpolymath/tma-mark2";
-              license = licenses.agpl3Plus;
+              # PMPL-1.0-or-later (Palimpsest License) — not yet in nixpkgs
+              license = licenses.free;
               maintainers = [ ];
               platforms = platforms.unix;
             };

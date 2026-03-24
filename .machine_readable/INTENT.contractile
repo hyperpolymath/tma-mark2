@@ -1,0 +1,85 @@
+; SPDX-License-Identifier: PMPL-1.0-or-later
+; INTENT.contractile — Purpose and scope for tma-mark2
+; Helps LLM/SLM agents understand what this repo IS and IS NOT.
+;
+; Part of the contractile family: MUST, TRUST, DUST, INTENT, ADJUST
+
+; ── Definitions ──────────────────────────────────────────────────
+;
+; INTENT (noun)
+;   The purpose contractile. Defines what this repository IS, what it is
+;   NOT (anti-purpose), and which architectural decisions are load-bearing.
+;   Without INTENT, LLMs drift into scope creep, reverse key decisions,
+;   or add features that belong in a different repo.
+;
+; Scope:
+;   INTENT governs the conceptual boundaries of the project — its reason
+;   for existing, its domain, and its relationship to the ecosystem.
+;   It does NOT specify implementation details (that's MUST and code).
+;
+; Relationship to other contractiles:
+;   - MUST: INTENT explains WHY certain MUSTs exist. If you don't
+;     understand a MUST, read INTENT first.
+;   - TRUST: The "ask-before-touching" section in INTENT maps directly
+;     to TRUST.trust-deny for the most sensitive areas.
+;   - ADJUST: INTENT's anti-purpose should include "this software is
+;     NOT only for users with perfect vision/hearing/mobility."
+;   - DUST: When INTENT changes (repo pivots), related DUST entries
+;     should be created for the abandoned direction.
+;
+; ── End Definitions ──────────────────────────────────────────────
+
+(intent-contractile
+  (version "1.0.0")
+  (repo "tma-mark2")
+
+  ; === Purpose (what this repo IS) ===
+  (purpose
+    "tma-mark2 is an offline-first desktop marking tool for Open University
+     tutors. It replaces the legacy Java eTMA application with an Elixir/Phoenix
+     LiveView implementation. It parses .fhi student submissions, provides a
+     real-time marking interface, and exports graded .docx feedback files. The
+     application runs entirely on the tutor's local machine with no cloud
+     dependency, using CubDB for embedded storage and Burrito for cross-platform
+     single-binary distribution."
+  )
+
+  ; === Anti-Purpose (what this repo is NOT — prevents scope creep) ===
+  (anti-purpose
+    "This is NOT a learning management system (LMS) — it only handles the
+     marking step of the assignment lifecycle. It is NOT a cloud application —
+     student data must never leave the tutor's machine. It is NOT a general
+     document editor — it processes .fhi and .docx only. It is NOT a student-
+     facing tool — only tutors use it. It is NOT only for users with perfect
+     vision — the LiveView UI must be accessible (see ADJUST.contractile)."
+  )
+
+  ; === Key Architectural Decisions That Must Not Be Reversed ===
+  (architectural-invariants
+    ("Elixir/OTP for fault tolerance — supervision trees ensure crash recovery")
+    ("CubDB for storage — embedded, crash-proof, no external database server")
+    ("Phoenix LiveView for UI — server-rendered, real-time, no SPA framework")
+    ("Rust NIFs for crypto — Argon2id via Rustler, not pure Elixir")
+    ("Burrito for distribution — single binary for all 6 target platforms")
+    ("Offline-first — no feature may require network connectivity")
+    ("Bebop for sync protocol — binary serialization, not JSON/protobuf")
+  )
+
+  ; === Sensitive Areas (if in doubt, ask) ===
+  (ask-before-touching
+    "native/tma_crypto/ — Rust NIFs, security-critical, changes affect BEAM stability"
+    "lib/etma_handler/fhi.ex — FHI parser, proprietary format, needs domain knowledge"
+    "lib/etma_handler/crypto.ex — security module, Argon2id config"
+    "mix.exs releases config — Burrito targets, affects all platform builds"
+    "config/runtime.exs — production configuration, affects deployed instances"
+    ".machine_readable/ — checkpoint files, format is specified"
+    "bebop/schemas/ — binary protocol definitions, affects sync compatibility"
+  )
+
+  ; === Ecosystem Position ===
+  (ecosystem
+    (belongs-to "standalone")
+    (depends-on ("phoenix" "cubdb" "rustler" "burrito" "cachex" "sweet_xml"))
+    (depended-on-by ("ou-tutors"))
+  )
+)

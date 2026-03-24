@@ -125,7 +125,10 @@ Assignments (eTMAs) for Open University tutors.  Features include virus
 scanning, plagiarism detection, feedback management, and post-quantum
 cryptography support.")
     (home-page "https://github.com/hyperpolymath/tma-mark2")
-    (license (list license:agpl3+))))
+    ;; PMPL-1.0-or-later is not in Guix's license list yet.
+    ;; Using non-copyleft as placeholder — the actual license is PMPL-1.0-or-later.
+    (license (list license:non-copyleft
+               "https://github.com/hyperpolymath/palimpsest-license"))))
 
 ;; Development environment
 (define-public tma-mark2-dev

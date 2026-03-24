@@ -1,0 +1,152 @@
+// SPDX-License-Identifier: PMPL-1.0-or-later
+// SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
+= QUICKSTART: eTMA Handler (tma-mark2)
+:author: Jonathan D.A. Jewell
+:toc: left
+:toclevels: 2
+:icons: font
+:source-highlighter: rouge
+
+== What Is This?
+
+eTMA Handler is a marking tool for Open University tutors. It reads student
+assignment submissions in `.fhi` format, provides a browser-based marking
+interface (Phoenix LiveView), and generates graded `.docx` feedback files.
+
+This is the BEAM (Elixir/OTP) rewrite of the legacy Java eTMA tool.
+
+== Prerequisites
+
+You need one of the following installed:
+
+[cols="1,2,1"]
+|===
+| Tool | Install | Check
+
+| Elixir 1.17+ / OTP 27+
+| `asdf install elixir latest` or https://elixir-lang.org/install.html
+| `elixir --version`
+
+| Nix (with flakes)
+| `sh <(curl -L https://nixos.org/nix/install) --daemon`
+| `nix --version`
+
+| Podman (container route)
+| `sudo dnf install podman` or https://podman.io/docs/installation
+| `podman --version`
+|===
+
+Optional but recommended:
+
+* **just** -- task runner: `cargo install just`
+* **Rust nightly** -- for NIFs: `rustup toolchain install nightly`
+
+== Install & Run (Fastest Path)
+
+=== Option A: Nix Flake (Recommended)
+
+[source,bash]
+----
+cd tma-mark2
+nix develop            # enters dev shell with all deps
+mix deps.get
+mix assets.setup
+mix phx.server         # open http://localhost:4000
+----
+
+=== Option B: Elixir Directly
+
+[source,bash]
+----
+cd tma-mark2
+mix deps.get
+mix assets.setup
+mix assets.build
+mix phx.server
+----
+
+Then open http://localhost:4000 in your browser.
+
+=== Option C: Container
+
+[source,bash]
+----
+cd tma-mark2
+just build-container
+just container-dev     # runs on http://localhost:4000
+----
+
+== Day-to-Day Workflow
+
+[source,bash]
+----
+# Start dev server with live reload
+just dev
+
+# Run all tests
+just test
+
+# Lint and format
+just lint
+just format
+
+# Check project health
+just doctor
+----
+
+== Marking Workflow
+
+1. Place `.fhi` files in your Downloads folder (or a configured watch directory).
+2. The files appear automatically in the eTMA Handler web interface.
+3. Use the marking grid to assign grades and write feedback.
+4. Click Export to generate graded `.docx` files.
+
+== Key Directories
+
+[cols="1,3"]
+|===
+| Path | Purpose
+
+| `lib/etma_handler/` | Core Elixir application (FHI parsing, marking logic, security)
+| `lib/etma_handler_web/` | Phoenix LiveView UI
+| `native/tma_crypto/` | Rust NIF for cryptographic operations
+| `config/` | Environment-specific configuration
+| `priv/static/` | Static assets (CSS, JS via esbuild/tailwind)
+| `test/` | ExUnit test suite
+|===
+
+== Troubleshooting
+
+[cols="1,2"]
+|===
+| Symptom | Fix
+
+| `mix deps.get` fails on Rustler
+| Ensure Rust is installed: `rustup show`
+
+| Port 4000 in use
+| `PORT=4001 mix phx.server`
+
+| Assets not loading
+| `mix assets.setup && mix assets.build`
+
+| CubDB lock file error
+| Remove `data/db/*.lock` and restart
+|===
+
+== Getting Help
+
+[source,bash]
+----
+just help-me           # interactive help menu
+just tour              # guided tour of the codebase
+just doctor            # diagnose common problems
+just heal              # attempt automatic fixes
+----
+
+== Further Reading
+
+* `README.adoc` -- full project documentation
+* `EXPLAINME.adoc` -- evidence backing README claims
+* `ROADMAP.adoc` -- planned features
+* `SECURITY.md` -- vulnerability reporting

@@ -1,0 +1,83 @@
+; SPDX-License-Identifier: PMPL-1.0-or-later
+; TRUST.contractile — Trust boundaries for tma-mark2
+; Defines what LLM/SLM agents are trusted to do without asking.
+;
+; Part of the contractile family: MUST, TRUST, DUST, INTENT, ADJUST
+
+; ── Definitions ──────────────────────────────────────────────────
+;
+; TRUST (noun/verb)
+;   The permission contractile. Defines the boundary between what an AI
+;   agent may do autonomously and what requires human approval. Trust is
+;   graduated — not binary — with four levels from minimal to maximal.
+;
+; Trust levels:
+;   - maximal:    Agent may read, build, test, lint, format, heal freely.
+;                 Only destructive/external actions require approval.
+;   - standard:   Agent may read and build. Test/lint need approval.
+;   - restricted: Agent may read only. All modifications need approval.
+;   - minimal:    Agent may read specific files only. Everything else blocked.
+;
+; Scope:
+;   TRUST governs AI agent behaviour only. It does not affect human
+;   contributors — humans follow CONTRIBUTING.md and GOVERNANCE.adoc.
+;
+; Relationship to other contractiles:
+;   - MUST: Trust never overrides MUST. Even at maximal trust, MUST
+;     violations are blocked.
+;   - ADJUST: Trust does not exempt from ADJUST. All trust tiers must
+;     produce accessible output.
+;   - INTENT: TRUST.trust-deny protects the sensitive areas listed in
+;     INTENT.ask-before-touching.
+;   - DUST: Deprecated features have the same trust rules as active ones.
+;
+; ── End Definitions ──────────────────────────────────────────────
+
+(trust-contractile
+  (version "1.0.0")
+  (repo "tma-mark2")
+
+  (trust-level "maximal")
+
+  ; === Maximal Trust (default) ===
+  ; LLM may freely do these without asking:
+  (trust-actions
+    "read"          ; Read any file in the repo
+    "build"         ; Run build commands (mix compile, cargo build)
+    "test"          ; Run test suites (mix test, cargo test)
+    "lint"          ; Run linters (mix credo, cargo clippy)
+    "format"        ; Auto-format code (mix format, cargo fmt)
+    "doctor"        ; Run self-diagnostics
+    "heal"          ; Attempt automatic repair
+    "git-status"    ; Check git status
+    "git-diff"      ; View diffs
+    "git-log"       ; View history
+  )
+
+  ; === Denied Actions (always require human approval) ===
+  (trust-deny
+    "delete-branch"           ; Could lose work
+    "force-push"              ; Overwrites history
+    "modify-ci-secrets"       ; Security sensitive
+    "publish"                 ; External visibility
+    "push-to-main"            ; Protected branch
+    "delete-files-bulk"       ; More than 5 files at once
+    "modify-license"          ; Legal implications
+    "modify-security-policy"  ; Security implications
+    "remove-proofs"           ; Formal verification regression
+    "disable-ci-checks"       ; Safety regression
+    "modify-crypto-nifs"      ; native/tma_crypto/ changes affect security
+    "modify-fhi-parser"       ; FHI format changes require domain knowledge
+    "access-student-data"     ; Real student data must never be processed by AI
+    "modify-burrito-config"   ; Platform target changes affect all users
+  )
+
+  ; === Trust Boundary ===
+  (trust-boundary "repo")
+
+  ; === Notes ===
+  ; This repo handles educational data. While test fixtures are safe for AI
+  ; to read, any real student .fhi files (which should never be in the repo)
+  ; are off-limits. The crypto NIFs are security-critical and require human
+  ; review for all changes.
+)
