@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: PMPL-1.0-or-later
+# Copyright (c) 2026 Jonathan D.A. Jewell (hyperpolymath) <j.d.a.jewell@open.ac.uk>
+#
+# k9iser manifest for tma-mark2
+# Generates K9 contracts from repo configuration files.
+# tma-mark2 is the Open University eTMA marking tool — Phoenix/Elixir + ReScript frontend
+
+[project]
+name = "tma-mark2"
+safety_tier = "yard"
+
+[[source]]
+path = "mix.exs"
+type = "mix"
+output = "generated/k9iser/mix-manifest.k9"
+
+[[source]]
+path = "rescript.json"
+type = "json"
+output = "generated/k9iser/rescript-config.k9"
+
+[[source]]
+path = "Justfile"
+type = "justfile"
+output = "generated/k9iser/justfile-recipes.k9"
+
+[[source]]
+path = "Containerfile"
+type = "containerfile"
+output = "generated/k9iser/container-build.k9"
+
+[[source]]
+path = ".github/workflows/hypatia-scan.yml"
+type = "workflow"
+output = "generated/k9iser/ci-security.k9"
+
+[[source]]
+path = ".github/workflows/codeql.yml"
+type = "workflow"
+output = "generated/k9iser/ci-codeql.k9"
+
+[[constraint]]
+rule = "mix.dependencies has no retired packages"
+severity = "error"
+
+[[constraint]]
+rule = "services.app.environment contains 'SECRET_KEY_BASE'"
+severity = "error"
+
+[[constraint]]
+rule = "services.app.environment contains 'VERISIMDB_URL'"
+severity = "warn"
+
+[[constraint]]
+rule = "container.base_image uses chainguard or distroless"
+severity = "warn"
+
+[[constraint]]
+rule = "workflows includes hypatia-scan"
+severity = "error"
+
+[[constraint]]
+rule = "rescript.package-specs does not include commonjs"
+severity = "warn"
