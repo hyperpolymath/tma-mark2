@@ -10,6 +10,8 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 set dotenv-load := true
 
 # Project metadata
+import? "contractile.just"
+
 project := "tma-mark2"
 version := "2.0.0"
 
