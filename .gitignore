@@ -100,3 +100,4 @@ deps/
 .cache/
 build/
 dist/
+priv/static/wasm/

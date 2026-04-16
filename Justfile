@@ -94,7 +94,7 @@ dev:
 
 # Start with file watching
 dev-watch:
-    watchexec -e ex,exs,res,ncl,scm -- just dev
+    watchexec -e ex,exs,res,affine,ncl,scm -- just dev
 
 # Open development shell (Guix or Nix)
 shell:
@@ -111,6 +111,16 @@ rescript:
 # ReScript watch mode
 rescript-watch:
     deno task rescript:watch
+
+# AffineScript build
+affine:
+    @echo ">>> Building AffineScript frontend"
+    ./build-affine.sh
+
+# AffineScript watch mode
+affine-watch:
+    @echo ">>> Watching AffineScript files"
+    watchexec -e affine -- just affine
 
 # ============================================================
 # TESTING
@@ -572,6 +582,11 @@ crg-grade:
 crg-badge:
     @grade=$$(grep -oP '(?<=\*\*Current Grade:\*\* )[A-FX]' READINESS.md 2>/dev/null | head -1); \
     [ -z "$$grade" ] && grade="X"; \
+    case "$$grade" in \
+      A) color="brightgreen" ;; B) color="green" ;; C) color="yellow" ;; \
+      D) color="orange" ;; E) color="red" ;; F) color="critical" ;; \
+      *) color="lightgrey" ;; esac; \
+    echo "[![CRG $$grade](https://img.shields.io/badge/CRG-$$grade-$$color?style=flat-square)](https://github.com/hyperpolymath/standards/tree/main/component-readiness-grades)"
     case "$$grade" in \
       A) color="brightgreen" ;; B) color="green" ;; C) color="yellow" ;; \
       D) color="orange" ;; E) color="red" ;; F) color="critical" ;; \
