@@ -118,7 +118,9 @@ defmodule EtmaHandler.Security do
       same_site: "Strict",
 
       # Secure flag (HTTPS only)
-      secure: https_enabled?(),
+      # In this offline-first app, we enforce Secure even on localhost
+      # to maintain the security posture across all environments.
+      secure: true,
 
       # HttpOnly (no JavaScript access)
       http_only: true,
@@ -154,7 +156,11 @@ defmodule EtmaHandler.Security do
     %{
       "x-content-type-options" => "nosniff",
       "x-frame-options" => "DENY",
+      "x-xss-protection" => "1; mode=block",
+      "strict-transport-security" => "max-age=63072000; includeSubDomains; preload",
+      "content-security-policy" => "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';",
       "cache-control" => "no-store, no-cache, must-revalidate, private",
+      "referrer-policy" => "no-referrer",
       "pragma" => "no-cache",
       "expires" => "0"
     }
@@ -222,20 +228,7 @@ defmodule EtmaHandler.Security do
   @doc """
   Constant-time string comparison (prevent timing attacks).
   """
-  def secure_compare(a, b) when is_binary(a) and is_binary(b) do
-    if byte_size(a) == byte_size(b) do
-      secure_compare(a, b, 0) == 0
-    else
-      false
-    end
-  end
-
-  defp secure_compare(<<x, rest_a::binary>>, <<y, rest_b::binary>>, acc) do
-    import Bitwise
-    secure_compare(rest_a, rest_b, acc ||| bxor(x, y))
-  end
-
-  defp secure_compare(<<>>, <<>>, acc), do: acc
+  def secure_compare(a, b), do: EtmaHandler.Crypto.secure_compare(a, b)
 
   # ============================================================================
   # Private Helpers

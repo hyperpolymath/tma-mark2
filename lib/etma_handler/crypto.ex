@@ -42,4 +42,10 @@ defmodule EtmaHandler.Crypto do
   """
   @spec sign(binary(), binary()) :: {:ok, binary()} | {:error, atom()}
   def sign(message, secret_key), do: Native.dilithium5_sign(message, secret_key)
+
+  @doc """
+  SECURE COMPARE: Constant-time byte comparison to prevent timing attacks.
+  """
+  @spec secure_compare(binary(), binary()) :: boolean()
+  def secure_compare(a, b), do: Native.secure_compare(a, b)
 end
