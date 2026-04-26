@@ -151,8 +151,8 @@ mod tests {
         let nonce = [0u8; 24];
         let plaintext = b"secret message";
 
-        let ciphertext = encrypt(&key, &nonce, plaintext).expect("TODO: handle error");
-        let decrypted = decrypt(&key, &nonce, &ciphertext).expect("TODO: handle error");
+        let ciphertext = encrypt(&key, &nonce, plaintext).unwrap();
+        let decrypted = decrypt(&key, &nonce, &ciphertext).unwrap();
 
         assert_eq!(plaintext.as_slice(), decrypted.as_slice());
     }
@@ -160,8 +160,8 @@ mod tests {
     #[test]
     fn test_kyber_roundtrip() {
         let (pk, sk) = generate_keypair();
-        let (ct, ss1) = encapsulate(&pk).expect("TODO: handle error");
-        let ss2 = decapsulate(&ct, &sk).expect("TODO: handle error");
+        let (ct, ss1) = encapsulate(&pk).unwrap();
+        let ss2 = decapsulate(&ct, &sk).unwrap();
 
         assert_eq!(ss1, ss2);
     }
@@ -171,8 +171,8 @@ mod tests {
         let (pk, sk) = generate_signing_keypair();
         let message = b"important document";
 
-        let signature = sign(message, &sk).expect("TODO: handle error");
-        let valid = verify(message, &signature, &pk).expect("TODO: handle error");
+        let signature = sign(message, &sk).unwrap();
+        let valid = verify(message, &signature, &pk).unwrap();
 
         assert!(valid);
     }

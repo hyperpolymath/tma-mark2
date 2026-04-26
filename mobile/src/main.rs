@@ -31,7 +31,7 @@ fn main() {
     oslog::OsLogger::new("com.hyperpolymath.tma-mobile")
         .level_filter(log::LevelFilter::Info)
         .init()
-        .expect("TODO: handle error");
+        .expect("invariant: oslog initialization with valid config cannot fail");
 
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     tracing_subscriber::fmt::init();

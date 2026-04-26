@@ -48,7 +48,7 @@ mod atoms {
 #[rustler::nif]
 fn blake3_hash<'a>(env: Env<'a>, data: Binary) -> Term<'a> {
     let hash = blake3::hash(data.as_slice());
-    let mut output = OwnedBinary::new(32).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(32).expect("invariant: 32-byte BLAKE3 output allocation cannot fail");
     output.as_mut_slice().copy_from_slice(hash.as_bytes());
     (atoms::ok(), output.release(env)).encode(env)
 }
@@ -62,7 +62,7 @@ fn blake3_hash_xof<'a>(env: Env<'a>, data: Binary, output_len: usize) -> Term<'a
 
     let mut hasher = blake3::Hasher::new();
     hasher.update(data.as_slice());
-    let mut output = OwnedBinary::new(output_len).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(output_len).expect("invariant: output_len validated to be between 1..65536");
     hasher.finalize_xof().fill(output.as_mut_slice());
     (atoms::ok(), output.release(env)).encode(env)
 }
@@ -79,7 +79,7 @@ fn blake3_derive_key<'a>(env: Env<'a>, context: Binary, ikm: Binary, output_len:
         return (atoms::error(), atoms::invalid_input()).encode(env);
     }
 
-    let mut output = OwnedBinary::new(output_len).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(output_len).expect("invariant: output_len validated to be between 1..65536");
 
     // Use BLAKE3's derive_key mode
     let mut hasher = blake3::Hasher::new_derive_key(context_str);
@@ -96,12 +96,12 @@ fn blake3_keyed_hash<'a>(env: Env<'a>, key: Binary, data: Binary) -> Term<'a> {
         return (atoms::error(), atoms::invalid_key_size()).encode(env);
     }
 
-    let key_array: [u8; 32] = key.as_slice().try_into().expect("TODO: handle error");
+    let key_array: [u8; 32] = key.as_slice().try_into().expect("invariant: key length validated to be exactly 32 bytes");
     let mut hasher = blake3::Hasher::new_keyed(&key_array);
     hasher.update(data.as_slice());
     let hash = hasher.finalize();
 
-    let mut output = OwnedBinary::new(32).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(32).expect("invariant: 32-byte BLAKE3 output allocation cannot fail");
     output.as_mut_slice().copy_from_slice(hash.as_bytes());
     (atoms::ok(), output.release(env)).encode(env)
 }
@@ -122,7 +122,7 @@ fn shake256<'a>(env: Env<'a>, data: Binary, output_len: usize) -> Term<'a> {
     let mut hasher = Shake256::default();
     hasher.update(data.as_slice());
     let mut reader = hasher.finalize_xof();
-    let mut output = OwnedBinary::new(output_len).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(output_len).expect("invariant: output_len validated to be between 1..65536");
     reader.read(output.as_mut_slice());
     (atoms::ok(), output.release(env)).encode(env)
 }
@@ -166,7 +166,7 @@ fn chacha20_poly1305_encrypt<'a>(
 
     match cipher.encrypt(nonce, payload) {
         Ok(ciphertext) => {
-            let mut output = OwnedBinary::new(ciphertext.len()).expect("TODO: handle error");
+            let mut output = OwnedBinary::new(ciphertext.len()).expect("invariant: ciphertext length is bounded by plaintext + tag");
             output.as_mut_slice().copy_from_slice(&ciphertext);
             (atoms::ok(), output.release(env)).encode(env)
         }
@@ -212,7 +212,7 @@ fn chacha20_poly1305_decrypt<'a>(
 
     match cipher.decrypt(nonce, payload) {
         Ok(plaintext) => {
-            let mut output = OwnedBinary::new(plaintext.len()).expect("TODO: handle error");
+            let mut output = OwnedBinary::new(plaintext.len()).expect("invariant: plaintext length is bounded by ciphertext - tag");
             output.as_mut_slice().copy_from_slice(&plaintext);
             (atoms::ok(), output.release(env)).encode(env)
         }
@@ -258,7 +258,7 @@ fn xchacha20_poly1305_encrypt<'a>(
 
     match cipher.encrypt(nonce, payload) {
         Ok(ciphertext) => {
-            let mut output = OwnedBinary::new(ciphertext.len()).expect("TODO: handle error");
+            let mut output = OwnedBinary::new(ciphertext.len()).expect("invariant: ciphertext length is bounded by plaintext + tag");
             output.as_mut_slice().copy_from_slice(&ciphertext);
             (atoms::ok(), output.release(env)).encode(env)
         }
@@ -303,7 +303,7 @@ fn xchacha20_poly1305_decrypt<'a>(
 
     match cipher.decrypt(nonce, payload) {
         Ok(plaintext) => {
-            let mut output = OwnedBinary::new(plaintext.len()).expect("TODO: handle error");
+            let mut output = OwnedBinary::new(plaintext.len()).expect("invariant: plaintext length is bounded by ciphertext - tag");
             output.as_mut_slice().copy_from_slice(&plaintext);
             (atoms::ok(), output.release(env)).encode(env)
         }
@@ -327,8 +327,8 @@ fn kyber1024_keypair<'a>(env: Env<'a>) -> Term<'a> {
     let pk_bytes = pk.as_bytes();
     let sk_bytes = sk.as_bytes();
 
-    let mut pk_out = OwnedBinary::new(pk_bytes.len()).expect("TODO: handle error");
-    let mut sk_out = OwnedBinary::new(sk_bytes.len()).expect("TODO: handle error");
+    let mut pk_out = OwnedBinary::new(pk_bytes.len()).expect("invariant: Kyber public key size is fixed");
+    let mut sk_out = OwnedBinary::new(sk_bytes.len()).expect("invariant: Kyber secret key size is fixed");
 
     pk_out.as_mut_slice().copy_from_slice(pk_bytes);
     sk_out.as_mut_slice().copy_from_slice(sk_bytes);
@@ -353,8 +353,8 @@ fn kyber1024_encapsulate<'a>(env: Env<'a>, public_key: Binary) -> Term<'a> {
     let ct_bytes = ct.as_bytes();
     let ss_bytes = ss.as_bytes();
 
-    let mut ct_out = OwnedBinary::new(ct_bytes.len()).expect("TODO: handle error");
-    let mut ss_out = OwnedBinary::new(ss_bytes.len()).expect("TODO: handle error");
+    let mut ct_out = OwnedBinary::new(ct_bytes.len()).expect("invariant: Kyber ciphertext size is fixed");
+    let mut ss_out = OwnedBinary::new(ss_bytes.len()).expect("invariant: Kyber shared secret size is fixed");
 
     ct_out.as_mut_slice().copy_from_slice(ct_bytes);
     ss_out.as_mut_slice().copy_from_slice(ss_bytes);
@@ -382,7 +382,7 @@ fn kyber1024_decapsulate<'a>(env: Env<'a>, ciphertext: Binary, secret_key: Binar
     let ss = kyber1024::decapsulate(&ct, &sk);
     let ss_bytes = ss.as_bytes();
 
-    let mut ss_out = OwnedBinary::new(ss_bytes.len()).expect("TODO: handle error");
+    let mut ss_out = OwnedBinary::new(ss_bytes.len()).expect("invariant: Kyber shared secret size is fixed");
     ss_out.as_mut_slice().copy_from_slice(ss_bytes);
 
     (atoms::ok(), ss_out.release(env)).encode(env)
@@ -404,8 +404,8 @@ fn dilithium5_keypair<'a>(env: Env<'a>) -> Term<'a> {
     let pk_bytes = pk.as_bytes();
     let sk_bytes = sk.as_bytes();
 
-    let mut pk_out = OwnedBinary::new(pk_bytes.len()).expect("TODO: handle error");
-    let mut sk_out = OwnedBinary::new(sk_bytes.len()).expect("TODO: handle error");
+    let mut pk_out = OwnedBinary::new(pk_bytes.len()).expect("invariant: Dilithium public key size is fixed");
+    let mut sk_out = OwnedBinary::new(sk_bytes.len()).expect("invariant: Dilithium secret key size is fixed");
 
     pk_out.as_mut_slice().copy_from_slice(pk_bytes);
     sk_out.as_mut_slice().copy_from_slice(sk_bytes);
@@ -430,7 +430,7 @@ fn dilithium5_sign<'a>(env: Env<'a>, message: Binary, secret_key: Binary) -> Ter
 
     // Extract just the signature (signed message = signature + message)
     let sig_len = sig_bytes.len() - message.len();
-    let mut sig_out = OwnedBinary::new(sig_len).expect("TODO: handle error");
+    let mut sig_out = OwnedBinary::new(sig_len).expect("invariant: signature length is bounded by signed message size");
     sig_out.as_mut_slice().copy_from_slice(&sig_bytes[..sig_len]);
 
     (atoms::ok(), sig_out.release(env)).encode(env)
@@ -482,7 +482,7 @@ fn random_bytes<'a>(env: Env<'a>, len: usize) -> Term<'a> {
         return (atoms::error(), atoms::invalid_input()).encode(env);
     }
 
-    let mut output = OwnedBinary::new(len).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(len).expect("invariant: output length validated to be between 1..65536");
     rand::thread_rng().fill_bytes(output.as_mut_slice());
     (atoms::ok(), output.release(env)).encode(env)
 }
@@ -492,7 +492,7 @@ fn random_bytes<'a>(env: Env<'a>, len: usize) -> Term<'a> {
 fn generate_nonce<'a>(env: Env<'a>) -> Term<'a> {
     use rand::RngCore;
 
-    let mut output = OwnedBinary::new(12).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(12).expect("invariant: 12-byte nonce allocation cannot fail");
     rand::thread_rng().fill_bytes(output.as_mut_slice());
     (atoms::ok(), output.release(env)).encode(env)
 }
@@ -502,7 +502,7 @@ fn generate_nonce<'a>(env: Env<'a>) -> Term<'a> {
 fn generate_xnonce<'a>(env: Env<'a>) -> Term<'a> {
     use rand::RngCore;
 
-    let mut output = OwnedBinary::new(24).expect("TODO: handle error");
+    let mut output = OwnedBinary::new(24).expect("invariant: 24-byte nonce allocation cannot fail");
     rand::thread_rng().fill_bytes(output.as_mut_slice());
     (atoms::ok(), output.release(env)).encode(env)
 }
