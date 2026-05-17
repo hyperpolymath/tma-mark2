@@ -38,7 +38,7 @@ jobs:
 
       - name: Validate A2ML manifests
         if: steps.detect.outputs.count > 0
-        uses: hyperpolymath/a2ml-validate-action@edad26fc392d7d9fd3d02f67ef131e26a7179a72 # main
+        uses: hyperpolymath/a2ml-validate-action@59145c7d1039fa3059b3ecacdb50ee23d7505898 # main
         with:
           path: '.'
           strict: 'false'
@@ -86,7 +86,7 @@ jobs:
 
       - name: Validate K9 contracts
         if: steps.detect.outputs.k9_count > 0
-        uses: hyperpolymath/k9-validate-action@66cd8fea58e9b660260d1928bea266414b535396 # main
+        uses: hyperpolymath/k9-validate-action@2d96f43c538964b097d159ed3a56ba5b5ceca227 # main
         with:
           path: '.'
           strict: 'false'
@@ -381,3 +381,4 @@ print(f'Valid: {project[\"name\"]} ({len(functions)} function(s))')
 es.*
           EOF
 EOF
+
