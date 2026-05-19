@@ -3,6 +3,17 @@
 # Nix Flake for tma-mark2
 # Fallback when Guix is unavailable
 #
+# Retained per standards#102 rule 3 (KEEP+DEP). guix.scm mirrors the
+# runtime/build set (erlang, elixir, rust + cargo, git, nss-certs,
+# openssl, ncurses, zlib, clamav, wireguard-tools, nftables,
+# tesseract-ocr, poppler, font-liberation, font-dejavu; dev variant
+# adds erlang-ls, rebar3, rust-analyzer), and the sealed Wolfi
+# Containerfile installs elixir/erlang/erlang-dev/git/build-base/nodejs
+# (build-base covers gnumake). This flake's devShell is the SOLE
+# source of `pkg-config`, `nickel`, and `just` — none of which are in
+# guix.scm or the sealed container. Remove only once those three reach
+# Guix or the sealed container.
+#
 # Usage:
 #   nix build .#default
 #   nix develop
