@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 # LLM Warmup: tma-mark2 (User Guide)
 
 ## What This Project Does
@@ -113,4 +113,4 @@ test/                   ExUnit tests
 
 ## License
 
-PMPL-1.0-or-later (Palimpsest License). See LICENSE file.
+MPL-2.0 (Palimpsest License). See LICENSE file.

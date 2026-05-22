@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 #
 # tma_nlp - Natural Language Processing NIF for tma-mark2
 #
@@ -9,7 +9,7 @@ name = "tma_nlp"
 version = "2.0.0"
 authors = ["Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>"]
 edition = "2021"
-license = "PMPL-1.0-or-later"
+license = "MPL-2.0"
 description = "Natural language processing NIF for tma-mark2"
 repository = "https://github.com/hyperpolymath/tma-mark2"
 keywords = ["nlp", "spell-check", "similarity", "elixir", "nif"]

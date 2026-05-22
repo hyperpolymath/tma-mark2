@@ -1,5 +1,5 @@
 ;; guix.scm
-;; SPDX-License-Identifier: PMPL-1.0-or-later
+;; SPDX-License-Identifier: MPL-2.0
 ;;
 ;; GNU Guix package definition for tma-mark2
 ;; Primary build system - Nix is fallback
@@ -125,8 +125,8 @@ Assignments (eTMAs) for Open University tutors.  Features include virus
 scanning, plagiarism detection, feedback management, and post-quantum
 cryptography support.")
     (home-page "https://github.com/hyperpolymath/tma-mark2")
-    ;; PMPL-1.0-or-later is not in Guix's license list yet.
-    ;; Using non-copyleft as placeholder — the actual license is PMPL-1.0-or-later.
+    ;; MPL-2.0 is not in Guix's license list yet.
+    ;; Using non-copyleft as placeholder — the actual license is MPL-2.0.
     (license (list license:non-copyleft
                "https://github.com/hyperpolymath/palimpsest-license"))))
 

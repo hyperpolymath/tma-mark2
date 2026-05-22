@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: PMPL-1.0-or-later
+// SPDX-License-Identifier: MPL-2.0
 = tma-mark2 Comprehensive Seams Review
 :author: hyperpolymath
 :revdate: 2025-01-02
@@ -44,10 +44,10 @@ The review evaluates quality, ergonomics, dependability, safety, and interoperab
 ----
 # lib/etma_handler/security.ex - Line 1-2
 # SPDX-FileCopyrightText: 2024 eTMA Handler Contributors
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 ----
 
-*Recommendation:* Update all file headers to PMPL-1.0-or-later to match LICENSE.txt.
+*Recommendation:* Update all file headers to MPL-2.0 to match LICENSE.txt.
 
 === 1.2 Architectural Patterns
 
@@ -252,7 +252,7 @@ The `password_policy/0` function enforces:
 |===
 |Gap |Severity |Recommendation
 
-|MIT license header in security.ex |🟡 MEDIUM |Update to PMPL-1.0-or-later
+|MIT license header in security.ex |🟡 MEDIUM |Update to MPL-2.0
 |No rate limiting implementation shown |🟡 MEDIUM |Verify `rate_limiter.ex` is complete
 |HIBP integration not implemented |🟢 LOW |Add Have I Been Pwned API check
 |===
@@ -353,7 +353,7 @@ The Bebop schemas provide:
 |===
 |# |Issue |Resolution
 
-|1 |License header in `security.ex` says MIT |Change to PMPL-1.0-or-later
+|1 |License header in `security.ex` says MIT |Change to MPL-2.0
 |2 |No test suite |Create `test/` with ExUnit tests
 |3 |Rust NIFs are stubs |Implement crypto and NLP functions
 |4 |LiveView templates missing |Create `.heex` files for all routes
@@ -409,7 +409,7 @@ The following matrix shows how components integrate:
 
 === Immediate Actions (This Week)
 
-1. ✓ Update license headers to PMPL-1.0-or-later
+1. ✓ Update license headers to MPL-2.0
 2. Create `test/` directory with basic ExUnit structure
 3. Generate Bebop code: `just bebop-generate`
 

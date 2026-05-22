@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 #
 # must/must.ncl - Physical State Contract for tma-mark2
 #
@@ -22,7 +22,7 @@ let platform = import "./contracts/platform.ncl" in
     description = "eTMA Handler - Open University Marking Tool",
 
     license = {
-      spdx = "PMPL-1.0-or-later",
+      spdx = "MPL-2.0",
       additional = "LicenseRef-Palimpsest-0.5",
       philosophy = "Copyleft with compassion",
     },
@@ -42,7 +42,7 @@ let platform = import "./contracts/platform.ncl" in
     # Files that MUST exist for valid build
     files_present = [
       # --- Legal & Compliance ---
-      "LICENSES/PMPL-1.0-or-later.txt",
+      "LICENSES/MPL-2.0.txt",
       "LICENSES/Palimpsest-0.5.txt",
       "SECURITY.md",
       "CODE_OF_CONDUCT.adoc",
@@ -111,7 +111,7 @@ let platform = import "./contracts/platform.ncl" in
     content_requirements = [
       {
         file = "mix.exs",
-        contains = "PMPL-1.0-or-later",
+        contains = "MPL-2.0",
         reason = "License must be declared in mix.exs",
       },
       {

@@ -1,4 +1,4 @@
-; SPDX-License-Identifier: PMPL-1.0-or-later
+; SPDX-License-Identifier: MPL-2.0
 ; 0-AI-MANIFEST.a2ml — Universal AI entry point for tma-mark2
 ;
 ; ALL AI agents (Claude, Gemini, OpenAI, etc.) MUST read this file FIRST.
@@ -10,7 +10,7 @@
   (display-name "eTMA Handler Mark 2")
   (purpose "Offline-first marking tool for Open University tutors")
   (author "Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>")
-  (license "PMPL-1.0-or-later")
+  (license "MPL-2.0")
 
   ; ── Context Tiers ──────────────────────────────────────────────────
   ; Agents should load tiers incrementally based on task scope.

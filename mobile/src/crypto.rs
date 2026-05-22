@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: PMPL-1.0-or-later
+// SPDX-License-Identifier: MPL-2.0
 //! Cryptographic operations for the mobile app
 //!
 //! Uses the same post-quantum algorithms as the main application:

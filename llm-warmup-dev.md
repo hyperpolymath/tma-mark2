@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 # LLM Warmup: tma-mark2 (Developer Guide)
 
 ## Project Identity
@@ -7,7 +7,7 @@
 **Type:** Desktop web application (Phoenix LiveView)
 **Primary language:** Elixir 1.17+ / OTP 27+
 **Secondary languages:** Rust (NIFs), ReScript (frontend components), Nickel (config)
-**License:** PMPL-1.0-or-later
+**License:** MPL-2.0
 **Author:** Jonathan D.A. Jewell <j.d.a.jewell@open.ac.uk>
 
 ## What This Does
@@ -252,4 +252,4 @@ Read `0-AI-MANIFEST.a2ml` first. It defines:
 
 ## License
 
-PMPL-1.0-or-later (Palimpsest License). Copyright 2025-2026 Jonathan D.A. Jewell.
+MPL-2.0 (Palimpsest License). Copyright 2025-2026 Jonathan D.A. Jewell.

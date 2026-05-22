@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 # Justfile - Task Orchestration for tma-mark2
 #
 # All local tasks orchestrated via Just
@@ -362,7 +362,7 @@ db-backup:
 info:
     @echo "Project: {{project}}"
     @echo "Version: {{version}}"
-    @echo "License: PMPL-1.0-or-later + Palimpsest"
+    @echo "License: MPL-2.0 + Palimpsest"
     @echo ""
     @echo "Build System: Guix (primary), Nix (fallback)"
     @echo "Container: Wolfi (Chainguard)"

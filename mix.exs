@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 defmodule EtmaHandler.MixProject do
   use Mix.Project
 
@@ -24,7 +24,7 @@ defmodule EtmaHandler.MixProject do
   defp package do
     [
       name: "etma_handler",
-      licenses: ["PMPL-1.0-or-later"],
+      licenses: ["MPL-2.0"],
       links: %{
         "GitHub" => "https://github.com/hyperpolymath/tma-mark2"
       },

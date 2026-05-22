@@ -1,4 +1,4 @@
-;; SPDX-License-Identifier: PMPL-1.0-or-later
+;; SPDX-License-Identifier: MPL-2.0
 ;; Comment Bank: Computing Fundamentals (TM129)
 ;;
 ;; This is an example of the structured comment bank format.

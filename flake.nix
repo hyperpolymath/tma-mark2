@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: PMPL-1.0-or-later
+# SPDX-License-Identifier: MPL-2.0
 #
 # Nix Flake for tma-mark2
 # Fallback when Guix is unavailable
@@ -154,7 +154,7 @@
             meta = with pkgs.lib; {
               description = "eTMA Handler - Open University Marking Tool";
               homepage = "https://github.com/hyperpolymath/tma-mark2";
-              # PMPL-1.0-or-later (Palimpsest License) — not yet in nixpkgs
+              # MPL-2.0 (Palimpsest License) — not yet in nixpkgs
               license = licenses.free;
               maintainers = [ ];
               platforms = platforms.unix;
