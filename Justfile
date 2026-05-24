@@ -240,9 +240,9 @@ clamav-update:
 # Generate Bebop code from schemas
 bebop-generate:
     @echo ">>> Generating Bebop code"
-    @if [ -d bebop/schemas ] && ls bebop/schemas/*.bop 1>/dev/null 2>&1; then \
-        bebop --lang elixir bebop/schemas/*.bop -o lib/etma_handler/bebop/generated/; \
-        bebop --lang rust bebop/schemas/*.bop -o native/tma_sync/src/generated/; \
+    @if [ -d experiments/bebop/schemas ] && ls experiments/bebop/schemas/*.bop 1>/dev/null 2>&1; then \
+        bebop --lang elixir experiments/bebop/schemas/*.bop -o lib/etma_handler/bebop/generated/; \
+        bebop --lang rust experiments/bebop/schemas/*.bop -o native/tma_sync/src/generated/; \
     else \
         echo ">>> No Bebop schemas found, skipping"; \
     fi
@@ -322,7 +322,7 @@ clean:
     rm -rf _build deps .mix .hex
     rm -rf native/tma_crypto/target
     rm -rf native/tma_nlp/target
-    rm -rf mobile/target
+    rm -rf experiments/mobile/target
 
 # Deep clean (including Nix/Guix stores - use with caution)
 clean-deep: clean
@@ -512,7 +512,8 @@ tour:
     echo "  native/tma_crypto/          Rust NIF (cryptography)"
     echo "  config/                     Environment-specific config"
     echo "  test/                       ExUnit tests"
-    echo "  bebop/schemas/              Binary serialization schemas"
+    echo "  experiments/bebop/schemas/  Binary serialization schemas (deferred)"
+    echo "  experiments/                Deferred frontends (mobile, affine, zig)"
     echo "  must/                       Nickel invariant definitions"
     echo "  .machine_readable/          AI checkpoint metadata"
     echo ""

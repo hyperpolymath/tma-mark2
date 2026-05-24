@@ -17,26 +17,15 @@ defmodule EtmaHandlerWeb.ApiController do
   Used by container health checks and load balancers.
   """
   def health(conn, _params) do
-    # Basic health check - verify CubDB is accessible
-    health_status =
-      try do
-        # Try to access the repo
-        case EtmaHandler.Repo.get(:health_check) do
-          _ -> :ok
-        end
-      rescue
-        _ -> :error
-      end
-
-    case health_status do
-      :ok ->
+    case Process.whereis(EtmaHandler.Repo.cubdb()) do
+      pid when is_pid(pid) ->
         json(conn, %{
           status: "healthy",
           version: EtmaHandler.version(),
           timestamp: DateTime.utc_now()
         })
 
-      :error ->
+      nil ->
         conn
         |> put_status(:service_unavailable)
         |> json(%{
