@@ -10,16 +10,20 @@ image:https://img.shields.io/badge/License-PMPL--1.0-blue.svg[License: PMPL-1.0,
 :experimental:
 :sectnums:
 
-image:https://img.shields.io/badge/version-2.0.0-blue[Version]
-image:https://img.shields.io/badge/RSR-Gold-gold[RSR Gold]
-image:https://img.shields.io/badge/elixir-1.14+-purple[Elixir Version]
-image:https://img.shields.io/badge/OTP-25+-red[OTP Version]
+image:https://img.shields.io/badge/version-0.1.0--alpha-orange[Version]
+image:https://img.shields.io/badge/status-alpha%20%2F%20scaffold-orange[Status]
+image:https://img.shields.io/badge/elixir-1.17+-purple[Elixir Version]
+image:https://img.shields.io/badge/OTP-26+-red[OTP Version]
+
+== Status
+
+**This is an early-stage scaffold, not a working application.** A Phoenix shell, the Rust crypto/NLP NIFs, and the marking calculator are real. The data plane (CubDB Repo, FHI parser, file watcher, `.docx` generator) is unimplemented. Marking-analytics modules are docstring stubs. See link:TOPOLOGY.md[TOPOLOGY.md] for an honest component-by-component status, and link:ROADMAP.adoc[ROADMAP.adoc] for the path to v1.
 
 == Overview
 
-eTMA Handler is the BEAM edition of the Open University's electronic Tutor Marked Assignment (eTMA) marking tool. Originally written in Java, this project migrates the marking workflow to Elixir/Phoenix for improved reliability, cross-platform distribution, and modern web capabilities.
+eTMA Handler is intended to be a BEAM-edition replacement for the Open University's electronic Tutor Marked Assignment (eTMA) marking tool, originally written in Java. The goal is to migrate the marking workflow to Elixir/Phoenix for improved reliability, cross-platform distribution, and modern web capabilities.
 
-The application processes student assignment submissions in `.fhi` format, provides a marking interface for tutors, and generates graded `.docx` files with feedback annotations.
+When complete, the application will process student assignment submissions in `.fhi` format, provide a marking interface for tutors, and generate graded `.docx` files with feedback annotations. None of that end-to-end flow works today; see Status above.
 
 === Key Features
 

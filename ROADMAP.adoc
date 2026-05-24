@@ -1,22 +1,201 @@
 // SPDX-License-Identifier: MPL-2.0
-= Tma Mark2 Roadmap
+= eTMA Handler — Roadmap to v1
+:toc: left
+:toclevels: 3
+:icons: font
+:sectnums:
 
 == Current Status
 
-Initial development phase.
+**Alpha scaffold (~25–30%).** A Phoenix shell exists. The Rust crypto/NLP NIFs work. The mark calculator works and is tested. Everything else listed in the README — CubDB-backed persistence, FHI XML parsing, file ingestion, `.docx` export, marking analytics, authentication — is either a docstring stub or partially-wired UI against mock data.
 
-== Milestones
+See link:TOPOLOGY.md[TOPOLOGY.md] for the component-by-component dashboard.
 
-=== v0.1.0 - Foundation
-* [ ] Core functionality
-* [ ] Basic documentation
-* [ ] CI/CD pipeline
+== Definition of v1
 
-=== v1.0.0 - Stable Release
-* [ ] Full feature set
-* [ ] Comprehensive tests
-* [ ] Production ready
+v1 is **a working replacement for the Java OU eTMA marking tool, for one tutor on one machine**. Nothing more.
 
-== Future Directions
+=== In scope
 
-_To be determined based on community feedback._
+* Watch a folder → ingest `.fhi` submissions
+* Parse `.fhi` metadata correctly (ISO-8859-1 round-trip)
+* Display submissions in a marking UI
+* Enter marks (with the existing calculator) and tutor comments
+* Persist crash-safely (CubDB) with encryption at rest
+* Generate graded `.docx` for return to students
+* Local authentication for a single tutor
+* Single-binary distribution for Linux, macOS, Windows
+* Audit log and basic DPIA-grade data protection
+
+=== Explicitly out of scope for v1
+
+These were oversold in the original docs. Each is weeks-to-months of work on its own. Re-evaluate post-pilot, based on whether a real user asks for it.
+
+* All 15 marking-analytics stubs (Quality Bot, Bloom's alignment, argumentation analysis, syntactic complexity, divergence detection, etc.)
+* Zotero integration
+* Scheduling / Calendar / iCal export
+* WASM plugin host
+* Mobile (Tauri / Dioxus)
+* Post-quantum crypto in user-facing flows (NIFs stay; not surfaced)
+* Multi-tutor, multi-tenant, networked sync
+* Course Management UI, Refinery (comment bank) UI
+* AffineScript / Bebop / Zig frontends
+
+== Phase 0 — Truth-up (1–2 days)
+
+Goal: docs match reality so the rest of planning isn't fiction.
+
+* [ ] Drop v2.0.0 / "RSR Gold" badges in README; status = alpha
+* [ ] `mix.exs` version → `0.1.0-alpha`
+* [ ] Rewrite `TOPOLOGY.md` dashboard with real percentages
+* [ ] Rewrite `ROADMAP.adoc` (this file)
+* [ ] Update `TEST-NEEDS.md` to reflect 4 real test files
+* [ ] Move clearly-deferred experiments out of the primary tree (`experiments/` for mobile, AffineScript, Bebop, Zig)
+
+**Exit criteria:** a new reader can tell what works in 5 minutes.
+
+== Phase 1 — Data plane (3–4 weeks)
+
+The unblocker for everything visual. Sequence matters.
+
+=== 1.1 `EtmaHandler.Repo` over CubDB (~1 week)
+
+Schema:
+
+* `{:submission, course, presentation, tma, oucu}` → submission record
+* `{:audit, submission_id, ts}` → change event
+* `{:snapshot, submission_id, ts}` → full state
+
+Functions: `put/2`, `get/1`, `list/1`, `delete/1`, `snapshot/1`, `history/1`, `restore/2`.
+
+Tests: property-based round-trip, concurrent writer stress, kill-and-restart durability.
+
+=== 1.2 FHI parser/generator (~1 week)
+
+* [ ] Acquire ≥5 real anonymised `.fhi` samples → `test/fixtures/fhi/`
+* [ ] Implement `parse/1` with SweetXml; handle ISO-8859-1
+* [ ] Implement `generate/1`; byte-identical round-trip on the fixtures
+* [ ] Date parsing via Timex (FHI format: `23-Nov-2025 23:52:29`)
+* [ ] Property tests: `parse(generate(x)) == x`
+
+=== 1.3 Bouncer (~3–4 days)
+
+* [ ] Fix the broken `init/1` (currently references undefined `download_dir` and `%__MODULE__{...}`)
+* [ ] Wire `FileSystem` → filename regex → SweetXml parse → `Repo.put` → PubSub broadcast
+* [ ] Quarantine path for invalid files
+* [ ] Integration test: drop fixture into tmp dir, observe Repo write within 2s
+
+=== 1.4 `.docx` generator (~1 week)
+
+* [ ] Pick a library or implement a minimal docx writer (it's zipped XML)
+* [ ] Insert tutor comments + scores into a template
+* [ ] Test: output opens cleanly in LibreOffice and Word
+
+**Exit criteria:** real `.fhi` can be dropped, ingested, marked via REPL, exported to a valid `.docx`.
+
+== Phase 2 — UI wired to reality (2–3 weeks)
+
+=== 2.1 MarkingLive (~1 week)
+
+* [ ] Replace `load_mock_submissions/0` with `Repo.list/1`
+* [ ] Subscribe to `"bouncer:events"` → push new submissions to the list
+* [ ] Implement TODO at line 119: "Package and return" → call `.docx` generator
+* [ ] Implement TODO at line 160: time-machine restore → call `Repo.restore/2`
+* [ ] Auto-save → snapshot on each save
+
+=== 2.2 Drop the placeholder routes (~1 day)
+
+* [ ] Remove `/courses`, `/courses/:id`, `/refinery` from router (or feature-flag them off)
+* [ ] Trim `SettingsLive` to v1-only settings: `data_dir`, `watch_dir`, tutor identity
+
+=== 2.3 UX pass (~1 week)
+
+* [ ] Keyboard shortcuts for common marking actions
+* [ ] Visual feedback for save status and audit warnings
+* [ ] Manual run through a real marking workflow on real fixtures
+
+**Exit criteria:** tutor marks a TMA end-to-end in the UI without the REPL.
+
+== Phase 3 — Auth + data protection (3–4 weeks)
+
+Non-negotiable: this handles student PII (OUCU, personal ID, address per FHI schema).
+
+=== 3.1 Authentication (~1 week)
+
+* [ ] Single-tutor passphrase login (Argon2id, already in deps)
+* [ ] Session pipeline in router
+* [ ] Idle lock
+* [ ] WebAuthn integration if painless; defer to v1.1 if it eats >3 days
+
+=== 3.2 Encryption at rest (~1 week)
+
+* [ ] Finish stubbed `EtmaHandler.Crypto.encrypt/3`
+* [ ] Wrap Repo writes with XChaCha20-Poly1305 (NIF works)
+* [ ] Key derivation: Argon2id from passphrase; master key in OS keystore (libsecret / Keychain / Credential Manager), **not on disk**
+* [ ] Test: kill app, grep CubDB files, confirm no plaintext PII
+
+=== 3.3 DPIA + governance (~1–2 weeks; partly elapsed time)
+
+* [ ] Data Protection Impact Assessment doc
+* [ ] Retention policy aligned with OU rules
+* [ ] GDPR data-subject endpoints: export-all / delete-all by OUCU
+* [ ] Audit log of every Repo read/write, tied to authenticated tutor
+* [ ] Rewrite `SECURITY.md` with a real threat model (replace generic boilerplate)
+
+Start 3.3 in week 1 of this phase, in parallel with engineering — institutional review has its own clock.
+
+**Exit criteria:** could be handed to your institution's DPO without embarrassment.
+
+== Phase 4 — Release engineering + pilot (2–3 weeks)
+
+=== 4.1 Burrito release (~1 week)
+
+* [ ] Actually build a release; resolve every issue
+* [ ] Smoke-test the binary on Linux x86_64, one macOS, Windows
+* [ ] Non-technical install docs
+* [ ] Fix `ApiController.health/2` — `Repo.get(:health_check)` is currently undefined
+
+=== 4.2 CI sanity (~2–3 days)
+
+14 workflows is too many. Collapse to one `elixir-ci.yml` doing deps → compile → test → dialyzer → credo → release-build. Park governance / scorecard / dogfood-gate workflows until they earn their keep.
+
+=== 4.3 Pilot (~2 weeks calendar)
+
+One real tutor (probably you) marks one real assignment cycle. Triage every bug; fix the showstoppers; iterate on UX.
+
+**Exit criteria:** someone other than the author marks an assignment successfully.
+
+== Effort summary
+
+[cols="1,1,2"]
+|===
+| Phase | Calendar | Focused engineering
+
+| 0 — Truth-up                 | 1–2 days | 1–2 days
+| 1 — Data plane               | 3–4 weeks | 3–4 weeks
+| 2 — UI wired                 | 2–3 weeks | 2–3 weeks
+| 3 — Auth + DPIA              | 3–4 weeks | 2–3 weeks active + DPO elapsed time
+| 4 — Release + pilot          | 2–3 weeks | 1–2 weeks active + 2 weeks pilot
+| **Total to v1**              | **~3–4 months** | **~9–12 weeks of focused work**
+|===
+
+Multiply by actual availability. Solo, part-time: realistically 6 months calendar.
+
+== Top risks
+
+. **FHI edge cases.** Get real samples in week 1 of Phase 1, not week 3. Undocumented variants are likely; phase 1.2 could double.
+. **CubDB scale.** Fine for one tutor; do not assume it scales to a department. Re-evaluate if v2 needs multi-tutor.
+. **WebAuthn rabbit hole.** Fall back to passphrase-only if it eats >3 days.
+. **DPIA process.** Institutional, not technical. Start in week 1 of Phase 3.
+. **Solo-dev burn.** The cut list is aggressive on purpose; resist re-adding scope.
+
+== Post-v1 (only after pilot feedback)
+
+* Marking analytics — one module at a time, only if a tutor asks for it
+* Multi-tutor sync — only if needed
+* Scheduling / Calendar (revive `lib/etma_handler/scheduling/calendar.ex`)
+* Zotero (revive `lib/etma_handler/external/zotero.ex`)
+* Refinery (comment bank) UI
+* Course management UI
+* Mobile — probably never; revisit only with concrete user demand
+* Post-quantum signing of feedback — cool, but not user-facing value

@@ -2,8 +2,8 @@
 defmodule EtmaHandler.MixProject do
   use Mix.Project
 
-  @version "2.0.0"
-  @description "eTMA Handler - Open University Marking Tool (BEAM Edition)"
+  @version "0.1.0-alpha"
+  @description "eTMA Handler - Open University Marking Tool (BEAM Edition, pre-alpha scaffold)"
 
   def project do
     [
