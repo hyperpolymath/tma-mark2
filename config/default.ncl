@@ -208,7 +208,7 @@ let platform = import "../must/contracts/platform.ncl" in
 
     # Package manager preference
     package_manager = "guix",
-    package_manager_fallback = "nix",
+    package_manager_fallback = "mix",
 
     # Build targets
     targets = platform.tier1,

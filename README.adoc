@@ -39,22 +39,24 @@ When complete, the application will process student assignment submissions in `.
 
 === Prerequisites
 
-* Elixir 1.14+ with OTP 25+
+* Elixir 1.17+ with OTP 26+ (via asdf; see `.tool-versions`)
+* Rust + Cargo (for the native NIFs)
 * Node.js 18+ (for assets)
-* Or: Nix with flakes enabled
+* Or: Guix with `guix.scm`
 
 === Installation
 
 [source,bash]
 ----
-# Using Nix (recommended)
-nix develop
-mix setup
-
-# Or manually
+# Using asdf (recommended)
+asdf install
 mix deps.get
 mix assets.setup
 mix assets.build
+
+# Or using Guix
+guix shell -m guix.scm
+mix deps.get
 ----
 
 === Running

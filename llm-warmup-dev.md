@@ -81,14 +81,7 @@ guix build -f guix.scm
 guix shell -m guix.scm   # dev shell
 ```
 
-### Fallback: Nix
-
-```bash
-nix build .#default
-nix develop               # dev shell
-```
-
-### Emergency: Mix
+### Fallback: Mix
 
 ```bash
 mix deps.get && mix compile && mix release

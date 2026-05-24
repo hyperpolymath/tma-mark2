@@ -2,13 +2,16 @@
 git clone https://github.com/hyperpolymath/tma-mark2.git
 cd tma-mark2
 
-# Using Nix (recommended for reproducibility)
-nix develop
+# Using asdf (matches .tool-versions)
+asdf install
+
+# Or using Guix (for reproducibility)
+guix shell -m guix.scm
 
 # Or using toolbox/distrobox
 toolbox create tma-mark2-dev
 toolbox enter tma-mark2-dev
-# Install dependencies manually
+# Install Elixir + Rust manually
 
 # Verify setup
 just check   # or: cargo check / mix compile / etc.
@@ -41,7 +44,7 @@ tma-mark2/
 ├── MAINTAINERS.md
 ├── README.adoc
 ├── SECURITY.md
-├── flake.nix            # Nix flake (Perimeter 1)
+├── guix.scm             # Guix manifest (Perimeter 1)
 └── Justfile             # Task runner (Perimeter 1)
 ```
 

@@ -60,7 +60,7 @@
       # Package managers (in preference order)
       package_managers = {
         primary = "guix",
-        fallback = "nix",
+        fallback = "mix",
         emergency = "apk",  # Alpine/Wolfi
       },
 
@@ -75,21 +75,18 @@
         x86_64 = {
           tier = 1,
           guix_support = true,
-          nix_support = true,
           container_support = true,
           burrito_support = true,
         },
         aarch64 = {
           tier = 1,
           guix_support = true,
-          nix_support = true,
           container_support = true,
           burrito_support = true,
         },
         riscv64 = {
           tier = 2,
           guix_support = false,  # Experimental - see riscv-guix-buildsys
-          nix_support = true,
           container_support = true,
           burrito_support = true,
         },
@@ -100,7 +97,6 @@
         fedora = { notes = "Primary development platform" },
         debian = { notes = "Well tested" },
         ubuntu = { notes = "Well tested" },
-        nixos = { notes = "Native Nix support" },
         guix_system = { notes = "Native Guix support" },
         alpine = { notes = "Container base" },
       },
@@ -112,8 +108,8 @@
 
     darwin = {
       package_managers = {
-        primary = "nix",
-        fallback = "brew",
+        primary = "brew",
+        fallback = "mix",
       },
 
       container_runtimes = ["podman", "docker"],
@@ -128,13 +124,11 @@
       architectures = {
         x86_64 = {
           tier = 2,
-          nix_support = true,
           burrito_support = true,
           notes = "Intel Macs (legacy)",
         },
         aarch64 = {
           tier = 1,
-          nix_support = true,
           burrito_support = true,
           notes = "Apple Silicon",
         },
@@ -152,7 +146,6 @@
       package_managers = {
         primary = "winget",
         fallback = "scoop",
-        nix_via_wsl = true,
       },
 
       container_runtimes = [
@@ -189,7 +182,6 @@
       deployment = "burrito_only",
 
       container_support = false,
-      nix_support = false,
       guix_support = false,
 
       architectures = {
@@ -286,11 +278,9 @@
     # What gets built in CI
     ci_builds = [
       { platform = "linux-x86_64", method = "guix" },
-      { platform = "linux-x86_64", method = "nix" },
       { platform = "linux-x86_64", method = "container" },
-      { platform = "linux-aarch64", method = "nix" },
       { platform = "linux-aarch64", method = "container" },
-      { platform = "darwin-aarch64", method = "nix" },
+      { platform = "darwin-aarch64", method = "mix" },
     ],
 
     # What gets built for releases

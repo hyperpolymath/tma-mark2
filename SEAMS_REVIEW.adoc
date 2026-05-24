@@ -81,14 +81,14 @@ The Justfile provides excellent command discoverability:
 just --list    # Shows all 77 recipes
 just info      # Shows project info
 just dev       # Starts development server
-just build     # Smart build (Guix → Nix → Mix fallback)
+just build     # Smart build (Guix → Mix fallback)
 ----
 
 *Ergonomic Strengths:*
 
 - Default recipe shows help
 - Grouped by concern (BUILD, TESTING, SECURITY, etc.)
-- Smart fallbacks (Guix → Nix → Mix)
+- Smart fallbacks (Guix → Mix)
 - Clear error messages via `error_guidance` in Nickel
 
 === 2.2 Platform-Appropriate Paths
@@ -283,8 +283,7 @@ The `password_policy/0` function enforces:
 |Build System |Priority |Notes
 
 |Guix |Primary |Full reproducibility, RISC-V experimental
-|Nix |Fallback |Wider platform support
-|Mix |Emergency |Direct build when no package manager
+|Mix |Fallback |Direct build when Guix unavailable
 |===
 
 The fallback chain in `Justfile` is correct:
@@ -293,8 +292,6 @@ The fallback chain in `Justfile` is correct:
 ----
 if guix available && guix.scm exists:
     guix build
-elif nix available && flake.nix exists:
-    nix build
 else:
     mix release
 ----
@@ -432,7 +429,7 @@ The tma-mark2 project demonstrates **excellent architectural design** with:
 
 - Proper OTP supervision patterns
 - Forward-looking post-quantum cryptography
-- Cross-platform support via Guix/Nix/Burrito
+- Cross-platform support via Guix/Burrito
 - Security-first design with TLS 1.3 only and SDP model
 - Clean module boundaries and GenServer patterns
 

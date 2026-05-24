@@ -23,17 +23,14 @@ default:
 # BUILD COMMANDS
 # ============================================================
 
-# Build with Guix (primary) or Nix (fallback)
+# Build with Guix (primary) or fall back to Mix
 build:
     @echo ">>> Building {{project}} v{{version}}"
     @if command -v guix &> /dev/null && [ -f guix.scm ]; then \
-        echo ">>> Using Guix (primary)"; \
+        echo ">>> Using Guix"; \
         guix build -f guix.scm; \
-    elif command -v nix &> /dev/null && [ -f flake.nix ]; then \
-        echo ">>> Using Nix (fallback)"; \
-        nix build .#default; \
     else \
-        echo ">>> Using Mix (emergency)"; \
+        echo ">>> Using Mix (fallback)"; \
         MIX_ENV=prod mix deps.get && mix compile && mix release; \
     fi
 
@@ -41,11 +38,6 @@ build:
 build-guix:
     @echo ">>> Building with Guix"
     guix build -f guix.scm
-
-# Build with Nix explicitly
-build-nix:
-    @echo ">>> Building with Nix"
-    nix build .#default
 
 # Build for specific platform
 build-platform platform="linux-x86_64":
@@ -96,13 +88,9 @@ dev:
 dev-watch:
     watchexec -e ex,exs,res,affine,ncl,scm -- just dev
 
-# Open development shell (Guix or Nix)
+# Open development shell (Guix)
 shell:
-    @if command -v guix &> /dev/null; then \
-        guix shell -m guix.scm; \
-    else \
-        nix develop; \
-    fi
+    guix shell -m guix.scm
 
 # ReScript build
 rescript:
@@ -324,9 +312,8 @@ clean:
     rm -rf native/tma_nlp/target
     rm -rf experiments/mobile/target
 
-# Deep clean (including Nix/Guix stores - use with caution)
+# Deep clean (including Guix store - use with caution)
 clean-deep: clean
-    nix store gc || true
     guix gc || true
 
 # ============================================================
@@ -364,7 +351,7 @@ info:
     @echo "Version: {{version}}"
     @echo "License: MPL-2.0 + Palimpsest"
     @echo ""
-    @echo "Build System: Guix (primary), Nix (fallback)"
+    @echo "Build System: Guix (primary), Mix (fallback)"
     @echo "Container: Wolfi (Chainguard)"
     @echo "Security: Post-quantum crypto, SDP, VPN support"
 
@@ -401,7 +388,6 @@ doctor:
     echo "-- Build / task --"
     check just
     check git
-    check nix optional
     check guix optional
     check nickel optional
     echo ""
@@ -545,7 +531,7 @@ help-me:
     echo ""
     read -rp "Pick a number (1-7): " choice
     case "$choice" in
-        1) echo ""; echo "Run: nix develop  (or install Elixir 1.17+ and Rust manually)"
+        1) echo ""; echo "Run: asdf install  (or install Elixir 1.17+ and Rust manually)"
            echo "Then: mix deps.get && mix assets.setup && mix phx.server"
            echo "See: QUICKSTART-USER.adoc" ;;
         2) echo ""; echo "Run: just dev"
@@ -553,7 +539,7 @@ help-me:
         3) echo ""; echo "Run: just test           (all tests)"
            echo "      just test-coverage  (with coverage)"
            echo "      just test-integration (integration only)" ;;
-        4) echo ""; echo "Run: just build              (Guix > Nix > Mix cascade)"
+        4) echo ""; echo "Run: just build              (Guix > Mix cascade)"
            echo "      just build-container    (Chainguard image)"
            echo "      just release 2.1.0      (full release cycle)" ;;
         5) echo ""; echo "Run: just doctor   (diagnose)"

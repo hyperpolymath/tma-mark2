@@ -95,7 +95,7 @@ TESTING
   No e2e, no property, no fuzz      ░░░░░░░░░░   0%
 
 REPO INFRASTRUCTURE
-  Justfile / flake.nix / guix.scm   █████████░  ~90%     Solid; not exercised in CI
+  Justfile / guix.scm               █████████░  ~90%     Solid; not exercised in CI
   CI workflows                      ██████░░░░  ~60%     14 workflows; most are governance, not value-adding
   Containerfiles                    ██████░░░░  ~60%     Exist; never demonstrated to run the app
   Burrito release                   █░░░░░░░░░  ~10%     Configured; never actually built/run

@@ -19,11 +19,14 @@ sends student data to external servers.
 ## How to Get Started
 
 ```bash
-# Recommended: use Nix
-nix develop && mix deps.get && mix assets.setup && mix phx.server
+# Recommended: use asdf
+asdf install && mix deps.get && mix assets.setup && mix phx.server
 
 # Or: plain Elixir
 mix deps.get && mix assets.setup && mix assets.build && mix phx.server
+
+# Or: Guix
+guix shell -m guix.scm && mix deps.get && mix phx.server
 
 # Or: container
 just build-container && just container-dev
@@ -49,7 +52,7 @@ Then open http://localhost:4000.
 | `just heal` | Attempt automatic repair |
 | `just tour` | Guided walkthrough of the codebase |
 | `just help-me` | Interactive help menu (pick what you need) |
-| `just build` | Build release (Guix/Nix/Mix cascade) |
+| `just build` | Build release (Guix/Mix cascade) |
 | `just build-container` | Build Chainguard container image |
 | `just security-audit` | Audit deps + run Trivy scan |
 

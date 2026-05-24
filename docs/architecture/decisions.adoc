@@ -192,7 +192,7 @@ Need standardized repository structure for maintainability and compliance.
 
 Adopt RSR Gold (Rhodium Repo Standard) including:
 
-* Nix flakes for reproducibility
+* Guix manifest for reproducibility
 * Containerfile with Wolfi
 * MAA/RMR/RMO accountability frameworks
 * TPCF contribution model

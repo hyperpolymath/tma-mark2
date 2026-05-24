@@ -23,13 +23,13 @@ You need one of the following installed:
 |===
 | Tool | Install | Check
 
-| Elixir 1.17+ / OTP 27+
-| `asdf install elixir latest` or https://elixir-lang.org/install.html
+| Elixir 1.17+ / OTP 26+
+| `asdf install` (uses `.tool-versions`) or https://elixir-lang.org/install.html
 | `elixir --version`
 
-| Nix (with flakes)
-| `sh <(curl -L https://nixos.org/nix/install) --daemon`
-| `nix --version`
+| Guix (for reproducibility)
+| https://guix.gnu.org/manual/en/html_node/Installation.html
+| `guix --version`
 
 | Podman (container route)
 | `sudo dnf install podman` or https://podman.io/docs/installation
@@ -39,29 +39,29 @@ You need one of the following installed:
 Optional but recommended:
 
 * **just** -- task runner: `cargo install just`
-* **Rust nightly** -- for NIFs: `rustup toolchain install nightly`
+* **Rust stable** -- for NIFs: `rustup toolchain install stable`
 
 == Install & Run (Fastest Path)
 
-=== Option A: Nix Flake (Recommended)
+=== Option A: asdf (Recommended)
 
 [source,bash]
 ----
 cd tma-mark2
-nix develop            # enters dev shell with all deps
+asdf install           # installs versions pinned in .tool-versions
 mix deps.get
 mix assets.setup
 mix phx.server         # open http://localhost:4000
 ----
 
-=== Option B: Elixir Directly
+=== Option B: Guix
 
 [source,bash]
 ----
 cd tma-mark2
+guix shell -m guix.scm
 mix deps.get
 mix assets.setup
-mix assets.build
 mix phx.server
 ----
 
