@@ -47,10 +47,8 @@ let platform = import "./contracts/platform.ncl" in
       "SECURITY.md",
       "CODE_OF_CONDUCT.adoc",
 
-      # --- Build System (Guix primary, Nix fallback) ---
+      # --- Build System (Guix primary, Mix fallback) ---
       "guix.scm",
-      "flake.nix",
-      "flake.lock",
       "mix.exs",
 
       # --- Container ---
@@ -232,7 +230,6 @@ let platform = import "./contracts/platform.ncl" in
     # Error messages should be helpful
     error_guidance = {
       missing_guix = "Install Guix: https://guix.gnu.org/manual/en/html_node/Installation.html",
-      missing_nix = "Install Nix: https://nixos.org/download.html",
       missing_container = "Install nerdctl/podman/docker",
     },
   },

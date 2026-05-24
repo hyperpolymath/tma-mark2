@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - RSR Gold compliance documentation
-- Nix flakes for reproducible builds
 - Containerfile with Chainguard Wolfi base
 - Architecture documentation (MAA/RMR/RMO)
 - TPCF contribution framework
+
+### Removed
+- Nix flakes (replaced by Guix manifest; see `guix.scm`)
 
 ## [2.0.0] - 2024-12-01
 

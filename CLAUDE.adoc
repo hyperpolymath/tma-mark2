@@ -413,7 +413,7 @@ tma-mark2/
 ├── Justfile                          # Task runner
 ├── Containerfile                     # Podman/Docker build
 ├── Dockerfile                        # Docker-compatible build
-├── flake.nix                         # Nix reproducibility
+├── guix.scm                          # Guix manifest (reproducibility)
 └── mix.exs                           # Elixir project config
 ----
 
@@ -486,7 +486,7 @@ All source files must have:
 
 [source,bash]
 ----
-# Enter Nix development shell
+# Enter development shell
 just dev
 
 # Run development server
@@ -543,7 +543,7 @@ This project follows RSR Gold standards:
 * SPDX headers on all files
 * TPCF contribution framework
 * MAA/RMR/RMO accountability frameworks
-* Nix flakes for reproducibility
+* Guix manifest for reproducibility
 * Containerfile with Wolfi base
 * No telemetry or tracking
 

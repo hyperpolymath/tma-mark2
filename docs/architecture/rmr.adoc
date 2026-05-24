@@ -73,7 +73,7 @@ The RMR (Responsibility Matrix Registry) documents who is responsible for what w
 | Component | Primary Owner | Backup Owner
 
 | CI/CD Pipeline | Core Maintainers | Expert Contributors
-| Nix Flakes | Core Maintainers | Community
+| Guix Manifest | Core Maintainers | Community
 | Container Image | Core Maintainers | Expert Contributors
 | Release Binaries | Core Maintainers | Expert Contributors
 |===

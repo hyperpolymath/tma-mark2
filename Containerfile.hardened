@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MPL-2.0
 # eTMA Handler - Hardened Container Build
 #
-# Build Strategy: Guix first, Nix fallback, direct build emergency
+# Build Strategy: Guix first, direct build fallback
 #
 # Build (single arch):
 #   nerdctl build -t tma-mark2:latest -f Containerfile.hardened .
@@ -20,7 +20,7 @@
 #
 # Security Features:
 #   - Wolfi base (Chainguard hardened, minimal CVEs)
-#   - Guix-first reproducible builds (Nix fallback)
+#   - Guix-first reproducible builds
 #   - Non-root user (UID 65532)
 #   - Read-only rootfs compatible
 #   - Dropped all capabilities
@@ -35,7 +35,7 @@
 # ARG: Build method selection
 # ===========================================
 ARG BUILD_METHOD=auto
-# Options: guix, nix, direct, auto (try guix, then nix, then direct)
+# Options: guix, direct, auto (try guix, then direct)
 
 # ===========================================
 # STAGE 1: Guix Builder (Primary)
@@ -59,7 +59,7 @@ COPY . .
 
 # Build with Guix if available
 RUN if command -v guix &> /dev/null && [ -f guix.scm ]; then \
-        echo ">>> Building with Guix (primary)" && \
+        echo ">>> Building with Guix" && \
         guix build -f guix.scm && \
         cp -r $(guix build -f guix.scm) /guix-output; \
     else \
@@ -69,31 +69,7 @@ RUN if command -v guix &> /dev/null && [ -f guix.scm ]; then \
     fi
 
 # ===========================================
-# STAGE 2: Nix Builder (Fallback)
-# ===========================================
-FROM nixos/nix:2.24.10 AS nix-builder
-
-WORKDIR /build
-COPY . .
-
-# Check if Guix succeeded, otherwise build with Nix
-COPY --from=guix-builder /guix-output /guix-check
-
-RUN if [ -f /guix-check/.guix-failed ]; then \
-        echo ">>> Building with Nix (fallback)" && \
-        nix build .#default \
-            --extra-experimental-features "nix-command flakes" \
-            --no-link \
-            --print-out-paths > /nix-output-path && \
-        cp -r $(cat /nix-output-path) /nix-output; \
-    else \
-        echo ">>> Guix build succeeded, skipping Nix" && \
-        mkdir -p /nix-output && \
-        cp -r /guix-check/* /nix-output/; \
-    fi
-
-# ===========================================
-# STAGE 3: Direct Builder (Emergency)
+# STAGE 2: Direct Builder (Fallback)
 # ===========================================
 FROM cgr.dev/chainguard/wolfi-base:latest AS direct-builder
 
@@ -150,7 +126,7 @@ RUN if [ -d assets ]; then \
 RUN mix compile && mix release
 
 # ===========================================
-# STAGE 4: Final Runner (Hardened Wolfi)
+# STAGE 3: Final Runner (Hardened Wolfi)
 # ===========================================
 FROM cgr.dev/chainguard/wolfi-base:latest AS runner
 
@@ -196,19 +172,19 @@ RUN mkdir -p /app /data /data/etmas /data/returns /data/cache /data/logs /run/tm
 
 WORKDIR /app
 
-# Copy built application (prefer Nix output, fallback to direct)
-COPY --from=nix-builder --chown=tma:tma /nix-output/ ./nix-build/
+# Copy built application (prefer Guix output, fallback to direct)
+COPY --from=guix-builder --chown=tma:tma /guix-output/ ./guix-build/
 COPY --from=direct-builder --chown=tma:tma /app/_build/prod/rel/etma_handler ./direct-build/
 
 # Select the build that succeeded
-RUN if [ -d nix-build/bin ]; then \
-        echo ">>> Using Guix/Nix build" && \
-        cp -r nix-build/* . && \
-        rm -rf nix-build direct-build; \
+RUN if [ -d guix-build/bin ]; then \
+        echo ">>> Using Guix build" && \
+        cp -r guix-build/* . && \
+        rm -rf guix-build direct-build; \
     elif [ -d direct-build/bin ]; then \
         echo ">>> Using direct build" && \
         cp -r direct-build/* . && \
-        rm -rf nix-build direct-build; \
+        rm -rf guix-build direct-build; \
     else \
         echo "ERROR: No successful build found!" && exit 1; \
     fi

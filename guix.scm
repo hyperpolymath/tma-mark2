@@ -2,7 +2,7 @@
 ;; SPDX-License-Identifier: MPL-2.0
 ;;
 ;; GNU Guix package definition for tma-mark2
-;; Primary build system - Nix is fallback
+;; Primary build system - Mix is fallback
 ;;
 ;; Usage:
 ;;   guix build -f guix.scm
