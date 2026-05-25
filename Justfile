@@ -546,7 +546,7 @@ help-me:
            echo "      just heal     (auto-fix)"
            echo "Common issues: CubDB lock, missing Rust, port 4000 in use." ;;
         6) echo ""; echo "Run: just tour     (guided walkthrough)"
-           echo "Read: README.adoc, EXPLAINME.adoc, llm-warmup-dev.md" ;;
+           echo "Read: README.adoc, EXPLAINME.adoc, docs/ai/warmup-dev.md" ;;
         7) echo ""; echo "Run: just security-audit  (dep audit + Trivy)"
            echo "      just assail           (panic-attacker scan)"
            echo "      just sbom-generate    (SBOM)" ;;

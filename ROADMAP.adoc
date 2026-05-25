@@ -49,7 +49,7 @@ Goal: docs match reality so the rest of planning isn't fiction.
 * [ ] `mix.exs` version → `0.1.0-alpha`
 * [ ] Rewrite `TOPOLOGY.md` dashboard with real percentages
 * [ ] Rewrite `ROADMAP.adoc` (this file)
-* [ ] Update `TEST-NEEDS.md` to reflect 4 real test files
+* [ ] Update `docs/status/test-needs.md` to reflect 4 real test files
 * [ ] Move clearly-deferred experiments out of the primary tree (`experiments/` for mobile, AffineScript, Bebop, Zig)
 
 **Exit criteria:** a new reader can tell what works in 5 minutes.

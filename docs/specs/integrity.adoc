@@ -479,8 +479,8 @@ The toolkit makes XML escaping errors impossible at compile time.
 
 == Related Documentation
 
-* link:FHI-SCHEMA.adoc[FHI Schema Specification]
-* link:architecture/overview.adoc[Architecture Overview]
+* link:fhi-schema.adoc[FHI Schema Specification]
+* link:../architecture/overview.adoc[Architecture Overview]
 * link:architecture/decisions.adoc[Architecture Decision Records]
 
 == Appendix: The 7/44 Test Cases

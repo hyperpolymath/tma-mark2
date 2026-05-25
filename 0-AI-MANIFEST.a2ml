@@ -37,7 +37,7 @@
         ".claude/CLAUDE.md"                    ; Language policy, dev patterns
         "Justfile"                             ; Task runner — all commands here
         "mix.exs"                              ; Elixir dependencies and config
-        "llm-warmup-dev.md"                    ; Developer-oriented LLM briefing
+        "docs/ai/warmup-dev.md"                ; Developer-oriented LLM briefing
         "QUICKSTART-USER.adoc"                 ; User setup instructions
       )
       (summary
