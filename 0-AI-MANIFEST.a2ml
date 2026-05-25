@@ -88,9 +88,8 @@
       "must/must.ncl"           ; Nickel structural invariants
       "rescript.json")          ; ReScript compiler config
     (containers
-      "Containerfile.hardened"  ; Production container
-      "Containerfile.simple"    ; Development container
-      "Containerfile")          ; Base container
+      "Containerfile"           ; Primary (development / base)
+      "Containerfile.hardened") ; Production-hardened variant
     (packaging
       "guix.scm"               ; GNU Guix (primary)
       "flake.nix"))             ; Nix (fallback)

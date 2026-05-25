@@ -36,12 +36,12 @@ tma-mark2/
 ├── .github/             # GitHub config (Perimeter 1)
 │   ├── ISSUE_TEMPLATE/
 │   └── workflows/
-├── CHANGELOG.md
-├── CODE_OF_CONDUCT.md
+├── CHANGELOG.adoc
+├── CODE_OF_CONDUCT.adoc
 ├── CONTRIBUTING.md      # This file
-├── GOVERNANCE.md
+├── GOVERNANCE.adoc
 ├── LICENSE
-├── MAINTAINERS.md
+├── MAINTAINERS.adoc
 ├── README.adoc
 ├── SECURITY.md
 ├── guix.scm             # Guix manifest (Perimeter 1)

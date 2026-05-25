@@ -23,7 +23,7 @@ The BDFL has final authority on project decisions:
 
 === Core Team
 
-Core team members (see MAINTAINERS.md):
+Core team members (see MAINTAINERS.adoc):
 
 * Merge permissions
 * Release management
