@@ -1,0 +1,97 @@
+// SPDX-License-Identifier: MPL-2.0
+= tma-mark2 — Documentation Index
+:toc:
+
+The documentation tree groups files by **intent**, not by file type.
+Pick the entry point that matches what you need to do.
+
+== If you want to…
+
+[cols="1,3"]
+|===
+| Goal | Start here
+
+| Run the app
+| link:../QUICKSTART-USER.adoc[QUICKSTART-USER.adoc] at the repo root
+
+| Set up a development environment
+| link:../QUICKSTART-DEV.adoc[QUICKSTART-DEV.adoc]
+
+| Cut a release or maintain the project
+| link:../QUICKSTART-MAINTAINER.adoc[QUICKSTART-MAINTAINER.adoc]
+
+| See where the project is heading
+| link:../ROADMAP.adoc[ROADMAP.adoc]
+
+| See where the project is *now*
+| link:../TOPOLOGY.md[TOPOLOGY.md] — live completion dashboard
+
+| Brief a new AI agent before it touches the code
+| link:../0-AI-MANIFEST.a2ml[0-AI-MANIFEST.a2ml] (canonical),
+  link:ai/warmup-dev.md[ai/warmup-dev.md] (dev focus),
+  link:ai/warmup-user.md[ai/warmup-user.md] (user focus)
+
+| Understand a design decision
+| link:architecture/[architecture/]
+
+| Read the file-format spec for `.fhi`
+| link:specs/fhi-schema.adoc[specs/fhi-schema.adoc]
+
+| Add or audit tests
+| link:status/test-needs.md[status/test-needs.md]
+|===
+
+== Directory map
+
+[cols="1,3"]
+|===
+| Path | What lives here
+
+| link:architecture/[architecture/]
+| System design, governance frameworks (MAA, RMR, RMO), architectural
+  decision records.
+
+| link:ai/[ai/]
+| Briefings for LLM agents working on the code. Pair with
+  link:../0-AI-MANIFEST.a2ml[0-AI-MANIFEST.a2ml] at the root.
+
+| link:examples/[examples/]
+| Illustrative examples — sample forensics report, sample Nickel
+  config. Compare to `examples/` at the repo root, which holds
+  *runtime* example data.
+
+| link:operations/[operations/]
+| Runbooks and operational concerns — failure modes, reversibility.
+
+| link:research/[research/]
+| Background and rationale — Palimpsest licence philosophy,
+  competitor analysis, citations, brainstormed ideas.
+
+| link:sessions/[sessions/]
+| STATE.scm conversation checkpoints from collaborative sessions.
+
+| link:specs/[specs/]
+| Protocol and format specifications — `.fhi` schema, integrity
+  guarantees.
+
+| link:status/[status/]
+| Live status reports — test coverage gaps, proof-obligation gaps,
+  internal code-review notes (SEAMS).
+|===
+
+== Machine-readable artefacts
+
+Project state, ecosystem, and agent-interaction patterns are tracked
+under link:../.machine_readable/[.machine_readable/]. See
+link:../.claude/CLAUDE.md[.claude/CLAUDE.md] for the index.
+
+== Conventions
+
+* AsciiDoc (`.adoc`) for long-form documents that benefit from a
+  table of contents or structured cross-references.
+* Markdown (`.md`) for shorter pieces and anything GitHub renders by
+  default.
+* File names are kebab-case under `docs/`. The top-level community
+  files (README, CHANGELOG, CONTRIBUTING, …) keep their conventional
+  UPPER_CASE names.
+* Every file carries an SPDX-License-Identifier header.

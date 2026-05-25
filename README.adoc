@@ -17,7 +17,9 @@ image:https://img.shields.io/badge/OTP-26+-red[OTP Version]
 
 == Status
 
-**This is an early-stage scaffold, not a working application.** A Phoenix shell, the Rust crypto/NLP NIFs, and the marking calculator are real. The data plane (CubDB Repo, FHI parser, file watcher, `.docx` generator) is unimplemented. Marking-analytics modules are docstring stubs. See link:TOPOLOGY.md[TOPOLOGY.md] for an honest component-by-component status, and link:ROADMAP.adoc[ROADMAP.adoc] for the path to v1.
+**This is an early-stage scaffold, not a working application.** A Phoenix shell, the Rust crypto/NLP NIFs, the CubDB-backed Repo, and the marking calculator are real. The rest of the data plane (FHI parser, file watcher, `.docx` generator) is unimplemented. Marking-analytics modules are docstring stubs. See link:TOPOLOGY.md[TOPOLOGY.md] for an honest component-by-component status, and link:ROADMAP.adoc[ROADMAP.adoc] for the path to v1.
+
+For a guided tour of the repository, see link:docs/README.adoc[docs/README.adoc]. For RSR compliance state, see link:RSR_COMPLIANCE.adoc[RSR_COMPLIANCE.adoc].
 
 == Overview
 
@@ -106,7 +108,7 @@ Then open http://localhost:4000 in your browser.
 |===
 |Component |Technology
 
-|Language |Elixir 1.14+ / OTP 25+
+|Language |Elixir 1.18+ / OTP 25 (pinned via `.tool-versions`)
 |Web Framework |Phoenix 1.7 + LiveView
 |HTTP Server |Bandit
 |Database |CubDB (embedded)
@@ -242,11 +244,14 @@ podman run -p 4000:4000 -v ~/assignments:/data etma-handler:latest
 
 == Contributing
 
-See link:CONTRIBUTING.adoc[CONTRIBUTING.adoc] for guidelines.
+See link:CONTRIBUTING.md[CONTRIBUTING.md] for guidelines, and link:GOVERNANCE.adoc[GOVERNANCE.adoc] for the decision-making model.
 
 == License
 
-Palimpsest-MPL-1.0 License - see link:LICENSE.txt[LICENSE.txt] for details.
+Palimpsest License (MPL-2.0) — see link:LICENSE[LICENSE] for the
+binding text and link:NOTICE[NOTICE] for the Palimpsest disposition.
+The philosophy is documented in
+link:docs/research/palimpsest.adoc[docs/research/palimpsest.adoc].
 
 == Security
 
@@ -258,8 +263,3 @@ See link:SECURITY.md[SECURITY.md] for security policies and vulnerability report
 * The Elixir and Phoenix communities
 * CubDB for the excellent embedded database
 * Burrito for cross-platform packaging
-
-
-== Architecture
-
-See link:TOPOLOGY.md[TOPOLOGY.md] for a visual architecture map and completion dashboard.

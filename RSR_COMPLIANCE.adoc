@@ -1,0 +1,119 @@
+// SPDX-License-Identifier: MPL-2.0
+= tma-mark2 — RSR Compliance Tracker
+:toc:
+:sectnums:
+
+This file tracks this project's compliance with the **Rhodium Standard
+Repository (RSR)** specification. For the template itself (canonical
+directory layout, recipe set, etc.) see
+link:docs/research/rsr-template.adoc[docs/research/rsr-template.adoc].
+
+== Compliance summary
+
+|===
+| Tier | Status
+
+| RSR Required files | ✓ pass
+| Language policy    | ✓ pass (Elixir tier 1; ReScript planned)
+| Build system       | ✓ pass (Guix primary, Mix fallback)
+| Container          | ✓ pass (Containerfile + hardened variant)
+| Well-known metadata | ✓ pass (.well-known/ populated)
+| License + SPDX     | ✓ pass (MPL-2.0 across the tree)
+| Documentation taxonomy | ✓ pass (docs/{architecture,specs,…})
+| State tracking     | partial (uses .machine_readable/6a2/STATE.a2ml
+                       rather than root-level STATE.scm)
+|===
+
+== Required files
+
+[cols="2,1,3"]
+|===
+| Path | Present | Notes
+
+| `.editorconfig`               | ✓ |
+| `.gitignore`                  | ✓ |
+| `.gitattributes`              | ✓ |
+| `.tool-versions`              | ✓ | Elixir 1.18.4-otp-25
+| `Justfile`                    | ✓ |
+| `README.adoc`                 | ✓ |
+| `CHANGELOG.adoc`              | ✓ |
+| `CONTRIBUTING.md`             | ✓ |
+| `CODE_OF_CONDUCT.adoc`        | ✓ |
+| `GOVERNANCE.adoc`             | ✓ |
+| `MAINTAINERS.adoc`            | ✓ |
+| `SECURITY.md`                 | ✓ |
+| `LICENSE`                     | ✓ | Standard MPL-2.0 for tooling
+| `NOTICE`                      | ✓ | Palimpsest disposition
+| `LICENSES/MPL-2.0.txt`        | ✓ | Palimpsest text
+| `RSR_COMPLIANCE.adoc`         | ✓ | This file
+| `.well-known/security.txt`    | ✓ |
+| `.well-known/ai.txt`          | ✓ |
+| `.well-known/humans.txt`      | ✓ |
+| `guix.scm`                    | ✓ |
+|===
+
+== Language policy
+
+This project uses only languages on the Hyperpolymath allowlist
+(see link:.claude/CLAUDE.md[.claude/CLAUDE.md]):
+
+[cols="2,1,3"]
+|===
+| Language | Use | Status
+
+| Elixir / Erlang  | Application core, Phoenix web layer | active
+| Rust             | NIFs (`native/`) — tma_crypto, tma_nlp | active
+| ReScript         | Frontend (planned; not yet wired) | planned
+| Nickel           | Structural contracts (`must/`)     | active
+| Guile Scheme     | State / meta (`.machine_readable/`) | active
+| Bash             | `setup.sh`, scripts | active
+|===
+
+No TypeScript, Node, Python, Go, Kotlin, Swift, or Flutter.
+
+== Build system
+
+Primary: link:guix.scm[guix.scm] (full reproducibility, Guix store
+output).
+
+Fallback: `mix release` for environments without Guix.
+
+The `Justfile` cascade auto-selects:
+
+[source]
+----
+if guix available && guix.scm exists:
+    guix build
+else:
+    mix release
+----
+
+See link:docs/status/seams-review.adoc[docs/status/seams-review.adoc]
+for the SEAMS review of the build system.
+
+== Container strategy
+
+Two Containerfiles:
+
+* link:Containerfile[Containerfile] — dev / base image.
+* link:Containerfile.hardened[Containerfile.hardened] — production
+  variant with Wolfi base, distroless runner, OCI labels.
+
+== Deviations from the canonical template
+
+|===
+| Item | Canonical | Here | Why
+
+| Source dir | `src/`     | `lib/` | Elixir convention
+| Test  dir  | `tests/`   | `test/` | Elixir convention
+| State file | root `STATE.scm` | `.machine_readable/6a2/STATE.a2ml`
+| Project keeps STATE inside the broader machine-readable bundle
+  (META, ECOSYSTEM, NEUROSYM, PLAYBOOK) for consistency
+|===
+
+These deviations are documented and remain semantically equivalent.
+
+== References
+
+* link:docs/research/rsr-template.adoc[docs/research/rsr-template.adoc] — canonical RSR template
+* https://rhodium.sh[Rhodium Standard] — upstream RSR documentation
