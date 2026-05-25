@@ -13,7 +13,7 @@ The previous version of this file claimed "CRG Grade C ACHIEVED 2026-04-04". Tha
 | `test/etma_handler/bouncer_test.exs` | Regex literal pattern matching only — does **not** exercise the GenServer (which is broken) | Cosmetic |
 | `test/etma_handler/nlp_test.exs` | NLP NIF wrappers | Partial |
 
-`tests/fuzz/` exists but has no payload yet.
+`test/fuzz/` exists but has no payload yet.
 
 ## Rust NIF Tests
 

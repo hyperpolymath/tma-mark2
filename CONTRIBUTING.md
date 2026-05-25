@@ -31,7 +31,7 @@ tma-mark2/
 │   └── proposals/       # RFCs (Perimeter 3)
 ├── examples/            # Examples (Perimeter 3)
 ├── spec/                # Spec tests (Perimeter 3)
-├── tests/               # Test suite (Perimeter 2-3)
+├── test/                # Test suite — Elixir convention (Perimeter 2-3)
 ├── .well-known/         # Protocol files (Perimeter 1-3)
 ├── .github/             # GitHub config (Perimeter 1)
 │   ├── ISSUE_TEMPLATE/
