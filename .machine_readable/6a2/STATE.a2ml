@@ -1,14 +1,30 @@
 # SPDX-License-Identifier: MPL-2.0
 # STATE.a2ml — Project state checkpoint
-# Converted from STATE.scm on 2026-03-15
 
 [metadata]
 project = "tma-mark2"
-version = "0.1.0"
-last-updated = "2026-03-15"
+version = "0.1.0-alpha"
+last-updated = "2026-05-25"
 status = "active"
 
 [project-context]
 name = "tma-mark2"
-completion-percentage = 0
-phase = "In development"
+completion-percentage = 32
+phase = "alpha scaffold — v1 critical path step 1 (Repo/CubDB) landed; step 2 (FHI parser) blocked on real fixtures"
+maturity = "alpha"
+
+[layout]
+docs-index = "docs/README.adoc"
+rsr-compliance = "RSR_COMPLIANCE.adoc"
+ai-manifest = "0-AI-MANIFEST.a2ml"
+topology = "TOPOLOGY.md"
+roadmap = "ROADMAP.adoc"
+
+[v1-critical-path]
+step-1-repo-cubdb = "done"
+step-2-fhi-parser = "blocked-on-fixtures"
+step-3-bouncer = "stub-only"
+step-4-docx-generator = "not-started"
+step-5-marking-live-wired = "not-started"
+step-6-auth-and-encryption-at-rest = "not-started"
+step-7-burrito-release = "not-started"

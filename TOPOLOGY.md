@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: MPL-2.0 -->
 <!-- TOPOLOGY.md — Project architecture map and completion dashboard -->
-<!-- Last updated: 2026-05-24 -->
+<!-- Last updated: 2026-05-25 -->
 
 # eTMA Handler (tma-mark2) — Project Topology
 
-## Status: alpha scaffold (~25–30%)
+## Status: alpha scaffold (~30–35%)
 
 The previous version of this file claimed ~90% completion. That was wrong. This is now an honest dashboard. See [ROADMAP.adoc](ROADMAP.adoc) for the path to v1.
 
@@ -58,9 +58,9 @@ ELIXIR CRYPTO SURFACE
   Crypto.encrypt/3 (top-level)      ░░░░░░░░░░   0%      STUB — placeholder body
 
 DATA PLANE (BLOCKING for v1)
-  Repo (CubDB)                      ░░░░░░░░░░   0%      STUB — 21-line module, no functions
-  FHI parser/generator              ░░░░░░░░░░   0%      STUB — parse/1 + generate/1 unimplemented
-  Bouncer (file watcher)            █░░░░░░░░░  ~10%     init/1 references undefined symbols
+  Repo (CubDB)                      ███████░░░  ~70%     280 LOC + 237 LOC of tests; encryption-at-rest still TODO
+  FHI parser/generator              ░░░░░░░░░░   0%      STUB — parse/1 + generate/1 unimplemented (Phase 1.2, waiting on real .fhi fixtures)
+  Bouncer (file watcher)            ██░░░░░░░░  ~20%     init/1 fixed (loud-fail stub); pipeline unimplemented (Phase 1.3)
   Scanner / Container               ░░░░░░░░░░   0%      STUB
   .docx generator                   ░░░░░░░░░░   0%      No module, no dependency selected
 
@@ -74,7 +74,7 @@ WEB LAYER
   MarkingLive (cockpit)             ████░░░░░░  ~40%     UI works against mock data; not wired to Repo
   SettingsLive                      ████░░░░░░  ~40%     Shell present, persistence stubbed
   RefineryLive, CourseLive.*        █░░░░░░░░░  ~10%     "Coming soon" placeholders
-  ApiController /health             ███░░░░░░░  ~30%     Calls Repo.get/1 which does not exist
+  ApiController /health             ███████░░░  ~70%     Real liveness check against Repo.cubdb/0
 
 EXTERNAL / DEFERRED (not on v1 path)
   Scheduling.Calendar               ████░░░░░░  ~40%     689 LOC, untested, deferred to post-v1
@@ -91,7 +91,7 @@ SECURITY / GOVERNANCE
   Audit log                         ░░░░░░░░░░   0%      Not implemented
 
 TESTING
-  ExUnit suite (4 files)            ██░░░░░░░░  ~20%     calculator + crypto real; bouncer tests regex literals only
+  ExUnit suite (5 files)            ███░░░░░░░  ~30%     calculator + crypto + Repo + bouncer surface real; no e2e/property/fuzz
   No e2e, no property, no fuzz      ░░░░░░░░░░   0%
 
 REPO INFRASTRUCTURE
@@ -101,19 +101,20 @@ REPO INFRASTRUCTURE
   Burrito release                   █░░░░░░░░░  ~10%     Configured; never actually built/run
 
 ─────────────────────────────────────────────────────────────────────────────
-OVERALL (to v1 scope):              ███░░░░░░░  ~25-30%   Scaffold + partial crypto + working calculator
+OVERALL (to v1 scope):              ████░░░░░░  ~30-35%   Scaffold + partial crypto + Repo + working calculator
 ```
 
 ## v1 Critical Path (see ROADMAP.adoc)
 
 ```
-1. Repo (CubDB) ──┐
+1. Repo (CubDB) ✓ ┐
 2. FHI parser ────┼──► 3. Bouncer ──► 4. .docx gen ──► 5. MarkingLive wired ──► 6. Auth + at-rest ──► 7. Burrito release
                   │
                   └── golden tests
 ```
 
-Nothing past step 1 can be honestly claimed complete until step 1 lands.
+Step 1 landed in Phase 1.1 (commit 779885d on `main`). Step 2 is waiting
+on real anonymised `.fhi` fixtures in `test/fixtures/fhi/`.
 
 ## Update Protocol
 

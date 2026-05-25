@@ -92,7 +92,7 @@
       "Containerfile.hardened") ; Production-hardened variant
     (packaging
       "guix.scm"               ; GNU Guix (primary)
-      "flake.nix"))             ; Nix (fallback)
+      "mix.exs"))              ; Mix release (fallback)
 
   ; ── Critical Invariants ────────────────────────────────────────────
 

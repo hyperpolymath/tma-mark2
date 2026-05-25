@@ -1,56 +1,75 @@
-<!-- SPDX-FileCopyrightText: 2024 eTMA Handler Contributors -->
-<!-- SPDX-License-Identifier: MIT -->
-
+// SPDX-License-Identifier: MPL-2.0
 = Changelog
+:toc:
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on https://keepachangelog.com/en/1.1.0/[Keep a Changelog],
+and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
 == [Unreleased]
 
 === Added
-- RSR Gold compliance documentation
-- Containerfile with Chainguard Wolfi base
-- Architecture documentation (MAA/RMR/RMO)
-- TPCF contribution framework
 
-=== Removed
-- Nix flakes (replaced by Guix manifest; see `guix.scm`)
-
-== [2.0.0] - 2024-12-01
-
-=== Added
-- Complete rewrite from Java to Elixir/Phoenix
-- Phoenix LiveView UI for real-time marking
-- CubDB embedded database (replaces file-based storage)
-- File system watcher for automatic ingestion
-- Burrito cross-platform packaging
-- WASM plugin support (optional)
-- Post-quantum cryptography support (optional)
+* `docs/README.adoc` — guided index of the documentation tree.
+* `RSR_COMPLIANCE.adoc` — explicit compliance tracker against the
+  Rhodium Standard Repository spec.
+* `docs/` taxonomy: `ai/`, `examples/`, `operations/`, `research/`,
+  `sessions/`, `specs/`, `status/`.
+* CubDB-backed persistence layer (`EtmaHandler.Repo`) — Phase 1.1 of
+  the v1 critical path.
+* RSR Gold compliance documentation
+* Containerfile.hardened with Chainguard Wolfi base
+* Architecture documentation (MAA / RMR / RMO)
+* TPCF contribution framework
 
 === Changed
-- Architecture: Monolithic Java → OTP supervision trees
-- Storage: File-based → CubDB append-only B-tree
-- UI: Desktop Java Swing → Web-based LiveView
-- Packaging: JAR/installer → Single binary (Burrito)
+
+* Repository layout reorganised. Top-level reduced from ~28 free-form
+  docs to a focused set of community files plus the v1-critical pair
+  (`ROADMAP.adoc`, `TOPOLOGY.md`). All other long-form documents now
+  live under `docs/<group>/`.
+* `EtmaHandler.Bouncer` — broken `init/1` (referenced undefined
+  symbols, invalid struct-literal syntax) replaced with a
+  loud-fail stub. Module constants exposed as zero-arity functions.
+* `README.adoc` — license section updated to the post-migration
+  wording (Palimpsest License (MPL-2.0)); duplicate Architecture
+  section removed; broken `CONTRIBUTING.adoc` link fixed.
 
 === Removed
-- Java codebase
-- External database dependencies
-- Platform-specific installers
 
-== [1.0.0] - 2023-01-01
+* `CHANGELOG.md`, `CODE_OF_CONDUCT.md`, `MAINTAINERS.md` — duplicates
+  of the canonical `.adoc` versions.
+* `ABI-FFI-README.md` — unfilled template (still contained literal
+  `{{PROJECT}}` placeholder).
+* `Containerfile.simple` — unused; the Containerfile pair is
+  `Containerfile` (dev/base) and `Containerfile.hardened` (prod).
+* `well-known-template/` and `well-known-template.tar.gz` — RSR
+  template scaffolding redundant with the populated `.well-known/`.
+* `schemas/config.cue` — CUE is prohibited by the language policy.
+* Duplicate root `FUNDING.yml`; the canonical one is
+  `.github/FUNDING.yml`.
+* `LICENSES/PMPL-1.0.txt`, `LICENSES/PMPL-1.0-or-later.txt` — the
+  Palimpsest text now lives in `LICENSES/MPL-2.0.txt` per the
+  SPDX-MPL-2.0 identifier the project uses.
+* `flake.nix`, `flake.lock` (replaced by Guix manifest; see
+  `guix.scm`).
 
-=== Added
-- Initial Java implementation
-- Basic marking functionality
-- .fhi file parsing
-- .docx export
+=== Fixed
 
----
+* Four SPDX-License-Identifier headers still carrying `PMPL-1.0`
+  after the migration to MPL-2.0: three workflows (CodeQL,
+  secret-scanner, scorecard) and
+  `lib/etma_handler/proven/safe_state_machine.ex`.
+* README licence shield: `PMPL-1.0` → `MPL-2.0`.
+* `docs/research/palimpsest.adoc` rewritten to describe the
+  post-migration state (Palimpsest is MPL-2.0 in SPDX terms).
 
-[Unreleased]: https://github.com/your-org/tma-mark2/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/your-org/tma-mark2/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/your-org/tma-mark2/releases/tag/v1.0.0
+== Earlier history
+
+This project is currently at `0.1.0-alpha`; no formal release has been
+cut. The repository started as scaffolding around a planned BEAM
+edition of the Open University's electronic Tutor-Marked Assignment
+(eTMA) marking tool, originally written in Java. See
+link:README.adoc[README.adoc] for the project intent and
+link:TOPOLOGY.md[TOPOLOGY.md] for honest current state.
