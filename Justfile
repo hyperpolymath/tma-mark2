@@ -103,7 +103,7 @@ rescript-watch:
 # AffineScript build
 affine:
     @echo ">>> Building AffineScript frontend"
-    ./build-affine.sh
+    ./experiments/affine-frontend/build.sh
 
 # AffineScript watch mode
 affine-watch:

@@ -1,41 +1,54 @@
+// SPDX-License-Identifier: MPL-2.0
 = Palimpsest License
 :toc:
 :toc-placement!:
 
-image:https://img.shields.io/badge/License-PMPL--1.0-blue.svg[License: PMPL-1.0,link="https://github.com/hyperpolymath/palimpsest-license"]
+image:https://img.shields.io/badge/License-MPL--2.0-blue.svg[License: MPL-2.0,link="https://github.com/hyperpolymath/palimpsest-license"]
 image:https://img.shields.io/badge/Philosophy-Palimpsest-indigo.svg[Palimpsest,link="https://github.com/hyperpolymath/palimpsest-license"]
 
 toc::[]
 
 == Legal Status
 
-This project is licensed under the **Palimpsest-MPL License 1.0 (PMPL-1.0)**.
-For SPDX and tooling, use **MPL-2.0**.
+This project is licensed under the **Palimpsest License (MPL-2.0)** — a
+philosophical extension of the Mozilla Public License 2.0 maintained by
+the hyperpolymath ecosystem.
 
-PMPL-1.0 incorporates the Mozilla Public License 2.0 by reference and adds
-ethical-use, provenance, and lineage requirements.
+For SPDX detectors and licence-aware tooling, the canonical identifier
+is `MPL-2.0`. See link:../../NOTICE[NOTICE] for the full disposition,
+and link:../../LICENSE[LICENSE] for the binding legal text.
 
-== What PMPL Adds
+NOTE: This document supersedes the earlier PMPL-1.0 / PMPL-1.0-or-later
+identifiers used in the project's pre-migration history. SPDX headers
+throughout the codebase now consistently use `MPL-2.0`.
 
-* **Emotional Lineage** - preserve narrative intent and cultural context
-* **Provenance Integrity** - retain attribution and lineage metadata
-* **Ethical Use Constraints** - explicit consent for non-interpretive AI training
-* **Quantum-Safe Provenance (optional)** - post-quantum signature support
+== What the Palimpsest extension adds
 
-== How to Adopt
+* **Emotional Lineage** — preserve narrative intent and cultural context
+* **Provenance Integrity** — retain attribution and lineage metadata
+* **Ethical Use Constraints** — explicit consent for non-interpretive AI training
+* **Quantum-Safe Provenance** (optional) — post-quantum signature support
 
-1. Include the PMPL-1.0 license text in `LICENSE`.
-2. Add SPDX headers to source files:
-   `SPDX-License-Identifier: MPL-2.0`
-3. Add a Palimpsest badge to your README (see `assets/badges/` and `embed/license-blocks/`).
+These obligations sit on top of, not in conflict with, the MPL-2.0
+copyleft provisions.
 
-== Versioning
+== How to adopt in a new project
 
-See `VERSIONING.adoc` for the release process and the "-or-later" model.
-The current legal text is PMPL-1.0.
+1. Copy the MPL-2.0 text into `LICENSE` at the repository root.
+2. Add a `NOTICE` file recording the Palimpsest extension.
+3. Add SPDX headers to source files:
++
+[source]
+----
+SPDX-License-Identifier: MPL-2.0
+SPDX-FileCopyrightText: <year> <author>
+----
+4. Add a Palimpsest badge to your README (see the shield URL at the
+   top of this file).
 
 == References
 
-* `legal/README.adoc`
-* `assets/badges/README.md`
-* `embed/license-blocks/README.md`
+* link:../../LICENSE[LICENSE] — the binding MPL-2.0 text
+* link:../../NOTICE[NOTICE] — Palimpsest disposition and tooling notes
+* link:../../LICENSES/translations/[LICENSES/translations/] — Dutch
+  translations and source Palimpsest texts

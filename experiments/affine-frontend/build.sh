@@ -3,8 +3,11 @@
 # SPDX-License-Identifier: MPL-2.0
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-OUT_DIR="$ROOT_DIR/priv/static/wasm"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Script lives at experiments/affine-frontend/build.sh — walk up two levels
+# to reach the project root.
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+OUT_DIR="$PROJECT_ROOT/priv/static/wasm"
 OUT_WASM="$OUT_DIR/etma_handler_frontend.wasm"
 TMP_WASM="$OUT_DIR/.etma_handler_frontend.wasm.tmp"
 
@@ -14,8 +17,8 @@ find_affinescript_repo() {
   local candidate
   for candidate in \
     "${AFFINESCRIPT_REPO:-}" \
-    "$ROOT_DIR/../nextgen-languages/affinescript" \
-    "$ROOT_DIR/../../nextgen-languages/affinescript" \
+    "$PROJECT_ROOT/../nextgen-languages/affinescript" \
+    "$PROJECT_ROOT/../../nextgen-languages/affinescript" \
     "/var/mnt/eclipse/repos/nextgen-languages/affinescript"
   do
     [ -n "$candidate" ] || continue
@@ -33,19 +36,19 @@ compile_with_affinescript() {
   
   if command -v affinescript >/dev/null 2>&1; then
     echo "Using affinescript from PATH (WASM GC)"
-    affinescript compile "$ROOT_DIR/src/main.affine" --wasm-gc -o "$TMP_WASM"
+    affinescript compile "$SCRIPT_DIR/main.affine" --wasm-gc -o "$TMP_WASM"
     return $?
   fi
 
   if [ -n "$compiler_repo" ] && [ -x "$compiler_repo/_build/default/bin/main.exe" ]; then
     echo "Using affinescript from $compiler_repo/_build/default/bin/main.exe (WASM GC)"
-    "$compiler_repo/_build/default/bin/main.exe" compile "$ROOT_DIR/src/main.affine" --wasm-gc -o "$TMP_WASM"
+    "$compiler_repo/_build/default/bin/main.exe" compile "$SCRIPT_DIR/main.affine" --wasm-gc -o "$TMP_WASM"
     return $?
   fi
 
   if [ -n "$compiler_repo" ]; then
     echo "Using dune exec affinescript from $compiler_repo (WASM GC)"
-    ( cd "$compiler_repo" && dune exec affinescript -- compile "$ROOT_DIR/src/main.affine" --wasm-gc -o "$TMP_WASM" )
+    ( cd "$compiler_repo" && dune exec affinescript -- compile "$SCRIPT_DIR/main.affine" --wasm-gc -o "$TMP_WASM" )
     return $?
   fi
 
