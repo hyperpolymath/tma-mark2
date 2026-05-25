@@ -6,16 +6,14 @@ defmodule EtmaHandler.BouncerTest do
 
   describe "filename validation" do
     test "accepts valid OU filename format" do
-      # Test the internal validation via the public API when bouncer is running
-      # For now, test the pattern matching logic directly
-      pattern = ~r/^([A-Z]{1,4}\d{2,4})-(\d{2}[JB])-(\d{2})-(\d+)-([a-z]{2}\d+)/i
+      pattern = Bouncer.filename_pattern()
 
       assert Regex.match?(pattern, "M150-25J-01-1-rg8274")
       assert Regex.match?(pattern, "TM470-25B-02-5-ab1234")
     end
 
     test "rejects invalid filename format" do
-      pattern = ~r/^([A-Z]{1,4}\d{2,4})-(\d{2}[JB])-(\d{2})-(\d+)-([a-z]{2}\d+)/i
+      pattern = Bouncer.filename_pattern()
 
       refute Regex.match?(pattern, "invalid-filename")
       refute Regex.match?(pattern, "M150_25J_01_1_rg8274")
@@ -24,34 +22,42 @@ defmodule EtmaHandler.BouncerTest do
   end
 
   describe "extension validation" do
-    @allowed_extensions ~w(.doc .docx .rtf .pdf .zip .fhi .odt)
+    test "document extensions are exposed" do
+      docs = Bouncer.document_extensions()
 
-    test "accepts allowed extensions" do
-      for ext <- @allowed_extensions do
-        assert ext in @allowed_extensions
-      end
+      assert ".docx" in docs
+      assert ".pdf" in docs
+      assert ".odt" in docs
     end
 
-    test "rejects disallowed extensions" do
-      refute ".exe" in @allowed_extensions
-      refute ".bat" in @allowed_extensions
-      refute ".js" in @allowed_extensions
+    test "code extensions are exposed" do
+      code = Bouncer.code_extensions()
+
+      assert ".ex" in code
+      assert ".rs" in code
+    end
+
+    test "executables are not in any allowlist" do
+      all = Bouncer.document_extensions() ++ Bouncer.code_extensions()
+
+      refute ".exe" in all
+      refute ".bat" in all
+      refute ".sh" in all
     end
   end
 
   describe "metadata extraction" do
     test "extracts metadata from valid filename" do
-      # The filename pattern extracts:
-      # - course code (M150)
-      # - presentation (25J)
-      # - TMA number (01)
-      # - submission ID (1)
-      # - student OUCU (rg8274)
-      pattern = ~r/^([A-Z]{1,4}\d{2,4})-(\d{2}[JB])-(\d{2})-(\d+)-([a-z]{2}\d+)/i
-
-      captures = Regex.run(pattern, "M150-25J-01-1-rg8274")
+      # course code, presentation, TMA number, submission ID, student OUCU
+      captures = Regex.run(Bouncer.filename_pattern(), "M150-25J-01-1-rg8274")
 
       assert captures == ["M150-25J-01-1-rg8274", "M150", "25J", "01", "1", "rg8274"]
+    end
+  end
+
+  describe "supervision tree behaviour" do
+    test "init/1 stops with :not_implemented" do
+      assert {:stop, :not_implemented} = Bouncer.init([])
     end
   end
 end
