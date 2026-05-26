@@ -1,4 +1,6 @@
-# Configuration generation
+# SPDX-License-Identifier: MPL-2.0
+# Example: generic Nickel configuration. Not project config; included
+# as a documentation reference for the Nickel language.
 {
   name = "my-app",
   replicas =

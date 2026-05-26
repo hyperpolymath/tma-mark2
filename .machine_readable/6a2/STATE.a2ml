@@ -4,7 +4,7 @@
 [metadata]
 project = "tma-mark2"
 version = "0.1.0-alpha"
-last-updated = "2026-05-25"
+last-updated = "2026-05-26"
 status = "active"
 
 [project-context]
@@ -28,3 +28,18 @@ step-4-docx-generator = "not-started"
 step-5-marking-live-wired = "not-started"
 step-6-auth-and-encryption-at-rest = "not-started"
 step-7-burrito-release = "not-started"
+
+[open-prs]
+# PR open at end of session, awaiting human decision on merge.
+pr-41-branch = "claude/post-phase-1-1-cleanup"
+pr-41-title = "post-Phase-1.1 repo tidy + docs taxonomy + wiki staging"
+pr-41-content-state = "ready"
+pr-41-ci-state = "red (pre-existing failures; see docs/status/ci-state.md)"
+pr-41-blocking-on = "human review"
+
+[ci-state]
+# Snapshot at end of session — see docs/status/ci-state.md for detail.
+elixir-ci-test = "failure (pre-existing, suspected setup-beam version mismatch)"
+rescript-deno-ci-build = "failure (pre-existing, suspected deno fmt on new docs/wiki/ markdown)"
+governance-language-package-anti-pattern = "failure (pre-existing, reusable workflow in hyperpolymath/standards)"
+all-other-checks = "success"

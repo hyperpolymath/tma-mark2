@@ -96,7 +96,7 @@ TESTING
 
 REPO INFRASTRUCTURE
   Justfile / guix.scm               █████████░  ~90%     Solid; not exercised in CI
-  CI workflows                      ██████░░░░  ~60%     14 workflows; most are governance, not value-adding
+  CI workflows                      █████░░░░░  ~50%     14 workflows; governance-heavy; elixir-ci/test and rescript-deno-ci/build fail pre-existing on every PR (no local toolchain to debug); governance / Language-package-anti-pattern also red — see docs/status/ci-state.md
   Containerfiles                    ██████░░░░  ~60%     Exist; never demonstrated to run the app
   Burrito release                   █░░░░░░░░░  ~10%     Configured; never actually built/run
 

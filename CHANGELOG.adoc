@@ -64,6 +64,9 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 * README licence shield: `PMPL-1.0` → `MPL-2.0`.
 * `docs/research/palimpsest.adoc` rewritten to describe the
   post-migration state (Palimpsest is MPL-2.0 in SPDX terms).
+* SPDX header added to `docs/examples/nickel-config-example.ncl`
+  (consequence of moving the file out of the old `configs/` dir;
+  Hypatia bot flagged the missing header on PR #41).
 
 == Earlier history
 
