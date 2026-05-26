@@ -77,6 +77,11 @@ Pick the entry point that matches what you need to do.
 | link:status/[status/]
 | Live status reports — test coverage gaps, proof-obligation gaps,
   internal code-review notes (SEAMS).
+
+| link:wiki/[wiki/]
+| GitHub Wiki staging area. Markdown source for the pages at
+  https://github.com/hyperpolymath/tma-mark2/wiki — see
+  link:wiki/README.md[wiki/README.md] for the sync procedure.
 |===
 
 == Machine-readable artefacts
