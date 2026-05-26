@@ -1,0 +1,55 @@
+;; SPDX-License-Identifier: MPL-2.0
+;; SPDX-FileCopyrightText: 2026 Jonathan D.A. Jewell
+
+;; panic-attack assail user-classification registry.
+;;
+;; Format and matching semantics: <https://github.com/hyperpolymath/panic-attack>
+;; `src/assail/mod.rs::apply_user_classifications`. Matches on exact
+;; (location, category) pairs and flips `suppressed = true`.
+;;
+;; Each entry below dismisses one `MutationGap` finding raised by the
+;; analyzer's "ExUnit.Case without ExUnitProperties/StreamData" rule on
+;; an Elixir test file. The rule is a meta-test-quality recommendation,
+;; not a defect: it asks for property-based tests on top of existing
+;; example-based tests. The five `etma_handler/*_test.exs` files are
+;; unit suites covering pure handler logic where the example-based
+;; coverage is already comprehensive; the two `support/*.ex` files are
+;; Phoenix conn/data test helpers that are themselves consumed by
+;; tests and not meaningfully property-testable on their own.
+
+(assail-classifications
+  (classification
+    (file "test/etma_handler/bouncer_test.exs")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "ExUnit-only unit suite for the Bouncer handler; example-based coverage is the appropriate shape"))
+  (classification
+    (file "test/etma_handler/calculator_test.exs")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "ExUnit-only unit suite for the Calculator handler; example-based coverage is the appropriate shape"))
+  (classification
+    (file "test/etma_handler/crypto_test.exs")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "ExUnit-only unit suite for the Crypto handler; example-based coverage is the appropriate shape"))
+  (classification
+    (file "test/etma_handler/nlp_test.exs")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "ExUnit-only unit suite for the NLP handler; example-based coverage is the appropriate shape"))
+  (classification
+    (file "test/etma_handler/repo_test.exs")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "ExUnit-only unit suite for the Repo handler; example-based coverage is the appropriate shape"))
+  (classification
+    (file "test/support/conn_case.ex")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "Phoenix ConnCase test helper module; consumed by tests, not itself property-testable"))
+  (classification
+    (file "test/support/data_case.ex")
+    (category "MutationGap")
+    (audit "audits/assail-classifications.a2ml")
+    (rationale "Phoenix DataCase test helper module; consumed by tests, not itself property-testable")))
