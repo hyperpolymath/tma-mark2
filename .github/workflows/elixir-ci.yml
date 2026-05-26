@@ -25,7 +25,15 @@ jobs:
       
       - name: Install deps
         run: mix deps.get
-      
+
+      # Compile dependencies first WITHOUT --warnings-as-errors so
+      # upstream warnings (e.g. rustler's `:json.decode` reference that
+      # requires Elixir 1.18, deprecated `use Bitwise`, unused `files`/
+      # `opts` in transitive deps) don't fail our build. The strict
+      # gate then applies only to this project's own modules.
+      - name: Compile dependencies
+        run: mix deps.compile
+
       - name: Compile
         run: mix compile --warnings-as-errors
       
