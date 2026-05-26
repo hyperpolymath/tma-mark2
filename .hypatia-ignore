@@ -1,0 +1,7 @@
+# Hypatia governance bundle exemptions
+# Format: <rule>:<path> — whole-line fixed-string match
+# Detail: hyperpolymath/standards/.github/workflows/governance-reusable.yml is_exempt()
+#
+# examples/SafeDOMExample.res — pre-existing ReScript example, scheduled
+# for ReScript→AffineScript migration in affinescript#57.
+cicd_rules/banned_language_file:examples/SafeDOMExample.res

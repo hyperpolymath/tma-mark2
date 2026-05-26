@@ -1,0 +1,21 @@
+{
+  "lint": {
+    "exclude": [
+      "assets/vendor/",
+      "deps/",
+      "_build/",
+      "node_modules/"
+    ]
+  },
+  "fmt": {
+    "include": [
+      "assets/js/"
+    ],
+    "exclude": [
+      "assets/vendor/",
+      "deps/",
+      "_build/",
+      "node_modules/"
+    ]
+  }
+}
